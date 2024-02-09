@@ -16,17 +16,23 @@
           window.location.href = data.url; // Redirects to the URL
         } else {
           console.error('No URL found in the response');
-          errorMessage = 'No URL found in the response';
+          errorMessage = 'No original URL is associated with this shortened URL';
         }
       } catch (error) {
         console.error('Fetch error:', error);
         errorMessage = error.message || 'An error occurred while fetching data.';
       }
     });
+
+    let goHome = () => {
+      goto('./home')
+    }
   </script>
   
   <main>
     {#if errorMessage}
       <p>Error: {errorMessage}</p>
+      <div>But you can add one here: </div>
+      <button on:click={goHome}>Return Home</button>
     {/if}
   </main>
