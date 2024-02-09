@@ -1,7 +1,56 @@
 <script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+	// import Counter from './Counter.svelte';
+	// import welcome from '$lib/images/svelte-welcome.webp';
+	// import welcome_fallback from '$lib/images/svelte-welcome.png';
+
+	import { onMount } from 'svelte';
+    import { getKey } from './getKey.js';
+	import { goto } from '$app/navigation';
+	import Instructions from './Instructions.svelte';
+
+    let key = 0;
+
+	let url = '';
+
+	let size = 'Partial'
+	let btext = 'More...'
+
+	let toggleText = () =>{
+		if (size === 'Partial'){
+			size = 'Full'
+			btext = 'Less..'
+		} else {
+			size = 'Partial'
+			btext = 'More...'
+		}
+	}
+
+    async function handleSubmit() {
+		try {
+        const response = await fetch('https://cs361a.wl.r.appspot.com/entry', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ "user": key, "url": url }),
+        });
+
+        if (!response.ok) {
+            goto('/error');
+        }
+
+        console.log(response)
+        goto('/past');
+    } catch (error) {
+        console.error('There was a problem with your fetch operation:', error);
+        goto('/error');
+    }
+    }
+
+    onMount(async () => {
+        key = await getKey();
+        console.log(key);
+    });
 </script>
 
 <svelte:head>
@@ -10,22 +59,19 @@
 </svelte:head>
 
 <section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
-
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
-
-	<Counter />
+	<h1>Enter your URL to shorten here:</h1>
+	<form on:submit|preventDefault={handleSubmit}>
+		<input
+			required
+			type="text"
+			placeholder="Enter URL here"
+			bind:value={url}
+			style="color: dark-gray;" />
+		<button type="submit">Create!</button>
+	</form>
+	<h2>Instructions:</h2>
+	<Instructions size={size}/>
+	<button on:click={toggleText}>{btext}</button>
 </section>
 
 <style>
@@ -37,8 +83,41 @@
 		flex: 0.6;
 	}
 
+	input {
+        /* Styles for the input */
+        margin-right: 8px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+		width: 80vw;
+    max-width: 500px;
+    min-width: calc(80vw, 500px);
+    }
+	input:focus{
+		outline: none;
+		border-color: var(--color-theme-1);
+		border-radius: 3px solidx;
+		outline-color: var(--color-theme-1);
+	}
+	button {
+		padding: 1rem;
+		background: rgba(255, 255, 255, 0.5);
+		border-radius: 2px;
+		border: none;
+	}
+
+	button:focus,
+	button:hover {
+		background: var(--color-theme-1);
+		color: white;
+		outline: none;
+	}
+
 	h1 {
 		width: 100%;
+	}
+	h2{
+		font-size: 1.5em;
 	}
 
 	.welcome {

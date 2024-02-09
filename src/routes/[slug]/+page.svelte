@@ -25,14 +25,41 @@
     });
 
     let goHome = () => {
-      goto('./home')
+      goto('./')
     }
   </script>
   
   <main>
     {#if errorMessage}
-      <p>Error: {errorMessage}</p>
-      <div>But you can add one here: </div>
+      <h1>Error: {errorMessage}</h1>
+      <h2>But you can add one here: </h2>
       <button on:click={goHome}>Return Home</button>
     {/if}
   </main>
+
+  <style>
+    h1{
+        font-size: 1.5em;
+    }
+    h2{
+        font-size: 1.25em;
+    }
+    main{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    button {
+		padding: 1rem;
+		background: rgba(255, 255, 255, 0.5);
+		border-radius: 2px;
+		border: none;
+	}
+
+	button:focus,
+	button:hover {
+		background: var(--color-theme-1);
+		color: white;
+		outline: none;
+	}
+  </style>
