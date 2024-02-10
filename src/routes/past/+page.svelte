@@ -57,6 +57,7 @@
 </svelte:head>
 
 <section>
+    <h2>Your Past Shortned URLs:</h2>
 	{#if loading}
 		<div>Loading</div>
 	{:else if error !== null}
@@ -75,3 +76,31 @@
 	  	</ul>
 	{/if}
 </section>
+
+<style>
+    button {
+		padding: 1rem;
+		background: rgba(255, 255, 255, 0.5);
+		border-radius: 2px;
+		border: none;
+	}
+
+	button:focus,
+	button:hover {
+		background: var(--color-theme-1);
+		color: white;
+		outline: none;
+	}
+    h2{
+        font-size: 2em;
+    }
+    section{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    ul{
+        width: 100%;
+        padding: 30px;
+    }
+</style>
