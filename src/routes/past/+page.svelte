@@ -45,7 +45,7 @@
   }
 
     onMount(async () => {
-		domain = window.location.hostname;
+		domain = window.location.protocol + '//' + window.location.host;
         key = await getKey();
 		fetchData();
     });

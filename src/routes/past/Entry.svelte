@@ -4,6 +4,7 @@
     export let domain;
     export let entryOb;
 
+    let url = domain + '/' + entryOb.param
     let date = new Date();
 
     let state = 'Present';
@@ -22,6 +23,14 @@
     let toRemoved = () =>{
         state = 'Removed';
         removed = true;
+    }
+
+    async function copyToClipboard() {
+        try {
+            await navigator.clipboard.writeText(url);
+        } catch (error) {
+            console.error('Error copying to clipboard:', error);
+        }
     }
 
     onDestroy(() => {
@@ -44,8 +53,8 @@
 
 {#if state == 'Present'}
     <button on:click={toMessage}>Delete</button>
-    <div>URL: {domain}/{entryOb.param}</div>
-    <button>Copy</button>
+    <div>URL: {url}</div>
+    <button on:click={copyToClipboard}>Copy</button>
     <div>Original: {entryOb.url}</div>
     <div>Date: {date.toLocaleDateString()}</div>
 {:else if state == 'Message'}
@@ -58,3 +67,4 @@
 {:else}
     <div>Error, shouldn't be reachable here</div>
 {/if}
+<br>
