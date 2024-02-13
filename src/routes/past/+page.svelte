@@ -57,7 +57,7 @@
 </svelte:head>
 
 <section>
-    <h2>Your Past Shortned URLs:</h2>
+    <h2>Your Past Shortened URLs:</h2>
 	{#if loading}
 		<div>Loading</div>
 	{:else if error !== null}
