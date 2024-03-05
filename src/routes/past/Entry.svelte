@@ -1,6 +1,4 @@
 <script>
-    import { onDestroy } from 'svelte';
-
     export let domain;
     export let entryOb;
 
@@ -8,21 +6,43 @@
     let date = new Date(entryOb.date);
 
     let state = 'Present';
-    let removed = false;
 
     let toMessage = () =>{
         state = 'Message';
-        removed = false;
     }
 
     let toPresent = () =>{
         state = 'Present';
-        removed = false;
+    }
+
+    let undoDelete = () =>{
+        state = 'Present';
+        fetch(`http://cs361a.wl.r.appspot.com/entry/${entryOb.param}`, {
+                method: 'PATCH',
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.error('Error deleting entry:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting entry:', error);
+                });
     }
 
     let toRemoved = () =>{
         state = 'Removed';
-        removed = true;
+        fetch(`http://cs361a.wl.r.appspot.com/entry/${entryOb.param}`, {
+                method: 'PATCH',
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.error('Error deleting entry:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting entry:', error);
+                });
     }
 
     function isSameCalendarDay(date1, date2) {
@@ -38,22 +58,6 @@
             console.error('Error copying to clipboard:', error);
         }
     }
-
-    onDestroy(() => {
-        if (removed){
-            fetch(`http://cs361a.wl.r.appspot.com/entry/${entryOb.param}`, {
-                method: 'DELETE',
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to delete entry');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error deleting entry:', error);
-                });
-            }
-        })
 
 </script>
 
@@ -81,7 +85,7 @@
     <button on:click={toPresent}>No</button>
 {:else if state == 'Removed'}
     <div>This URL has been deleted</div>
-    <button on:click={toPresent}>Undo</button>
+    <button on:click={undoDelete}>Undo</button>
 {:else}
     <div>Error, shouldn't be reachable here</div>
 {/if}
