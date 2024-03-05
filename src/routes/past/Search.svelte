@@ -1,18 +1,27 @@
 <script>
     export let entryArray;
 
-    let searchval = '';
+    let searchval = "";
+    let timeout;
 
     let filterEntries = (sv) => {
-        if (sv !== ''){
-            entryArray = entryArray.filterEntries((entry) => entry.toLowerCase().includes(sv.toLowerCase()))
+        if (sv !== "") {
+            entryArray = entryArray.filterEntries((entry) =>
+                entry.toLowerCase().includes(sv.toLowerCase()),
+            );
         }
+    };
+
+    $: {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            filterEntries(searchval);
+        }, 500);
     }
-
-    $: filterEntries(searchval)
-
-
+    
 </script>
 
-<div>Filter by original URL or new URL names: </div>
-<input type="text" placeholder="Search..." bind:value={searchval}>
+<div>Filter by original URL or new URL names:</div>
+<input type="text" placeholder="Search..." bind:value={searchval} />

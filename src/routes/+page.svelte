@@ -120,7 +120,7 @@
 		font-size: 1.5em;
 	}
 
-	.welcome {
+	/* .welcome {
 		display: block;
 		position: relative;
 		width: 100%;
@@ -134,5 +134,5 @@
 		height: 100%;
 		top: 0;
 		display: block;
-	}
+	} */
 </style>
