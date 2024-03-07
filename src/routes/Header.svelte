@@ -5,11 +5,15 @@
 	import github from "$lib/images/github.svg";
 
 	login = () => {
-		const baseUrl = `${window.location.protocol}//${window.location.host}/callback`;
+
+		let baseUrl = `${window.location.protocol}//${window.location.host}/callback`
+		if ($page.url.pathname.startsWith("/past")){
+			baseUrl += "/past"
+		}
 
 		const encodedBaseUrl = encodeURIComponent(baseUrl);
 
-		const targetUrl = `http://cs361l.uw.r.appspot.com/login?callback=${encodedBaseUrl}`;
+		const targetUrl = `http://cs361l.uw.r.appspot.com/login?url=${encodedBaseUrl}`;
 
 		window.location.href = targetUrl;
 	};
