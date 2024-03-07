@@ -1,28 +1,51 @@
 <script>
-	import { page } from '$app/stores';
-	import logo from '$lib/images/svelte-logo.svg';
-	import github from '$lib/images/github.svg';
+    import { goto } from "$app/navigation";
+	import { page } from "$app/stores";
+	// import logo from "$lib/images/svelte-logo.svg";
+	import github from "$lib/images/github.svg";
+
+	login = () => {
+		const baseUrl = `${window.location.protocol}//${window.location.host}/callback`;
+
+		const encodedBaseUrl = encodeURIComponent(baseUrl);
+
+		const targetUrl = `http://cs361l.uw.r.appspot.com/login?callback=${encodedBaseUrl}`;
+
+		window.location.href = targetUrl;
+	};
+
+	logout = () => {
+		localStorage.removeItem("361UserKey")
+		localStorage.removeItem("userPicture")
+		localStorage.removeItem("userName")
+
+		goto(window.location.href, { replaceState: true });
+	}
 </script>
 
 <header>
-	<!-- <div class="corner">
-		<a href="https://kit.svelte.dev">
-			<img src={logo} alt="SvelteKit" />
+	<div class="corner">
+		<a href="https://github.com/kopatsis">
+			<img src={github} alt="GitHub" />
 		</a>
-	</div> -->
+	</div>
 
 	<nav>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
 			<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
 		</svg>
 		<ul>
-			<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
+			<li aria-current={$page.url.pathname === "/" ? "page" : undefined}>
 				<a href="/">Home</a>
 			</li>
 			<li>
 				<a href="/" class="main">EZPZ URL Shortener</a>
 			</li>
-			<li aria-current={$page.url.pathname.startsWith('/past') ? 'page' : undefined}>
+			<li
+				aria-current={$page.url.pathname.startsWith("/past")
+					? "page"
+					: undefined}
+			>
 				<a href="/past">History</a>
 			</li>
 		</ul>
@@ -31,11 +54,18 @@
 		</svg>
 	</nav>
 
-	<!-- <div class="corner">
-		<a href="https://github.com/sveltejs/kit">
-			<img src={github} alt="GitHub" />
-		</a>
-	</div> -->
+	<div class="corner">
+		{#if localStorage.getItem("361UserKey")}
+			<img
+				src={localStorage.getItem("userPicture")}
+				alt="Thumbnail of user"
+			/>
+			<div>Welcome, {localStorage.getItem("userName")}</div>
+			<button>Logout</button>
+		{:else}
+			<button>Login</button>
+		{/if}
+	</div>
 </header>
 
 <style>
@@ -44,7 +74,7 @@
 		justify-content: center;
 	}
 
-	/* .corner {
+	.corner {
 		width: 3em;
 		height: 3em;
 	}
@@ -61,7 +91,7 @@
 		width: 2em;
 		height: 2em;
 		object-fit: contain;
-	} */
+	}
 
 	nav {
 		display: flex;
@@ -97,9 +127,9 @@
 		height: 100%;
 	}
 
-	li[aria-current='page']::before {
+	li[aria-current="page"]::before {
 		--size: 6px;
-		content: '';
+		content: "";
 		width: 0;
 		height: 0;
 		position: absolute;

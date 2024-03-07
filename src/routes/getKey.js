@@ -1,4 +1,10 @@
 export async function getKey() {
+
+    let userkey = parseInt(localStorage.getItem('361UserKey'));
+    if (userkey){
+        return userkey
+    }
+
     let key = parseInt(localStorage.getItem('CS361Key'));
 
     if (!key) {
