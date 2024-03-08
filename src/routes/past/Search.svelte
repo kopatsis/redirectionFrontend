@@ -1,16 +1,18 @@
 <script>
+    import { data } from '$lib/stores/linkstore.js';
     export let entryArray;
-
-    let originalArray = entryArray
 
     let searchval = "";
     let timeout;
 
     let filterEntries = (sv) => {
-        if (sv !== "") {
-            entryArray = originalArray.filterEntries((entry) =>
-                entry.toLowerCase().includes(sv.toLowerCase()),
+        const search = String(sv).toLowerCase()
+        if (search !== "") {
+            entryArray = data.filter((entry) =>
+                entry.param.toLowerCase().includes(search) || entry.url.toLowerCase().includes(search),
             );
+        } else {
+            entryArray = data;
         }
     };
 

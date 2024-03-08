@@ -1,12 +1,10 @@
 <script>
-  // import Counter from './Counter.svelte';
-  // import welcome from '$lib/images/svelte-welcome.webp';
-  // import welcome_fallback from '$lib/images/svelte-welcome.png';
 
   import { onMount } from "svelte";
   import { getKey } from "../getKey.js";
+  import {setData } from '$lib/stores/linkstore.js';
   import Entry from "./Entry.svelte";
-    import Search from "./Search.svelte";
+  import Search from "./Search.svelte";
 
   let domain = "";
   let key = 0;
@@ -25,6 +23,13 @@
     currentIndex += batchSize;
   }
 
+  function resetDisplayedEntries(){
+    displayedEntries = [];
+    updateDisplayedEntries()
+  }
+
+  $: entries, resetDisplayedEntries();
+
   async function fetchData() {
     try {
       console.log(key);
@@ -39,6 +44,7 @@
         entries = [];
       } else {
         entries = data.results;
+        setData(entries)
         updateDisplayedEntries();
       }
     } catch (err) {
@@ -68,7 +74,7 @@
   {:else if entries.length === 0}
     <div>No data for key</div>
   {:else}
-    <Search bind:entryArray={entries}/>
+    <Search bind:entryArray={entries} />
     <ul>
       {#each displayedEntries as entry (entry.param)}
         <Entry {domain} entryOb={entry} />

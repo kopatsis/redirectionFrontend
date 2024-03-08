@@ -1,4 +1,6 @@
 <script>
+
+    import {removeItem, addBack} from '$lib/stores/linkstore.js';
     export let domain;
     export let entryOb;
 
@@ -17,6 +19,7 @@
 
     let undoDelete = () =>{
         state = 'Present';
+        addBack(entryOb);
         fetch(`http://cs361a.wl.r.appspot.com/entry/${entryOb.param}`, {
                 method: 'PATCH',
                 })
@@ -32,8 +35,9 @@
 
     let toRemoved = () =>{
         state = 'Removed';
+        removeItem(entryOb);
         fetch(`http://cs361a.wl.r.appspot.com/entry/${entryOb.param}`, {
-                method: 'PATCH',
+                method: 'DELETE',
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -76,6 +80,7 @@
         <div>
             <button on:click={toMessage}>Delete</button>
             <button on:click={copyToClipboard}>Copy</button>
+            <button>Analytics</button>
         </div>
     </div>
       
