@@ -1,14 +1,18 @@
 <script>
-    import { goto } from "$app/navigation";
+	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
+	import { onMount } from "svelte";
 	// import logo from "$lib/images/svelte-logo.svg";
 	import github from "$lib/images/github.svg";
 
-	login = () => {
+	let userKey;
+	let userPicture;
+	let userName;
 
-		let baseUrl = `${window.location.protocol}//${window.location.host}/callback`
-		if ($page.url.pathname.startsWith("/past")){
-			baseUrl += "/past"
+	const login = () => {
+		let baseUrl = `${window.location.protocol}//${window.location.host}/callback`;
+		if ($page.url.pathname.startsWith("/past")) {
+			baseUrl += "/past";
 		}
 
 		const encodedBaseUrl = encodeURIComponent(baseUrl);
@@ -18,13 +22,24 @@
 		window.location.href = targetUrl;
 	};
 
-	logout = () => {
-		localStorage.removeItem("361UserKey")
-		localStorage.removeItem("userPicture")
-		localStorage.removeItem("userName")
+	const logout = () => {
+		localStorage.removeItem("361UserKey");
+		localStorage.removeItem("userPicture");
+		localStorage.removeItem("userName");
+		updateVars();
 
 		goto(window.location.href, { replaceState: true });
+	};
+
+	const updateVars = () => {
+		userKey = localStorage.getItem("361UserKey");
+		userPicture = localStorage.getItem("userPicture");
+		userName = localStorage.getItem("userName");
 	}
+
+	onMount(() => {
+		updateVars();
+	});
 </script>
 
 <header>
@@ -59,15 +74,12 @@
 	</nav>
 
 	<div class="corner">
-		{#if localStorage.getItem("361UserKey")}
-			<img
-				src={localStorage.getItem("userPicture")}
-				alt="Thumbnail of user"
-			/>
-			<div>Welcome, {localStorage.getItem("userName")}</div>
-			<button>Logout</button>
+		{#if userKey}
+			<img src={userPicture} alt="Thumbnail of user" />
+			<div>Welcome, {userName}</div>
+			<button on:click={logout}>Logout</button>
 		{:else}
-			<button>Login</button>
+			<button on:click={login}>Login</button>
 		{/if}
 	</div>
 </header>

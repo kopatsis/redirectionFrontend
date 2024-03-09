@@ -1,6 +1,7 @@
 <script>
     import { page } from "$app/stores";
     import { onMount } from "svelte";
+    import { goto } from "$app/navigation";
 
     let data = {};
     let errorMessage = "";
@@ -22,16 +23,27 @@
     }
 
     $: {
-        const paramsObject = Object.fromEntries(
-            $page.url.searchParams.entries(),
-        );
-        data = paramsObject;
+        const dataString = $page.url.searchParams.get("data");
+        let parsedData;
+        if (dataString) {
+            try {
+                parsedData = JSON.parse(decodeURIComponent(dataString));
+            } catch (e) {
+                console.error("Error parsing JSON from URL parameter", e);
+                parsedData = {}; // or any fallback you prefer
+            }
+        }
+        data = parsedData;
+        console.log("Receive");
+        console.log(data);
     }
 
     onMount(() => {
-
+        console.log("Send");
+        console.log(data);
         postData("https://cs361a.wl.r.appspot.com/login", data)
             .then((response) => {
+                console.log(response)
                 key = response.key;
                 localStorage.setItem("361UserKey", key.toString());
                 localStorage.setItem("userPicture", data.picture);
@@ -40,7 +52,7 @@
             })
             .catch((error) => {
                 errorMessage = error.message;
-                setTimeout(() => goto("/"), 3000);
+                // setTimeout(() => goto("/"), 3000);
             });
     });
 </script>

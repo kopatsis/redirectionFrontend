@@ -19,4 +19,5 @@ export function addBack(object) {
 
 export function setData(passedData){
     data = passedData
+    console.log(data)
 }

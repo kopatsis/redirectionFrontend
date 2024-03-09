@@ -12,10 +12,11 @@
   let error = null;
   let loading = true;
 
+  let searchArray = [];
   let entries = [];
   let displayedEntries = [];
   let currentIndex = 0;
-  const batchSize = 3;
+  const batchSize = 5;
 
   function updateDisplayedEntries() {
     const nextBatch = entries.slice(currentIndex, currentIndex + batchSize);
@@ -24,11 +25,14 @@
   }
 
   function resetDisplayedEntries(){
+    console.log("searched")
+    entries = [...searchArray]
     displayedEntries = [];
+    currentIndex = 0;
     updateDisplayedEntries()
   }
 
-  $: entries, resetDisplayedEntries();
+  $: searchArray, resetDisplayedEntries();
 
   async function fetchData() {
     try {
@@ -40,12 +44,13 @@
         throw new Error("Unable to reach EZPZ Service");
       }
       const data = await response.json();
+      console.log(data)
       if (data.results.length === 0) {
         entries = [];
       } else {
         entries = data.results;
         setData(entries)
-        updateDisplayedEntries();
+        searchArray = [...entries]
       }
     } catch (err) {
       error = err.message;
@@ -71,10 +76,8 @@
     <div>Loading</div>
   {:else if error !== null}
     <div>Error fetching data</div>
-  {:else if entries.length === 0}
-    <div>No data for key</div>
   {:else}
-    <Search bind:entryArray={entries} />
+    <Search bind:entryArray={searchArray} />
     <ul>
       {#each displayedEntries as entry (entry.param)}
         <Entry {domain} entryOb={entry} />
