@@ -13,6 +13,7 @@
         const data = await response.json();
         
         if (data.url) {
+          // HERE! Increment the python api with slug and current time. 
           window.location.href = data.url; // Redirects to the URL
         } else {
           console.error('No URL found in the response');

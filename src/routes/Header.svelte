@@ -23,12 +23,13 @@
 	};
 
 	const logout = () => {
+		console.log("clicked")
 		localStorage.removeItem("361UserKey");
 		localStorage.removeItem("userPicture");
 		localStorage.removeItem("userName");
 		updateVars();
 
-		goto(window.location.href, { replaceState: true });
+		goto("/");
 	};
 
 	const updateVars = () => {
@@ -44,7 +45,7 @@
 
 <header>
 	<div class="corner">
-		<a href="https://github.com/kopatsis">
+		<a href="https://github.com/kopatsis" target="_blank">
 			<img src={github} alt="GitHub" />
 		</a>
 	</div>
@@ -93,6 +94,8 @@
 	.corner {
 		width: 3em;
 		height: 3em;
+		display: flex;
+		
 	}
 
 	.corner a {

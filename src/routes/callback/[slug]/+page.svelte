@@ -35,7 +35,7 @@
 
         postData("https://cs361a.wl.r.appspot.com/login", data)
             .then((response) => {
-                key = response.key;
+                const key = response.key;
                 localStorage.setItem("361UserKey", key.toString());
                 localStorage.setItem("userPicture", data.picture);
                 localStorage.setItem("userName", data.name);

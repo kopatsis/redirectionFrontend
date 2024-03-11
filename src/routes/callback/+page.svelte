@@ -44,7 +44,7 @@
         postData("https://cs361a.wl.r.appspot.com/login", data)
             .then((response) => {
                 console.log(response)
-                key = response.key;
+                const key = response.key;
                 localStorage.setItem("361UserKey", key.toString());
                 localStorage.setItem("userPicture", data.picture);
                 localStorage.setItem("userName", data.name);
@@ -52,7 +52,7 @@
             })
             .catch((error) => {
                 errorMessage = error.message;
-                // setTimeout(() => goto("/"), 3000);
+                setTimeout(() => goto("/"), 3000);
             });
     });
 </script>
