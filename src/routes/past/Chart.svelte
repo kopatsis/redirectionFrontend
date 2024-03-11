@@ -121,11 +121,14 @@
 {:else if error}
     <div>Error loading analytics</div>
 {:else}
-    <canvas bind:this={chartElement}></canvas>
+    
     <button class:bold={displaying === "Hourly"} on:click={clickHourly}>Hourly</button>
     <button class:bold={displaying === "Daily"} on:click={clickDaily}>Daily</button>
     <button class:bold={displaying === "Weekly"} on:click={clickWeekly}>Weekly</button>
 {/if}
+<div>
+<canvas bind:this={chartElement}></canvas>
+</div>
 
 <style>
     .bold {

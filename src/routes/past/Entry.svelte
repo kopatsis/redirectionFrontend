@@ -1,6 +1,7 @@
 <script>
 
     import {removeItem, addBack} from '$lib/stores/linkstore.js';
+    import Chart from './Chart.svelte';
     export let domain;
     export let entryOb;
 
@@ -8,6 +9,7 @@
     let date = new Date(entryOb.date);
 
     let state = 'Present';
+    let hasChart = false;
 
     let toMessage = () =>{
         state = 'Message';
@@ -80,10 +82,14 @@
         <div>
             <button on:click={toMessage}>Delete</button>
             <button on:click={copyToClipboard}>Copy</button>
-            <button>Analytics</button>
+            <button on:click={() => hasChart = !hasChart}>Analytics</button>
         </div>
+        
+
     </div>
-      
+      {#if hasChart}
+            <Chart param={entryOb.param} />
+        {/if}
 {:else if state == 'Message'}
     <div>Are you sure you want to delete this URL?</div>
     <button on:click={toRemoved}>Yes</button>
