@@ -56,7 +56,7 @@
 <main>
   {#if errorMessage}
     <h1>Error: {errorMessage}</h1>
-    <h2>But you can add one here:</h2>
+    <h2>If you want to use this service,:</h2>
     <button on:click={goHome}>Return Home</button>
   {/if}
 </main>
