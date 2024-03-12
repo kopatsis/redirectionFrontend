@@ -2,6 +2,7 @@
     import { removeItem, addBack } from "$lib/stores/linkstore.js";
     import Chart from "./Chart.svelte";
     import copy from "$lib/images/copy.png";
+    import QrCode from "./QRCode.svelte";
     export let domain;
     export let entryOb;
 
@@ -9,7 +10,24 @@
     let date = new Date(entryOb.date);
 
     let state = "Present";
-    let hasChart = false;
+
+    let chartOrQR = "none";
+
+    function toggleChart() {
+        if (chartOrQR === "chart"){
+            chartOrQR = "none"
+        } else {
+            chartOrQR = "chart"
+        }
+    }
+
+    function toggleQR() {
+        if (chartOrQR === "qr"){
+            chartOrQR = "none"
+        } else {
+            chartOrQR = "qr"
+        }
+    }
 
     let toMessage = () => {
         state = "Message";
@@ -83,15 +101,21 @@
         <div>
             <button on:click={toMessage}>X</button>
             <button on:click={copyToClipboard} class="hasImg"
-                ><img src="{copy}" alt="copy symbol" /></button
+                ><img src={copy} alt="copy symbol" /></button
             >
-            <button on:click={() => (hasChart = !hasChart)}>
-                {#if hasChart}▲{:else}▼{/if} Analytics</button
+            <button on:click={toggleChart}>
+                {#if chartOrQR === "chart"}▲{:else}▼{/if} Analytics</button
+            >
+            <button on:click={toggleQR}>
+                {#if chartOrQR === "qr"}▲{:else}▼{/if} QR Code</button
             >
         </div>
     </div>
-    {#if hasChart}
+    {#if chartOrQR === "chart"}
         <Chart param={entryOb.param} />
+    {/if}
+    {#if chartOrQR === "qr"}
+        <QrCode QRText={url} />
     {/if}
 {:else if state == "Message"}
     <div>Are you sure you want to delete this URL?</div>
@@ -133,7 +157,7 @@
         font-size: 20px;
     }
     .hasImg img {
-        height: .89em;
+        height: 0.89em;
     }
     /* .hasImg {
         display: inline-flex;
