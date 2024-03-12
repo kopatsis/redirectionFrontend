@@ -19,11 +19,26 @@
 
     let loading = true;
 
+    function isSameCalendarDay(date1) {
+        const date2 = new Date();
+        return (
+            date1.getFullYear() === date2.getFullYear() &&
+            date1.getMonth() === date2.getMonth() &&
+            date1.getDate() === date2.getDate()
+        );
+    }
+
     async function fetchClickData() {
+        // const urls = [
+        //     `http://127.0.0.1:5000/clicks_last_day_by_hour/${param}`,
+        //     `http://127.0.0.1:5000/clicks_last_week_by_day/${param}`,
+        //     `http://127.0.0.1:5000/clicks_last_month_by_week/${param}`,
+        // ];
+
         const urls = [
-            `http://127.0.0.1:5000/clicks_last_day_by_hour/${param}`,
-            `http://127.0.0.1:5000/clicks_last_week_by_day/${param}`,
-            `http://127.0.0.1:5000/clicks_last_month_by_week/${param}`,
+            `https://cs361a.wl.r.appspot.com/analyze/hourly/${param}`,
+            `https://cs361a.wl.r.appspot.com/analyze/daily/${param}`,
+            `https://cs361a.wl.r.appspot.com/analyze/weekly/${param}`,
         ];
 
         try {
@@ -47,8 +62,22 @@
         } else {
             entries = Object.entries(passed);
         }
-        const sortedEntries = entries.sort((a, b) => a[0].localeCompare(b[0]));
-        const labels = sortedEntries.map((entry) => entry[0]);
+        // const sortedEntries = entries.sort((a, b) => a[0].localeCompare(b[0]));
+        const sortedEntries = entries.sort((a, b) => {
+            const dateA = new Date(a[0]);
+            const dateB = new Date(b[0]);
+
+            return dateA - dateB;
+        });
+
+        // const labels = sortedEntries.map((entry) => entry[0]);
+        const labels = sortedEntries.map((entry) => {
+            const entryDate = new Date(entry[0]);
+
+            return isSameCalendarDay(entryDate)
+                ? entryDate.toLocaleTimeString()
+                : entryDate.toLocaleDateString();
+        });
         const dataset = sortedEntries.map((entry) => entry[1]);
 
         if (chartInstance) {
@@ -90,24 +119,24 @@
 
     // $: chartData, updateChart(chartData);
 
-    function clickHourly(){
-        if (displaying !== "Hourly"){
+    function clickHourly() {
+        if (displaying !== "Hourly") {
             displaying = "Hourly";
-            updateChart(hourly)
+            updateChart(hourly);
         }
     }
 
-    function clickDaily(){
-        if (displaying !== "Daily"){
+    function clickDaily() {
+        if (displaying !== "Daily") {
             displaying = "Daily";
-            updateChart(daily)
+            updateChart(daily);
         }
     }
 
-    function clickWeekly(){
-        if (displaying !== "Weekly"){
+    function clickWeekly() {
+        if (displaying !== "Weekly") {
             displaying = "Weekly";
-            updateChart(weekly)
+            updateChart(weekly);
         }
     }
 
@@ -121,13 +150,18 @@
 {:else if error}
     <div>Error loading analytics</div>
 {:else}
-    
-    <button class:bold={displaying === "Hourly"} on:click={clickHourly}>Hourly</button>
-    <button class:bold={displaying === "Daily"} on:click={clickDaily}>Daily</button>
-    <button class:bold={displaying === "Weekly"} on:click={clickWeekly}>Weekly</button>
+    <button class:bold={displaying === "Hourly"} on:click={clickHourly}
+        >Hourly</button
+    >
+    <button class:bold={displaying === "Daily"} on:click={clickDaily}
+        >Daily</button
+    >
+    <button class:bold={displaying === "Weekly"} on:click={clickWeekly}
+        >Weekly</button
+    >
 {/if}
 <div>
-<canvas bind:this={chartElement}></canvas>
+    <canvas bind:this={chartElement}></canvas>
 </div>
 
 <style>

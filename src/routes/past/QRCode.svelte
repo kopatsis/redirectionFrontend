@@ -39,8 +39,8 @@
     .qrbutton{
         width: fit-content;
     }
-    /* img.qrcode {
-        height: 222px;
-        width: 222px
-    } */
+    img.qrcode {
+        height: 148px;
+        width: 148px
+    }
 </style>
