@@ -2,6 +2,7 @@
     import { page } from "$app/stores";
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
+    import user from "$lib/stores/userStore.js";
 
     let data = {};
     let errorMessage = "";
@@ -48,6 +49,11 @@
                 localStorage.setItem("361UserKey", key.toString());
                 localStorage.setItem("userPicture", data.picture);
                 localStorage.setItem("userName", data.name);
+                user.set({
+			userKey: localStorage.getItem("361UserKey"), // Set the new key
+			userName: localStorage.getItem("userName"), // Set the new name
+			userPicture: localStorage.getItem("userPicture"), // Set the new picture URL
+		});
                 goto(`/`);
             })
             .catch((error) => {

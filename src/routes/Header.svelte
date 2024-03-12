@@ -2,12 +2,9 @@
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
 	import { onMount } from "svelte";
+	import user from "$lib/stores/userStore.js";
 	// import logo from "$lib/images/svelte-logo.svg";
 	import github from "$lib/images/github.svg";
-
-	let userKey;
-	let userPicture;
-	let userName;
 
 	const login = () => {
 		let baseUrl = `${window.location.protocol}//${window.location.host}/callback`;
@@ -23,23 +20,36 @@
 	};
 
 	const logout = () => {
-		console.log("clicked")
+		console.log("clicked");
 		localStorage.removeItem("361UserKey");
 		localStorage.removeItem("userPicture");
 		localStorage.removeItem("userName");
-		updateVars();
+		// updateVars();
+
+		user.set({
+			userKey: null,
+			userName: null,
+			userPicture: null,
+		});
+
+		// loggedIn.set(false);
 
 		goto("/");
 	};
 
-	const updateVars = () => {
-		userKey = localStorage.getItem("361UserKey");
-		userPicture = localStorage.getItem("userPicture");
-		userName = localStorage.getItem("userName");
-	}
+	// const updateVars = () => {
+	// 	userKey = localStorage.getItem("361UserKey");
+	// 	userPicture = localStorage.getItem("userPicture");
+	// 	userName = localStorage.getItem("userName");
+	// };
 
 	onMount(() => {
-		updateVars();
+		// updateVars();
+		user.set({
+			userKey: localStorage.getItem("361UserKey"), // Set the new key
+			userName: localStorage.getItem("userName"), // Set the new name
+			userPicture: localStorage.getItem("userPicture"), // Set the new picture URL
+		});
 	});
 </script>
 
@@ -75,9 +85,9 @@
 	</nav>
 
 	<div class="corner">
-		{#if userKey}
-			<img src={userPicture} alt="Thumbnail of user" />
-			<div>Welcome, {userName}</div>
+		{#if $user.userKey}
+			<img src={$user.userPicture} alt="Thumbnail of user" />
+			<div>Welcome, {$user.userName}</div>
 			<button on:click={logout}>Logout</button>
 		{:else}
 			<button on:click={login}>Login</button>
@@ -95,7 +105,6 @@
 		width: 3em;
 		height: 3em;
 		display: flex;
-		
 	}
 
 	.corner a {
