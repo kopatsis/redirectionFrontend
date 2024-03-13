@@ -97,7 +97,7 @@
                 >
             </div>
             <div>
-                <div>URL: <a href={url}>{url}</a></div>
+                <div>URL: <a href={window.location.protocol + "//" + url}>{url}</a></div>
                 <div>Original URL: {entryOb.url}</div>
                 {#if isSameCalendarDay(date, new Date())}
                     <div>Created: {date.toLocaleTimeString()}</div>
