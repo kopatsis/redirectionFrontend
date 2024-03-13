@@ -9,7 +9,9 @@
     onMount(async () => {
         if (QRText) {
             try {
-                qrImageURL = await QRCode.toDataURL(QRText);
+                qrImageURL = await QRCode.toDataURL(QRText, {
+                    width: 500,
+                });
             } catch (err) {
                 console.error(err);
             }
@@ -40,7 +42,7 @@
         width: fit-content;
     }
     img.qrcode {
-        height: 148px;
-        width: 148px
+        height: 250px;
+        width: 250px;
     }
 </style>

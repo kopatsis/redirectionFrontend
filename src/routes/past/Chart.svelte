@@ -74,9 +74,15 @@
         const labels = sortedEntries.map((entry) => {
             const entryDate = new Date(entry[0]);
 
+            if (passed !== hourly){
+                let date = new Date(entryDate)
+                date.setDate(entryDate.getDate() + 1)
+                return date.toLocaleDateString();
+            }
+
             return isSameCalendarDay(entryDate)
                 ? entryDate.toLocaleTimeString()
-                : entryDate.toLocaleDateString();
+                : entryDate.toLocaleString();
         });
         const dataset = sortedEntries.map((entry) => entry[1]);
 
@@ -91,7 +97,7 @@
                     labels,
                     datasets: [
                         {
-                            label: "Count",
+                            label: "Number of Visits",
                             backgroundColor: "rgb(75, 192, 192)",
                             borderColor: "rgb(75, 192, 192)",
                             data: dataset,
