@@ -7,10 +7,13 @@
     import { getKey } from './getKey.js';
 	import { goto } from '$app/navigation';
 	import Instructions from './Instructions.svelte';
+    import QrMessage from './QRMessage.svelte';
 
     let key = 0;
 
 	let url = '';
+
+	let qrinst = false;
 
 	let size = 'Partial'
 	let btext = 'More...'
@@ -69,6 +72,11 @@
 			style="color: dark-gray;" />
 		<button type="submit">Create!</button>
 	</form>
+	<br>
+	<div>New Feature! Generate and download QR Code: <button on:click={() => qrinst = !qrinst}>{#if qrinst}▲{:else}▼{/if}See More</button></div>
+	{#if qrinst}
+		<QrMessage />
+	{/if}
 	<h2>Instructions:</h2>
 	<Instructions size={size}/>
 	<button on:click={toggleText}>{btext}</button>
@@ -106,7 +114,6 @@
 		border: none;
 	}
 
-	button:focus,
 	button:hover {
 		background: var(--color-theme-1);
 		color: white;
