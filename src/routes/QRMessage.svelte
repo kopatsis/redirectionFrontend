@@ -9,7 +9,8 @@
     browser to be taken to your original URL, or you can click the "Download" button to save or print the QR code. This way it can be re-used.
 </p>
 <p>
-    This feature is optional and the code will only be generated it you click the "QR code" button. All of the original features are still here, so no need to worry about them 
+    This feature is optional and the code will only be generated it you click the "QR code" button. A QR code can't be pasted into the browser, so if you 
+    do need a shortened URL, it is still available for this task. All of the original features are still here, so no need to worry about them 
     going away!
 </p>
 
