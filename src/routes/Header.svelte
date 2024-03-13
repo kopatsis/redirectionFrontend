@@ -188,4 +188,17 @@
 	a:hover {
 		color: var(--color-theme-1);
 	}
+	button {
+		padding: .5rem;
+		background: rgba(255, 255, 255, 0.5);
+		border-radius: 2px;
+		border: none;
+	}
+	button:focus,
+	button:hover {
+		background: var(--color-theme-1);
+		color: white;
+		outline: none;
+	}
+
 </style>

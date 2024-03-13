@@ -100,7 +100,7 @@
 		outline-color: var(--color-theme-1);
 	}
 	button {
-		padding: 1rem;
+		padding: .5rem;
 		background: rgba(255, 255, 255, 0.5);
 		border-radius: 2px;
 		border: none;

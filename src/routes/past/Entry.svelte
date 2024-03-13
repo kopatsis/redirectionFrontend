@@ -2,6 +2,7 @@
     import { removeItem, addBack } from "$lib/stores/linkstore.js";
     import Chart from "./Chart.svelte";
     import copy from "$lib/images/copy.png";
+    import del from "$lib/images/delete.png";
     import QrCode from "./QRCode.svelte";
     export let domain;
     export let entryOb;
@@ -14,18 +15,18 @@
     let chartOrQR = "none";
 
     function toggleChart() {
-        if (chartOrQR === "chart"){
-            chartOrQR = "none"
+        if (chartOrQR === "chart") {
+            chartOrQR = "none";
         } else {
-            chartOrQR = "chart"
+            chartOrQR = "chart";
         }
     }
 
     function toggleQR() {
-        if (chartOrQR === "qr"){
-            chartOrQR = "none"
+        if (chartOrQR === "qr") {
+            chartOrQR = "none";
         } else {
-            chartOrQR = "qr"
+            chartOrQR = "qr";
         }
     }
 
@@ -89,17 +90,24 @@
 <div class="line"></div>
 {#if state == "Present"}
     <div class="sections">
-        <div>
-            <div>URL: <a href={url}>{url}</a></div>
+        <div class="sections">
+            <div class="deletecont">
+                <button on:click={toMessage} class="hasImg"
+                    ><img src={del} alt="delete symbol" /></button
+                >
+            </div>
+            <div>
+                <div>URL: <a href={url}>{url}</a></div>
             <div>Original URL: {entryOb.url}</div>
             {#if isSameCalendarDay(date, new Date())}
                 <div>Created: {date.toLocaleTimeString()}</div>
             {:else}
                 <div>Created: {date.toLocaleDateString()}</div>
             {/if}
+            </div>
+            
         </div>
         <div>
-            <button on:click={toMessage}>X</button>
             <button on:click={copyToClipboard} class="hasImg"
                 ><img src={copy} alt="copy symbol" /></button
             >
@@ -131,7 +139,7 @@
 
 <style>
     button {
-        padding: 1rem;
+        padding: 0.5rem;
         background: rgba(255, 255, 255, 0.5);
         border-radius: 2px;
         border: none;
@@ -158,6 +166,9 @@
     }
     .hasImg img {
         height: 0.89em;
+    }
+    .deletecont{
+        margin-right: 5px;
     }
     /* .hasImg {
         display: inline-flex;
