@@ -16,7 +16,7 @@
   let entries = [];
   let displayedEntries = [];
   let currentIndex = 0;
-  const batchSize = 5;
+  const batchSize = 4;
 
   function updateDisplayedEntries() {
     const nextBatch = entries.slice(currentIndex, currentIndex + batchSize);

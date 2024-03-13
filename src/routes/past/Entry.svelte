@@ -98,16 +98,15 @@
             </div>
             <div>
                 <div>URL: <a href={url}>{url}</a></div>
-            <div>Original URL: {entryOb.url}</div>
-            {#if isSameCalendarDay(date, new Date())}
-                <div>Created: {date.toLocaleTimeString()}</div>
-            {:else}
-                <div>Created: {date.toLocaleDateString()}</div>
-            {/if}
+                <div>Original URL: {entryOb.url}</div>
+                {#if isSameCalendarDay(date, new Date())}
+                    <div>Created: {date.toLocaleTimeString()}</div>
+                {:else}
+                    <div>Created: {date.toLocaleDateString()}</div>
+                {/if}
             </div>
-            
         </div>
-        <div>
+        <div class="buttonhold">
             <button on:click={copyToClipboard} class="hasImg"
                 ><img src={copy} alt="copy symbol" /></button
             >
@@ -126,10 +125,14 @@
         <QrCode QRText={url} />
     {/if}
 {:else if state == "Message"}
+    <div>URL: <a href={url}>{url}</a></div>
+    <div>Original URL: {entryOb.url}</div>
     <div>Are you sure you want to delete this URL?</div>
     <button on:click={toRemoved}>Yes</button>
     <button on:click={toPresent}>No</button>
 {:else if state == "Removed"}
+    <div>URL: <a href={url}>{url}</a></div>
+    <div>Original URL: {entryOb.url}</div>
     <div>This URL has been deleted</div>
     <button on:click={undoDelete}>Undo</button>
 {:else}
@@ -138,14 +141,17 @@
 <br />
 
 <style>
+    .buttonhold{
+        min-width: 243px;
+    }
     button {
         padding: 0.5rem;
         background: rgba(255, 255, 255, 0.5);
         border-radius: 2px;
         border: none;
+        font-size: 16px;
     }
 
-    button:focus,
     button:hover {
         background: var(--color-theme-1);
         color: white;
@@ -162,12 +168,12 @@
         justify-content: space-between;
     }
     div {
-        font-size: 20px;
+        font-size: 18px;
     }
     .hasImg img {
         height: 0.89em;
     }
-    .deletecont{
+    .deletecont {
         margin-right: 5px;
     }
     /* .hasImg {

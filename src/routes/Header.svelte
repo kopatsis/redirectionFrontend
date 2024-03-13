@@ -86,9 +86,9 @@
 
 	<div class="corner">
 		{#if $user.userKey}
-			<img src={$user.userPicture} alt="Thumbnail of user" />
+			<button on:click={logout} class="headuser">Logout</button>
+			<img src={$user.userPicture} alt="Thumbnail of user" class="headuser" />
 			<div>Welcome, {$user.userName}</div>
-			<button on:click={logout}>Logout</button>
 		{:else}
 			<button on:click={login}>Login</button>
 		{/if}
@@ -200,5 +200,7 @@
 		color: white;
 		outline: none;
 	}
-
+	.headuser{
+		margin-right: 5px;
+	}
 </style>
