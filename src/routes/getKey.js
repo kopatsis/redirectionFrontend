@@ -9,7 +9,7 @@ export async function getKey() {
 
     if (!key) {
         // If the key is not found in localStorage, make a POST request to get a new key
-        const response = await fetch('http://cs361a.wl.r.appspot.com/user', {
+        const response = await fetch('https://cs361a.wl.r.appspot.com/user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

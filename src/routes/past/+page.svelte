@@ -38,7 +38,7 @@
     try {
       console.log(key);
       const response = await fetch(
-        `http://cs361a.wl.r.appspot.com/user/${key}/entries`,
+        `https://cs361a.wl.r.appspot.com/user/${key}/entries`,
       );
       if (!response.ok) {
         throw new Error("Unable to reach EZPZ Service");

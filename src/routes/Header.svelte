@@ -14,7 +14,7 @@
 
 		const encodedBaseUrl = encodeURIComponent(baseUrl);
 
-		const targetUrl = `http://cs361l.uw.r.appspot.com/login?url=${encodedBaseUrl}`;
+		const targetUrl = `https://cs361l.uw.r.appspot.com/login?url=${encodedBaseUrl}`;
 
 		window.location.href = targetUrl;
 	};

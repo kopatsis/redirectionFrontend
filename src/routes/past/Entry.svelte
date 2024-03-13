@@ -41,7 +41,7 @@
     let undoDelete = () => {
         state = "Present";
         addBack(entryOb);
-        fetch(`http://cs361a.wl.r.appspot.com/entry/${entryOb.param}`, {
+        fetch(`https://cs361a.wl.r.appspot.com/entry/${entryOb.param}`, {
             method: "PATCH",
         })
             .then((response) => {
@@ -57,7 +57,7 @@
     let toRemoved = () => {
         state = "Removed";
         removeItem(entryOb);
-        fetch(`http://cs361a.wl.r.appspot.com/entry/${entryOb.param}`, {
+        fetch(`https://cs361a.wl.r.appspot.com/entry/${entryOb.param}`, {
             method: "DELETE",
         })
             .then((response) => {
