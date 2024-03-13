@@ -98,7 +98,7 @@
             </div>
             <div>
                 <div>URL: <a href={window.location.protocol + "//" + url}>{url}</a></div>
-                <div>Original URL: {entryOb.url}</div>
+                <div class="ogurl">Original URL: {entryOb.url}</div>
                 {#if isSameCalendarDay(date, new Date())}
                     <div>Created: {date.toLocaleTimeString()}</div>
                 {:else}
@@ -175,6 +175,9 @@
     }
     .deletecont {
         margin-right: 5px;
+    }
+    .ogurl{
+        word-wrap: break-word;
     }
     /* .hasImg {
         display: inline-flex;
