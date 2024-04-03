@@ -3,7 +3,6 @@
 	import { page } from "$app/stores";
 	import { onMount } from "svelte";
 	import user from "$lib/stores/userStore.js";
-	// import logo from "$lib/images/svelte-logo.svg";
 	import github from "$lib/images/github.svg";
 
 	const login = () => {
@@ -24,7 +23,6 @@
 		localStorage.removeItem("361UserKey");
 		localStorage.removeItem("userPicture");
 		localStorage.removeItem("userName");
-		// updateVars();
 
 		user.set({
 			userKey: null,
@@ -32,19 +30,11 @@
 			userPicture: null,
 		});
 
-		// loggedIn.set(false);
 
 		goto("/");
 	};
 
-	// const updateVars = () => {
-	// 	userKey = localStorage.getItem("361UserKey");
-	// 	userPicture = localStorage.getItem("userPicture");
-	// 	userName = localStorage.getItem("userName");
-	// };
-
 	onMount(() => {
-		// updateVars();
 		user.set({
 			userKey: localStorage.getItem("361UserKey"), // Set the new key
 			userName: localStorage.getItem("userName"), // Set the new name

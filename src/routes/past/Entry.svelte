@@ -70,6 +70,14 @@
             });
     };
 
+    let firstHundredChar = (word) => {
+        if (word.length > 100) {
+            return word.slice(0, 98) + "...";
+        } else {
+            return word;
+        }
+    };
+
     function isSameCalendarDay(date1, date2) {
         return (
             date1.getFullYear() === date2.getFullYear() &&
@@ -97,8 +105,12 @@
                 >
             </div>
             <div>
-                <div>URL: <a href={window.location.protocol + "//" + url}>{url}</a></div>
-                <div class="ogurl">Original URL: {entryOb.url}</div>
+                <div>
+                    URL: <a href={window.location.protocol + "//" + url}
+                        >{url}</a
+                    >
+                </div>
+                <div class="ogurl">Original URL: {firstHundredChar(entryOb.url)}</div>
                 {#if isSameCalendarDay(date, new Date())}
                     <div>Created: {date.toLocaleTimeString()}</div>
                 {:else}
@@ -141,7 +153,7 @@
 <br />
 
 <style>
-    .buttonhold{
+    .buttonhold {
         min-width: 243px;
     }
     button {
@@ -176,12 +188,7 @@
     .deletecont {
         margin-right: 5px;
     }
-    .ogurl{
-        word-wrap: break-word;
+    .ogurl {
+        word-break: break-all;
     }
-    /* .hasImg {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    } */
 </style>
