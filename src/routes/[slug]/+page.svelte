@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { page } from "$app/stores"; // Import the page store
   import { goto } from "$app/navigation"; // Import goto for SvelteKit navigation
+  import { redirect } from "@sveltejs/kit";
 
   let errorMessage = "";
 
@@ -15,13 +16,8 @@
       const data = await response.json();
 
       if (data.url) {
-
-        // const timestamp = new Date().toISOString();
-
-        // const url = "http://127.0.0.1:5000/analyze_qr_code";
         const url = "https://cs361a.wl.r.appspot.com/analyze";
 
-        // const poster = { qr_id: slug, timestamp: timestamp };
         const poster = { param: slug};
 
         await fetch(url, {

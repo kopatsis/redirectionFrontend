@@ -122,11 +122,11 @@
             <button on:click={copyToClipboard} class="hasImg"
                 ><img src={copy} alt="copy symbol" /></button
             >
+            <button on:click={toggleQR}>
+                {#if chartOrQR === "qr"}▲{:else}▼{/if} QR</button
+            >
             <button on:click={toggleChart}>
                 {#if chartOrQR === "chart"}▲{:else}▼{/if} Analytics</button
-            >
-            <button on:click={toggleQR}>
-                {#if chartOrQR === "qr"}▲{:else}▼{/if} QR Code</button
             >
         </div>
     </div>
@@ -138,13 +138,13 @@
     {/if}
 {:else if state == "Message"}
     <div>URL: <a href={url}>{url}</a></div>
-    <div>Original URL: {entryOb.url}</div>
+    <div class="ogurl">Original URL: {entryOb.url}</div>
     <div>Are you sure you want to delete this URL?</div>
     <button on:click={toRemoved}>Yes</button>
     <button on:click={toPresent}>No</button>
 {:else if state == "Removed"}
     <div>URL: <a href={url}>{url}</a></div>
-    <div>Original URL: {entryOb.url}</div>
+    <div class="ogurl">Original URL: {entryOb.url}</div>
     <div>This URL has been deleted</div>
     <button on:click={undoDelete}>Undo</button>
 {:else}
@@ -154,7 +154,7 @@
 
 <style>
     .buttonhold {
-        min-width: 243px;
+        min-width: fit-content;
     }
     button {
         padding: 0.5rem;
@@ -191,4 +191,20 @@
     .ogurl {
         word-break: break-all;
     }
+
+    @media (max-width: 540px) {
+		.buttonhold {
+        display: flex;
+        flex-direction: column;
+    }
+	} 
+
+    @media (max-width: 425px) {
+		div{
+            font-size: 15px;
+        }
+        button{
+            font-size: 14px;
+        }
+	} 
 </style>
