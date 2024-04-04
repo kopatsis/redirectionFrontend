@@ -6,7 +6,7 @@
   let errorMessage = "";
 
   onMount(async () => {
-    const { slug } = $page.params; // Destructure the slug from the page params
+    const { slug } = $page.params;
 
     try {
       const response = await fetch(
@@ -15,30 +15,7 @@
       const data = await response.json();
 
       if (data.url) {
-
-        // const timestamp = new Date().toISOString();
-
-        // const url = "http://127.0.0.1:5000/analyze_qr_code";
-        const url = "https://cs361a.wl.r.appspot.com/analyze";
-
-        // const poster = { qr_id: slug, timestamp: timestamp };
-        const poster = { param: slug};
-
-        await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(poster),
-        })
-          .then((response) => response.json())
-          .then((resp) => {
-            console.log("Success:", resp);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-
+        postClick(slug);
         window.location.href = data.url;
       } else {
         console.error("No URL found in the response");
@@ -49,6 +26,20 @@
       errorMessage = error.message || "An error occurred while fetching data.";
     }
   });
+
+  let postClick = async (slug) => {
+    const url = "https://cs361a.wl.r.appspot.com/analyze";
+    const data = JSON.stringify({ param: slug });
+
+    await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: data,
+        keepalive: true
+    });
+};
 
   let goHome = () => {
     goto("./");
