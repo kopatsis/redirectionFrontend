@@ -32,7 +32,7 @@
 <div class="searchcontain">
     <input type="text" placeholder="Search..." bind:value={searchval} />
     <!-- {#if searchval !== ""} -->
-    <button on:click={() => (searchval = "")}>X</button>
+    <button on:click={() => (searchval = "")}>&times;</button>
     <!-- {/if} -->
 </div>
 
@@ -47,7 +47,7 @@
         border-radius: 4px;
         width: 50vw;
         max-width: 400px;
-        min-width: calc(50vw, 400px);
+        min-width: 300px;
     }
     input:focus {
         outline: none;

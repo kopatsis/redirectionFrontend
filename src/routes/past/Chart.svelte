@@ -29,11 +29,6 @@
     }
 
     async function fetchClickData() {
-        // const urls = [
-        //     `http://127.0.0.1:5000/clicks_last_day_by_hour/${param}`,
-        //     `http://127.0.0.1:5000/clicks_last_week_by_day/${param}`,
-        //     `http://127.0.0.1:5000/clicks_last_month_by_week/${param}`,
-        // ];
 
         const urls = [
             `https://cs361a.wl.r.appspot.com/analyze/hourly/${param}`,
@@ -62,7 +57,6 @@
         } else {
             entries = Object.entries(passed);
         }
-        // const sortedEntries = entries.sort((a, b) => a[0].localeCompare(b[0]));
         const sortedEntries = entries.sort((a, b) => {
             const dateA = new Date(a[0]);
             const dateB = new Date(b[0]);
@@ -70,7 +64,6 @@
             return dateA - dateB;
         });
 
-        // const labels = sortedEntries.map((entry) => entry[0]);
         const labels = sortedEntries.map((entry) => {
             const entryDate = new Date(entry[0]);
 
@@ -101,7 +94,7 @@
                             backgroundColor: "rgb(75, 192, 192)",
                             borderColor: "rgb(75, 192, 192)",
                             data: dataset,
-                        },
+                        }
                     ],
                 },
                 options: {
@@ -110,6 +103,7 @@
                             beginAtZero: true,
                         },
                     },
+                    
                 },
             });
         }
@@ -122,8 +116,6 @@
 
         updateChart(hourly);
     });
-
-    // $: chartData, updateChart(chartData);
 
     function clickHourly() {
         if (displaying !== "Hourly") {
@@ -166,7 +158,7 @@
         >Weekly</button
     >
 {/if}
-<div>
+<div class="charthold">
     <canvas bind:this={chartElement}></canvas>
 </div>
 
@@ -186,4 +178,16 @@
         color: white;
         outline: none;
     }
+
+    @media (max-width: 700px) {
+		canvas{
+            max-width: 525px;
+        }
+	} 
+
+    @media (max-width: 600px) {
+		canvas{
+            max-width: 450px;
+        }
+	} 
 </style>

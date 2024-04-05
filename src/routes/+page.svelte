@@ -63,7 +63,7 @@
 
 <section>
 	<h1>Enter your URL to shorten here:</h1>
-	<form on:submit|preventDefault={handleSubmit}>
+	<form on:submit|preventDefault={handleSubmit} class="centeroverf">
 		<input
 			required
 			type="text"
@@ -73,7 +73,7 @@
 		<button type="submit">Create!</button>
 	</form>
 	<br>
-	<div>New Feature! Generate and download QR Code: <button on:click={() => qrinst = !qrinst}>{#if qrinst}▲{:else}▼{/if}See More</button></div>
+	<div  class="centeroverf">New Feature! Generate and download QR Code: &nbsp; <button on:click={() => qrinst = !qrinst}>{#if qrinst}▲{:else}▼{/if}See More</button></div>
 	{#if qrinst}
 		<QrMessage />
 	{/if}
@@ -92,14 +92,13 @@
 	}
 
 	input {
-        /* Styles for the input */
         margin-right: 8px;
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 4px;
 		width: 80vw;
     max-width: 500px;
-    min-width: calc(80vw, 500px);
+    min-width: 300px;
     }
 	input:focus{
 		outline: none;
@@ -112,12 +111,21 @@
 		background: rgba(255, 255, 255, 0.5);
 		border-radius: 2px;
 		border: none;
+		color: var(--color-text);
 	}
 
 	button:hover {
 		background: var(--color-theme-1);
 		color: white;
 		outline: none;
+	}
+
+	.centeroverf{
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
 	}
 
 	h1 {
