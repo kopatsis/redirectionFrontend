@@ -59,7 +59,8 @@
 				<a href="/">Home</a>
 			</li>
 			<li>
-				<a href="/" class="main">EZPZ URL Shortener</a>
+				<a href="/" class="main message small">EZPZ</a>
+				<a href="/" class="main message large">EZPZ URL Shortener</a>
 			</li>
 			<li
 				aria-current={$page.url.pathname.startsWith("/past")
@@ -77,8 +78,8 @@
 	<div class="corner">
 		{#if $user.userKey}
 			<button on:click={logout} class="headuser">Logout</button>
-			<img src={$user.userPicture} alt="Thumbnail of user" class="headuser" />
-			<div>Welcome, {$user.userName}</div>
+			<img src={$user.userPicture} alt="Thumbnail of user" class="headuser pardisp" />
+			<div class="pardisp">Welcome, {$user.userName}</div>
 		{:else}
 			<button on:click={login}>Login</button>
 		{/if}
@@ -179,11 +180,10 @@
 		color: var(--color-theme-1);
 	}
 	button {
-		padding: .5rem;
 		background: rgba(255, 255, 255, 0.5);
 		border-radius: 2px;
 		border: none;
-	}
+	} 
 	button:focus,
 	button:hover {
 		background: var(--color-theme-1);
@@ -193,4 +193,39 @@
 	.headuser{
 		margin-right: 5px;
 	}
+
+	@media (max-width: 880px) {
+		.pardisp{
+		display: none;
+	}
+	} 
+
+	@media (max-width: 667px) {
+		nav a.main {
+		font-size: 1em;
+	}
+	nav a {
+		letter-spacing: normal;
+	}
+	} 
+
+	@media (max-width: 510px) {
+		svg{
+			display: none;
+		}
+	} 
+
+  .message.large {
+    display: none;
+  }
+
+  @media (min-width: 451px) {
+    .message.small {
+      display: none;
+    }
+
+    .message.large {
+      display: flex;
+    }
+  }
 </style>
