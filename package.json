@@ -24,6 +24,7 @@
 	"type": "module",
 	"dependencies": {
 		"chart.js": "^4.4.2",
+		"firebase": "^10.13.0",
 		"qrcode": "^1.5.3"
 	}
 }
