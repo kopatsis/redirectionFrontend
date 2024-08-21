@@ -59,8 +59,8 @@
   }
 
   onMount(async () => {
-    domain = window.location.host;
-    key = await getKey();
+    domain = import.meta.env.VITE_SHORT_DOMAIN;;
+    await getKey();
     fetchData();
   });
 </script>

@@ -106,7 +106,7 @@
             </div>
             <div>
                 <div>
-                    URL: <a href={window.location.protocol + "//" + url}
+                    URL: <a href={"https://" + url}
                         >{url}</a
                     >
                 </div>
@@ -134,7 +134,7 @@
         <Chart param={entryOb.param} />
     {/if}
     {#if chartOrQR === "qr"}
-        <QrCode QRText={url} />
+        <QrCode QRText={"https://" + url + "?q=t"} />
     {/if}
 {:else if state == "Message"}
     <div>URL: <a href={url}>{url}</a></div>

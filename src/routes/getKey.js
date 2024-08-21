@@ -1,30 +1,25 @@
 export async function getKey() {
+    if (!getCookie('userKey')) {
+        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-    let userkey = parseInt(localStorage.getItem('361UserKey'));
-    if (userkey){
-        return userkey
-    }
-
-    let key = parseInt(localStorage.getItem('CS361Key'));
-
-    if (!key) {
-        // If the key is not found in localStorage, make a POST request to get a new key
-        const response = await fetch('https://cs361a.wl.r.appspot.com/user', {
+        const response = await fetch(`${BACKEND_URL}/user`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
         });
 
         if (response.ok) {
             const data = await response.json();
-            key = data.key;
-            // Store the new key in localStorage
-            localStorage.setItem('CS361Key', key.toString());
+            document.cookie = `userKey=${data.key}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure`;
         } else {
             throw new Error('Failed to fetch the key');
         }
     }
+}
 
-    return key;
+function getCookie(name) {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+        const [key, value] = cookie.split('=');
+        if (key === name) return value;
+    }
 }

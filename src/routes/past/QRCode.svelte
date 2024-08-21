@@ -11,7 +11,7 @@
         if (QRText) {
             try {
                 qrImageURL = await QRCode.toDataURL(QRText, {
-                    width: 500,
+                    width: 750,
                 });
             } catch (err) {
                 console.error(err);
