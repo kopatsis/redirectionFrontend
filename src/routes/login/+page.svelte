@@ -4,6 +4,7 @@
     import { goto } from "$app/navigation";
     import {
         createUserWithEmailAndPassword,
+        getRedirectResult,
         GoogleAuthProvider,
         signInWithEmailAndPassword,
         signInWithRedirect,
@@ -46,6 +47,16 @@
     }
 
     let interval;
+
+    getRedirectResult(auth)
+        .then((result) => {
+            if (result && result.user) {
+                goto("./");
+            }
+        })
+        .catch((error) => {
+            errorMessage = error.message;
+        });
 
     function startEmailVerificationCheck() {
         if (!waitingOnVerif || interval) return;
@@ -111,7 +122,7 @@
                     password,
                 );
                 const user = userCredential.user;
-                
+
                 if (!user.emailVerified) {
                     await sendVerificationEmail(user);
                     exUser = user.email;
@@ -168,7 +179,7 @@
         auth.onAuthStateChanged((user) => {
             if (user) {
                 exUser = user.email;
-                if(!user.emailVerified) {
+                if (!user.emailVerified) {
                     startEmailVerificationCheck();
                     waitingOnVerif = true;
                 }
