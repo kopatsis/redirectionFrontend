@@ -15,7 +15,11 @@
             	variable = "no user";
             } else if (firebaseUser) {
             	if(firebaseUser.email) {
-                    variable = firebaseUser.email;
+                    if (firebaseUser.emailVerified){
+                        variable = firebaseUser.email;
+                    } else {
+                        variable = firebaseUser.email + " unverified!";
+                    }
                 } else {
                     variable = "no email??";
                 }

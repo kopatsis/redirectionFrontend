@@ -168,6 +168,10 @@
         auth.onAuthStateChanged((user) => {
             if (user) {
                 exUser = user.email;
+                if(!user.emailVerified) {
+                    startEmailVerificationCheck();
+                    waitingOnVerif = true;
+                }
                 isUserLoggedIn = true;
             } else {
                 isUserLoggedIn = false;
@@ -181,7 +185,9 @@
     });
 </script>
 
-{#if waitingOnVerif}
+{#if loading}
+    <div>loading...</div>
+{:else if waitingOnVerif}
     <div class="logintxt">Verify your email before proceeeding</div>
     <div>
         We sent you an email with verification link{#if exUser}to the address <b
