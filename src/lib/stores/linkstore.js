@@ -8,6 +8,13 @@ export function removeItem(itemToRemove) {
     }
 }
 
+export function updateItem(object) {
+    const index = data.findIndex(item => item.param === object.param);
+    if (index !== -1) {
+        data[index].url = object.url;
+    }
+}
+
 export function addBack(object) {
     data.push(object)
     data.sort((a, b) => {

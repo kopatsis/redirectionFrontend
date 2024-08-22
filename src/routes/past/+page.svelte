@@ -34,7 +34,7 @@
   $: searchArray, resetDisplayedEntries();
 
   async function fetchData() {
-    let url = import.meta.env.VITE_BACKEND_URL;
+    const url = import.meta.env.VITE_BACKEND_URL;
     try {
       const token = await getToken();
       const response = await fetch(`${url}/entries`, {

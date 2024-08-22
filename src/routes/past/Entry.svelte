@@ -1,5 +1,5 @@
 <script>
-  import { removeItem, addBack } from "$lib/stores/linkstore.js";
+  import { removeItem, addBack, updateItem } from "$lib/stores/linkstore.js";
   import Chart from "./Chart.svelte";
   import copy from "$lib/images/copy.png";
   import del from "$lib/images/delete.png";
@@ -58,6 +58,9 @@
             "Unable to reach our server :/ Check your internet but it might be us";
         }
       } else {
+        const resp = await response.json();
+        entryOb.url = resp.url;
+        updateItem(entryOb);
         workingError = "";
       }
     } catch (err) {

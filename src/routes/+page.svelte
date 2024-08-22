@@ -8,9 +8,10 @@
 	import { goto } from "$app/navigation";
 	import Instructions from "./Instructions.svelte";
 	import QrMessage from "./QRMessage.svelte";
-	import { userStore } from "$lib/stores/firebaseuser.js";
+	import { getToken, userStore } from "$lib/stores/firebaseuser.js";
 
 	let user = null;
+	let workingError = '';
 
 	let key = 0;
 
@@ -32,36 +33,36 @@
 	};
 
 	async function handleSubmit() {
+		const url = import.meta.env.VITE_BACKEND_URL;
 		try {
-			const response = await fetch(
-				"https://cs361a.wl.r.appspot.com/entry",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ user: key, url: url }),
+			const token = await getToken();
+			const response = await fetch(`${url}/entry`, {
+				method: "POST",
+				headers: {
+					Authorization: token,
 				},
-			);
+				credentials: "include",
+			});
 
 			if (!response.ok) {
-				goto("/error");
+				const errorData = await response.json();
+				if (
+					errorData["Error Type"] === "Not a URL that can be parsed"
+				) {
+					workingError =
+						"Error: The URL you provided is not formatted correctly and would not work. Please try again.";
+				} else {
+					workingError =
+						"Unable to reach our server :/ Check your internet but it might be us";
+				}
+			} else {
+				goto("/past");
 			}
-
-			console.log(response);
-			goto("/past");
 		} catch (error) {
-			console.error(
-				"There was a problem with your fetch operation:",
-				error,
-			);
-			goto("/error");
+			workingError =
+				"Unable to reach our server :/ Check your internet but it might be us";
 		}
 	}
-
-	// onMount(async () => {
-	// 	await getKey();
-	// });
 </script>
 
 <svelte:head>
@@ -81,6 +82,7 @@
 		/>
 		<button type="submit">Create!</button>
 	</form>
+	{#if workingError}{workingError}{/if}
 	<br />
 	<div class="centeroverf">
 		New Feature! Generate and download QR Code: &nbsp; <button
