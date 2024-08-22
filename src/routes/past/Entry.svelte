@@ -19,6 +19,8 @@
   let workingURL = "";
   let workingError = "";
 
+  let expanded = false;
+
   function toggleEditing() {
     if (editing === true) {
       workingURL = "";
@@ -141,6 +143,8 @@
     }
   };
 
+  $: firstHund = firstHundredChar(entryOb.url);
+
   function isSameCalendarDay(date1, date2) {
     return (
       date1.getFullYear() === date2.getFullYear() &&
@@ -172,7 +176,35 @@
         <div>
           URL: <a href={"https://" + url}>{url}</a>
         </div>
-        <div class="ogurl">Original URL: {firstHundredChar(entryOb.url)}</div>
+        <div>
+          {#if editing}
+            <div>
+              Original URL: <input type="text" bind:value={workingURL} />
+            </div>
+            <div>
+              <button on:click={toggleEditing}>Cancel</button
+              >{#if workingURL !== entryOb.url}<button on:click={submitEdits}
+                  >Submit Change</button
+                >{/if}
+            </div>
+          {:else}
+            <div class="ogurl">
+              Original URL:
+              {#if entryOb.url === firstHund}
+                {firstHund}
+              {:else if !expanded}
+                {firstHund}&nbsp;<button on:click={() => (expanded = true)}
+                  >more...</button
+                >
+              {:else}
+                {entryOb.url}<button on:click={() => (expanded = false)}
+                  >less...</button
+                >
+              {/if}
+            </div>
+            <button on:click={toggleEditing}>Edit</button>
+          {/if}
+        </div>
         {#if isSameCalendarDay(date, new Date())}
           <div>Created: {date.toLocaleTimeString()}</div>
         {:else}
@@ -200,13 +232,35 @@
   {/if}
 {:else if state == "Message"}
   <div>URL: <a href={url}>{url}</a></div>
-  <div class="ogurl">Original URL: {entryOb.url}</div>
+  <div class="ogurl">
+    Original URL:
+    {#if entryOb.url === firstHund}
+      {firstHund}
+    {:else if !expanded}
+      {firstHund}&nbsp;<button on:click={() => (expanded = true)}
+        >more...</button
+      >
+    {:else}
+      {entryOb.url}<button on:click={() => (expanded = false)}>less...</button>
+    {/if}
+  </div>
   <div>Are you sure you want to delete this URL?</div>
   <button on:click={toRemoved}>Yes</button>
   <button on:click={toPresent}>No</button>
 {:else if state == "Removed"}
   <div>URL: <a href={url}>{url}</a></div>
-  <div class="ogurl">Original URL: {entryOb.url}</div>
+  <div class="ogurl">
+    Original URL:
+    {#if entryOb.url === firstHund}
+      {firstHund}
+    {:else if !expanded}
+      {firstHund}&nbsp;<button on:click={() => (expanded = true)}
+        >more...</button
+      >
+    {:else}
+      {entryOb.url}<button on:click={() => (expanded = false)}>less...</button>
+    {/if}
+  </div>
   <div>This URL has been deleted</div>
   <button on:click={undoDelete}>Undo</button>
 {:else}
