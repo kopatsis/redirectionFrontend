@@ -20,3 +20,11 @@ export const refreshUserData = async () => {
 		userStore.set(user);
 	}
 };
+
+export const getToken = async () => {
+	const user = get(userStore);
+	if (user) {
+		return await user.getIdToken();
+	}
+	return null;
+};

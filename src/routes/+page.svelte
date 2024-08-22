@@ -8,6 +8,9 @@
 	import { goto } from "$app/navigation";
 	import Instructions from "./Instructions.svelte";
 	import QrMessage from "./QRMessage.svelte";
+	import { userStore } from "$lib/stores/firebaseuser.js";
+
+	let user = null;
 
 	let key = 0;
 
@@ -58,6 +61,21 @@
 
 	onMount(async () => {
 		await getKey();
+		const unsubFirebase = userStore.subscribe((value) => {
+			firebaseUser = value;
+
+			if (
+				firebaseUser &&
+				firebaseUser.email &&
+				firebaseUser.emailVerified
+			) {
+				user = firebaseUser;
+			}
+		});
+
+		return () => {
+			unsubFirebase();
+		};
 	});
 </script>
 
