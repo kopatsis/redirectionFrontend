@@ -2,149 +2,155 @@
     import { onMount, onDestroy } from "svelte";
     import Chart from "chart.js/auto";
     import Modal from "../login/Modal.svelte";
+    import { getToken } from "$lib/stores/firebaseuser";
 
     export let param;
     export let chartOrQR = "none";
+
+    let error = false;
+    let loading = true;
+    let status = "free";
+
+    let allData = null;
+
+    let dailyChart = null;
+    let weeklyChart = null;
+
+    let countryChart = null;
+    let cityChart = null;
+    let osChart = null;
+    let browserChart = null;
 
     const close = () => {
         chartOrQR = "none";
     };
 
-    let chartInstance;
-    let chartElement;
+    function createDateChart(chartData, isdaily = true) {
+        let labels;
+        if (isdaily) {
+            labels = chartData.keys.map((date) =>
+                new Date(date).toLocaleDateString("en-US"),
+            );
+        } else {
+            labels = chartData.keys.map((date, index, array) => {
+                const currentLabel = new Date(date).toLocaleDateString("en-US");
+                const nextLabel =
+                    index < array.length - 1
+                        ? new Date(array[index + 1]).toLocaleDateString("en-US")
+                        : "Now";
+                return `${currentLabel} - ${nextLabel}`;
+            });
+        }
+        return new Chart(chartCanvas.getContext("2d"), {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: isdaily
+                            ? "Click Count By Date"
+                            : "Click Count By Week",
+                        data: chartData.data,
+                        backgroundColor: "rgba(75, 192, 192, 0.2)",
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    }
 
-    let hourly = null;
-    let daily = null;
-    let weekly = null;
+    function createDonutChart(chartData, chartTitle) {
+        let chartCanvas;
 
-    let pendingData = { "0": 0 };
+        chartCanvas = new Chart(chartCanvas.getContext("2d"), {
+            type: "doughnut",
+            data: {
+                labels: chartData.keys,
+                datasets: [
+                    {
+                        label: chartTitle,
+                        data: chartData.data,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: "top",
+                    },
+                    title: {
+                        display: true,
+                        text: chartTitle,
+                    },
+                },
+            },
+        });
 
-    let displaying = "Hourly";
-
-    let error = false;
-
-    let loading = true;
-
-    function isSameCalendarDay(date1) {
-        const date2 = new Date();
-        return (
-            date1.getFullYear() === date2.getFullYear() &&
-            date1.getMonth() === date2.getMonth() &&
-            date1.getDate() === date2.getDate()
-        );
+        return chartCanvas;
     }
 
     async function fetchClickData() {
-        const urls = [
-            `https://cs361a.wl.r.appspot.com/analyze/hourly/${param}`,
-            `https://cs361a.wl.r.appspot.com/analyze/daily/${param}`,
-            `https://cs361a.wl.r.appspot.com/analyze/weekly/${param}`,
-        ];
-
+        const url = import.meta.env.VITE_BACKEND_URL;
         try {
-            const responses = await Promise.all(
-                urls.map((url) => fetch(url).then((res) => res.json())),
-            );
-
-            hourly = responses[0];
-            daily = responses[1];
-            weekly = responses[2];
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            error = true;
-        }
-    }
-
-    function updateChart(passed) {
-        let entries;
-        if (passed === null) {
-            entries = Object.entries(pendingData);
-        } else {
-            entries = Object.entries(passed);
-        }
-        const sortedEntries = entries.sort((a, b) => {
-            const dateA = new Date(a[0]);
-            const dateB = new Date(b[0]);
-
-            return dateA - dateB;
-        });
-
-        const labels = sortedEntries.map((entry) => {
-            const entryDate = new Date(entry[0]);
-
-            if (passed !== hourly) {
-                let date = new Date(entryDate);
-                date.setDate(entryDate.getDate() + 1);
-                return date.toLocaleDateString();
-            }
-
-            return isSameCalendarDay(entryDate)
-                ? entryDate.toLocaleTimeString()
-                : entryDate.toLocaleString();
-        });
-        const dataset = sortedEntries.map((entry) => entry[1]);
-
-        if (chartInstance) {
-            chartInstance.data.labels = labels;
-            chartInstance.data.datasets[0].data = dataset;
-            chartInstance.update();
-        } else {
-            chartInstance = new Chart(chartElement, {
-                type: "bar",
-                data: {
-                    labels,
-                    datasets: [
-                        {
-                            label: "Number of Visits",
-                            backgroundColor: "rgb(75, 192, 192)",
-                            borderColor: "rgb(75, 192, 192)",
-                            data: dataset,
-                        },
-                    ],
+            const token = await getToken();
+            const response = await fetch(`${url}/clicks/${param}`, {
+                method: "GET",
+                headers: {
+                    Authorization: token,
                 },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                        },
-                    },
-                },
+                credentials: "include",
             });
+            if (!response.ok) {
+                error = true;
+                return;
+            }
+            const result = await response.json();
+            status = result.class ? result.class : "free";
+            allData = result.data ? result.data : null;
+        } catch (err) {
+            error = true;
         }
     }
 
     onMount(async () => {
         await fetchClickData();
-
         loading = false;
-
-        updateChart(hourly);
     });
 
-    function clickHourly() {
-        if (displaying !== "Hourly") {
-            displaying = "Hourly";
-            updateChart(hourly);
+    function destroyCharts() {
+        if (dailyChart) {
+            dailyChart.destroy();
+        }
+        if (weeklyChart) {
+            weeklyChart.destroy();
+        }
+        if (countryChart) {
+            countryChart.destroy();
+        }
+        if (cityChart) {
+            cityChart.destroy();
+        }
+        if (osChart) {
+            osChart.destroy();
+        }
+        if (browserChart) {
+            browserChart.destroy();
         }
     }
 
-    function clickDaily() {
-        if (displaying !== "Daily") {
-            displaying = "Daily";
-            updateChart(daily);
-        }
-    }
-
-    function clickWeekly() {
-        if (displaying !== "Weekly") {
-            displaying = "Weekly";
-            updateChart(weekly);
-        }
-    }
-
-    onDestroy(() => {
-        if (chartInstance) chartInstance.destroy();
-    });
+    onDestroy(destroyCharts);
 </script>
 
 <Modal closerFunc={close}>
@@ -156,47 +162,9 @@
     {:else if error}
         <div>Error loading analytics</div>
     {:else}
-        <button class:bold={displaying === "Hourly"} on:click={clickHourly}
-            >Hourly</button
-        >
-        <button class:bold={displaying === "Daily"} on:click={clickDaily}
-            >Daily</button
-        >
-        <button class:bold={displaying === "Weekly"} on:click={clickWeekly}
-            >Weekly</button
-        >
+        <div class="charthold">
+            <!-- <canvas bind:this={chartElement}></canvas> -->
+        </div>
     {/if}
-    <div class="charthold">
-        <canvas bind:this={chartElement}></canvas>
-    </div>
 </Modal>
 
-<style>
-    .bold {
-        font-weight: bold;
-    }
-    button {
-        padding: 0.5rem;
-        background: rgba(255, 255, 255, 0.5);
-        border-radius: 2px;
-        border: none;
-    }
-
-    button:hover {
-        background: var(--color-theme-1);
-        color: white;
-        outline: none;
-    }
-
-    @media (max-width: 700px) {
-        canvas {
-            max-width: 525px;
-        }
-    }
-
-    @media (max-width: 600px) {
-        canvas {
-            max-width: 450px;
-        }
-    }
-</style>
