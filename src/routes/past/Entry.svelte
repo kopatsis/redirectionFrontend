@@ -219,19 +219,15 @@
       <button on:click={copyToClipboard} class="hasImg"
         ><img src={copy} alt="copy symbol" /></button
       >
-      <button on:click={toggleQR}>
-        {#if chartOrQR === "qr"}▲{:else}▼{/if} QR</button
-      >
-      <button on:click={toggleChart}>
-        {#if chartOrQR === "chart"}▲{:else}▼{/if} Analytics</button
-      >
+      <button on:click={toggleQR}>QR Code</button>
+      <button on:click={toggleChart}>Analytics</button>
     </div>
   </div>
   {#if chartOrQR === "chart"}
-    <Chart param={entryOb.param} />
+    <Chart param={entryOb.param} bind:chartOrQR />
   {/if}
   {#if chartOrQR === "qr"}
-    <QrCode QRText={"https://" + url + "?q=t"} />
+    <QrCode QRText={"https://" + url + "?q=t"} bind:chartOrQR />
   {/if}
 {:else if state == "Message"}
   <div>URL: <a href={url}>{url}</a></div>

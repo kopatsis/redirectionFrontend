@@ -1,17 +1,14 @@
 <script>
-	// import Counter from './Counter.svelte';
-	// import welcome from '$lib/images/svelte-welcome.webp';
-	// import welcome_fallback from '$lib/images/svelte-welcome.png';
-
 	import { onMount } from "svelte";
 	import { getKey } from "./getKey.js";
 	import { goto } from "$app/navigation";
 	import Instructions from "./Instructions.svelte";
 	import QrMessage from "./QRMessage.svelte";
 	import { getToken, userStore } from "$lib/stores/firebaseuser.js";
+	import { page } from "$app/stores";
 
 	let user = null;
-	let workingError = '';
+	let workingError = "";
 
 	let key = 0;
 
@@ -21,6 +18,11 @@
 
 	let size = "Partial";
 	let btext = "More...";
+
+	let referred = false;
+
+	const queryParams = $page.url.searchParams;
+	referred = queryParams.has("dne");
 
 	let toggleText = () => {
 		if (size === "Partial") {
@@ -71,6 +73,12 @@
 </svelte:head>
 
 <section>
+	{#if referred}
+		<div>
+			Looks like that shortened URL didn't lead to anything that exists.
+			But you can still make one here! :)
+		</div>
+	{/if}
 	<h1>Enter your URL to shorten here:</h1>
 	<form on:submit|preventDefault={handleSubmit} class="centeroverf">
 		<input

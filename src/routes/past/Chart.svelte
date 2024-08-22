@@ -1,8 +1,14 @@
 <script>
-    export let param;
-
     import { onMount, onDestroy } from "svelte";
     import Chart from "chart.js/auto";
+    import Modal from "../login/Modal.svelte";
+
+    export let param;
+    export let chartOrQR = "none";
+
+    const close = () => {
+        chartOrQR = "none";
+    };
 
     let chartInstance;
     let chartElement;
@@ -29,7 +35,6 @@
     }
 
     async function fetchClickData() {
-
         const urls = [
             `https://cs361a.wl.r.appspot.com/analyze/hourly/${param}`,
             `https://cs361a.wl.r.appspot.com/analyze/daily/${param}`,
@@ -67,9 +72,9 @@
         const labels = sortedEntries.map((entry) => {
             const entryDate = new Date(entry[0]);
 
-            if (passed !== hourly){
-                let date = new Date(entryDate)
-                date.setDate(entryDate.getDate() + 1)
+            if (passed !== hourly) {
+                let date = new Date(entryDate);
+                date.setDate(entryDate.getDate() + 1);
                 return date.toLocaleDateString();
             }
 
@@ -94,7 +99,7 @@
                             backgroundColor: "rgb(75, 192, 192)",
                             borderColor: "rgb(75, 192, 192)",
                             data: dataset,
-                        }
+                        },
                     ],
                 },
                 options: {
@@ -103,7 +108,6 @@
                             beginAtZero: true,
                         },
                     },
-                    
                 },
             });
         }
@@ -143,24 +147,29 @@
     });
 </script>
 
-{#if loading}
-    <div>Loading analytics</div>
-{:else if error}
-    <div>Error loading analytics</div>
-{:else}
-    <button class:bold={displaying === "Hourly"} on:click={clickHourly}
-        >Hourly</button
-    >
-    <button class:bold={displaying === "Daily"} on:click={clickDaily}
-        >Daily</button
-    >
-    <button class:bold={displaying === "Weekly"} on:click={clickWeekly}
-        >Weekly</button
-    >
-{/if}
-<div class="charthold">
-    <canvas bind:this={chartElement}></canvas>
-</div>
+<Modal closerFunc={close}>
+    <div class="closeline">
+        <button class="link-button" on:click={close}>&times;</button>
+    </div>
+    {#if loading}
+        <div>Loading analytics</div>
+    {:else if error}
+        <div>Error loading analytics</div>
+    {:else}
+        <button class:bold={displaying === "Hourly"} on:click={clickHourly}
+            >Hourly</button
+        >
+        <button class:bold={displaying === "Daily"} on:click={clickDaily}
+            >Daily</button
+        >
+        <button class:bold={displaying === "Weekly"} on:click={clickWeekly}
+            >Weekly</button
+        >
+    {/if}
+    <div class="charthold">
+        <canvas bind:this={chartElement}></canvas>
+    </div>
+</Modal>
 
 <style>
     .bold {
@@ -180,14 +189,14 @@
     }
 
     @media (max-width: 700px) {
-		canvas{
+        canvas {
             max-width: 525px;
         }
-	} 
+    }
 
     @media (max-width: 600px) {
-		canvas{
+        canvas {
             max-width: 450px;
         }
-	} 
+    }
 </style>
