@@ -1,10 +1,10 @@
 <script>
-
   import { onMount } from "svelte";
   import { getKey } from "../getKey.js";
-  import {setData } from '$lib/stores/linkstore.js';
+  import { setData } from "$lib/stores/linkstore.js";
   import Entry from "./Entry.svelte";
   import Search from "./Search.svelte";
+  import { getToken } from "$lib/stores/firebaseuser.js";
 
   let domain = "";
   let key = 0;
@@ -24,33 +24,36 @@
     currentIndex += batchSize;
   }
 
-  function resetDisplayedEntries(){
-    console.log("searched")
-    entries = [...searchArray]
+  function resetDisplayedEntries() {
+    entries = [...searchArray];
     displayedEntries = [];
     currentIndex = 0;
-    updateDisplayedEntries()
+    updateDisplayedEntries();
   }
 
   $: searchArray, resetDisplayedEntries();
 
   async function fetchData() {
+    let url = import.meta.env.VITE_BACKEND_URL;
     try {
-      console.log(key);
-      const response = await fetch(
-        `https://cs361a.wl.r.appspot.com/user/${key}/entries`,
-      );
+      const token = await getToken();
+      const response = await fetch(`${url}/entries`, {
+        method: "GET",
+        headers: {
+          Authorization: token,
+        },
+        credentials: "include",
+      });
       if (!response.ok) {
-        throw new Error("Unable to reach EZPZ Service");
+        throw new Error("Unable to reach Service");
       }
       const data = await response.json();
-      console.log(data)
-      if (data.results.length === 0) {
+      if (data.entries.length === 0) {
         entries = [];
       } else {
-        entries = data.results;
-        setData(entries)
-        searchArray = [...entries]
+        entries = data.entries;
+        setData(entries);
+        searchArray = [...entries];
       }
     } catch (err) {
       error = err.message;
@@ -59,9 +62,13 @@
   }
 
   onMount(async () => {
-    domain = import.meta.env.VITE_SHORT_DOMAIN;;
-    await getKey();
-    fetchData();
+    domain = import.meta.env.VITE_SHORT_DOMAIN;
+    const unsubFirebase = userStore.subscribe((value) => {
+      if (value !== undefined) {
+        fetchData();
+      }
+    });
+    return unsubFirebase;
   });
 </script>
 
@@ -92,7 +99,7 @@
 
 <style>
   button {
-    padding: .5rem;
+    padding: 0.5rem;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 2px;
     border: none;

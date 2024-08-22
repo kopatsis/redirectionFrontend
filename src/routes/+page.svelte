@@ -59,24 +59,9 @@
 		}
 	}
 
-	onMount(async () => {
-		await getKey();
-		const unsubFirebase = userStore.subscribe((value) => {
-			firebaseUser = value;
-
-			if (
-				firebaseUser &&
-				firebaseUser.email &&
-				firebaseUser.emailVerified
-			) {
-				user = firebaseUser;
-			}
-		});
-
-		return () => {
-			unsubFirebase();
-		};
-	});
+	// onMount(async () => {
+	// 	await getKey();
+	// });
 </script>
 
 <svelte:head>

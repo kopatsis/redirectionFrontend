@@ -1,6 +1,7 @@
 import { get, writable } from 'svelte/store';
 import { auth } from '../../auth/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { getKey } from '../../routes/getKey';
 
 export const userStore = writable(undefined);
 export const localLogin = writable(false);
@@ -24,7 +25,10 @@ export const refreshUserData = async () => {
 export const getToken = async () => {
 	const user = get(userStore);
 	if (user) {
-		return await user.getIdToken();
+		const [, token] = await Promise.all([getKey(), user.getIdToken()]);
+		return "Bearer " + token
+	} else {
+		await getKey();
+		return "";
 	}
-	return null;
 };
