@@ -23,9 +23,45 @@
     let osChart = null;
     let browserChart = null;
 
+    let csvErr = false;
+    let csvLoading = false;
+
     const close = () => {
         chartOrQR = "none";
     };
+
+    async function downloadCSV() {
+        csvLoading = true;
+        try {
+            const token = await getToken();
+            const response = await fetch(`${url}/clickcsv/${param}`, {
+                method: "GET",
+                headers: {
+                    Authorization: token,
+                },
+                credentials: "include",
+            });
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${param}-clicks.csv`;
+                document.body.appendChild(a);
+                a.click();
+                csvLoading = false;
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                csvErr = false;
+            } else {
+                csvErr = true;
+            }
+        } catch (error) {
+            csvErr = true;
+        } finally {
+            csvLoading = false;
+        }
+    }
 
     function createDateChart(chartData, isdaily = true) {
         let labels;
@@ -237,25 +273,47 @@
             {#if status === "paid"}
                 <div><canvas bind:this={cityChart}></canvas></div>
             {:else}
-                <div>Start a paid membership to see share of clicks by city</div>
+                <div>
+                    Start a paid membership to see share of clicks by city
+                </div>
             {/if}
 
             {#if status === "paid"}
                 <div><canvas bind:this={countryChart}></canvas></div>
             {:else}
-                <div>Start a paid membership to see share of clicks by country</div>
+                <div>
+                    Start a paid membership to see share of clicks by country
+                </div>
             {/if}
 
             {#if status === "paid"}
                 <div><canvas bind:this={osChart}></canvas></div>
             {:else}
-                <div>Start a paid membership to see share of clicks by oeprating system</div>
+                <div>
+                    Start a paid membership to see share of clicks by oeprating
+                    system
+                </div>
             {/if}
 
             <div>
                 <canvas bind:this={browserChart}></canvas>
             </div>
         </div>
+
+        {#if status === "paid"}
+            <div>Source for data analytics:</div>
+            <div>
+                Click below to download a csv with all data for each click this
+                entry has gotten
+            </div>
+            <button on:click={downloadCSV}>Download CSV</button>
+            {#if csvLoading}
+                <div>loading csv...</div>
+            {/if}
+            {#if csvErr}
+                <div>Error downloading csv</div>
+            {/if}
+        {/if}
     {:else}
         <div>Error loading analytics, please close and try again</div>
     {/if}
