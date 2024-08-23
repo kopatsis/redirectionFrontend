@@ -3,9 +3,11 @@
     import Chart from "chart.js/auto";
     import Modal from "../login/Modal.svelte";
     import { getToken } from "$lib/stores/firebaseuser";
+    import Percentile from "./Percentile.svelte";
 
     export let param;
     export let chartOrQR = "none";
+    let domain = import.meta.env.VITE_SHORT_DOMAIN;
 
     let error = false;
     let loading = true;
@@ -101,6 +103,29 @@
         return chartCanvas;
     }
 
+    function createAllCharts() {
+        weeklyChart = createDateChart(allData.weeklyGraph, false);
+        browserChart = createDonutChart(
+            allData.browserGraph,
+            "Web Browsers Used",
+        );
+        if (status === "paid") {
+            dailyChart = createDateChart(allData.dailyGraph, true);
+            osChart = createDonutChart(
+                allData.operatingGraph,
+                "Operating Systems Used",
+            );
+            cityChart = createDonutChart(
+                allData.cityGraph,
+                "Cities Accessing URL",
+            );
+            countryChart = createDonutChart(
+                allData.countryGraph,
+                "Countries Accessing URL",
+            );
+        }
+    }
+
     async function fetchClickData() {
         const url = import.meta.env.VITE_BACKEND_URL;
         try {
@@ -119,8 +144,11 @@
             const result = await response.json();
             status = result.class ? result.class : "free";
             allData = result.data ? result.data : null;
+            createAllCharts();
         } catch (err) {
             error = true;
+        } finally {
+            loading = false;
         }
     }
 
@@ -160,11 +188,75 @@
     {#if loading}
         <div>Loading analytics</div>
     {:else if error}
-        <div>Error loading analytics</div>
-    {:else}
-        <div class="charthold">
-            <!-- <canvas bind:this={chartElement}></canvas> -->
+        <div>Error loading analytics, please close and try again</div>
+    {:else if allData}
+        <div>All Click Data for {domain + "/" + param}</div>
+        <div>Current extended url: {allData.realUrl}</div>
+        <div>Total Clicks: {allData.total}</div>
+        {#if status === "paid"}
+            <div>Total Unique Visitors by IP: {allData.uniqueVisits}</div>
+        {:else}
+            <div>Total Unique Visitors by IP: ???</div>
+        {/if}
+
+        <div>
+            Clicks from QR Code: <Percentile
+                numerator={allData.fromQr}
+                denominator={allData.total}
+                blocked={false}
+            />
         </div>
+
+        <div>
+            Clicks from Bots: <Percentile
+                numerator={status === "paid" ? allData.fromBot : 0}
+                denominator={allData.total}
+                blocked={status === "free"}
+            />
+        </div>
+
+        <div>
+            Clicks from Mobile Devices: <Percentile
+                numerator={status === "paid" ? allData.fromMobile : 0}
+                denominator={allData.total}
+                blocked={status === "free"}
+            />
+        </div>
+
+        <div>
+            {#if status === "paid"}
+                <div><canvas bind:this={dailyChart}></canvas></div>
+            {:else}
+                <div>Start a paid membership to see clicks by day</div>
+            {/if}
+
+            <div>
+                <canvas bind:this={weeklyChart}></canvas>
+            </div>
+
+            {#if status === "paid"}
+                <div><canvas bind:this={cityChart}></canvas></div>
+            {:else}
+                <div>Start a paid membership to see share of clicks by city</div>
+            {/if}
+
+            {#if status === "paid"}
+                <div><canvas bind:this={countryChart}></canvas></div>
+            {:else}
+                <div>Start a paid membership to see share of clicks by country</div>
+            {/if}
+
+            {#if status === "paid"}
+                <div><canvas bind:this={osChart}></canvas></div>
+            {:else}
+                <div>Start a paid membership to see share of clicks by oeprating system</div>
+            {/if}
+
+            <div>
+                <canvas bind:this={browserChart}></canvas>
+            </div>
+        </div>
+    {:else}
+        <div>Error loading analytics, please close and try again</div>
     {/if}
 </Modal>
-
