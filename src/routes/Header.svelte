@@ -8,6 +8,8 @@
   let user = undefined;
   let dropdown = false;
 
+  
+
   onMount(() => {
     const unsubFirebase = userStore.subscribe((value) => {
       if (value && !(value.email && value.emailVerified)) {
