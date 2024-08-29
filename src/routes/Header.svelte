@@ -4,11 +4,24 @@
   import { onMount } from "svelte";
   import github from "$lib/images/github.svg";
   import { userStore } from "$lib/stores/firebaseuser";
+  import { sendPostRequest } from "$lib/shared/postpaying";
+  import Modal from "./login/Modal.svelte";
+  import Contact from "./Contact.svelte";
 
   let user = undefined;
   let dropdown = false;
 
-  
+  let errorMess = false;
+
+  let contactModal = false;
+
+  async function clickManage() {
+    errorMess = false;
+    const res = await sendPostRequest();
+    if (!res) {
+      errorMess = true;
+    }
+  }
 
   onMount(() => {
     const unsubFirebase = userStore.subscribe((value) => {
@@ -72,12 +85,22 @@
   {#if dropdown}
     <div>
       {#if user.email}<div>Email: {user.email}</div>{/if}
-      <div>Manage Membership</div>
+      <button on:click={clickManage}>Manage Membership</button>
+      {#if errorMess}
+        <div>
+          Error opening up membership management window :/ Try again and if the
+          issue persists, contact us please :)
+        </div>
+      {/if}
       <div>Contact Us</div>
       <div>Log Out</div>
     </div>
   {/if}
 </header>
+
+{#if contactModal}
+  <Contact email={user ? (user.Email ? user.Email : "") : ""} />
+{/if}
 
 <style>
   header {

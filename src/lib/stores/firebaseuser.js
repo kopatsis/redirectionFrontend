@@ -32,3 +32,12 @@ export const getToken = async () => {
 		return "";
 	}
 };
+
+export const getIdToken = async () => {
+	const user = get(userStore);
+	if (user) {
+		const token = await user.getIdToken()
+		return token
+	} 
+	throw new Error("no user currently logged in");
+};
