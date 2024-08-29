@@ -25,6 +25,7 @@
 
   onMount(() => {
     const unsubFirebase = userStore.subscribe((value) => {
+      console.log(value);
       if (value && !(value.email && value.emailVerified)) {
         user = null;
       } else {

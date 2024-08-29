@@ -8,6 +8,7 @@
         GoogleAuthProvider,
         signInWithEmailAndPassword,
         signInWithRedirect,
+        sendEmailVerification
     } from "firebase/auth";
     import ForgotPass from "./ForgotPass.svelte";
     import { FirebaseError } from "firebase/app";
@@ -159,7 +160,7 @@
     async function sendVerificationEmail(user) {
         if (user && user.email) {
             try {
-                await user.sendEmailVerification();
+                await sendEmailVerification(user);
             } catch (error) {
                 errorMessage = error.message;
             }

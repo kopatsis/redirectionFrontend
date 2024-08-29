@@ -1,5 +1,5 @@
 <script>
-    import { auth } from "../auth/firebase";
+    import { auth } from "../../auth/firebase";
     import { sendPasswordResetEmail } from "firebase/auth";
     import Modal from "./Modal.svelte";
 

@@ -33,7 +33,7 @@ export const getToken = async () => {
 	}
 };
 
-export const getIdToken = async () => {
+export const getRealToken = async () => {
 	const user = get(userStore);
 	if (user) {
 		const token = await user.getIdToken()

@@ -1,6 +1,4 @@
 <script>
-    import { turnstile } from '@cf-turnstile/svelte';
-
     export let email = '';
     let name = '';
     let subject = '';
@@ -60,7 +58,7 @@
             <textarea id="body" bind:value={body}></textarea>
         </div>
 
-        <div class="cf-turnstile" use:turnstile on:change={e => turnstileToken = e.detail.token} data-sitekey="0x4AAAAAAAiN0D-hYmv3ulQQ"></div>
+        <!-- <div class="cf-turnstile" use:turnstile on:change={e => turnstileToken = e.detail.token} data-sitekey="0x4AAAAAAAiN0D-hYmv3ulQQ"></div> -->
 
         <button type="submit">Send</button>
     </form>
