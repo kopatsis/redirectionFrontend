@@ -1,15 +1,52 @@
 <script>
-	import Header from './Header.svelte';
-	import './styles.css';
+	import { onMount } from "svelte";
+	import Header from "./Header.svelte";
+	import "./styles.css";
+	import { userStore } from "$lib/stores/firebaseuser";
+	import { CheckPaymentStatus } from "$lib/shared/checkpaying";
+
+	let loading = true;
+	let paying = false;
+
+	onMount(() => {
+		const unsubFirebase = userStore.subscribe(async (value) => {
+			if (value === undefined) {
+				return;
+			} else if (
+				value &&
+				value.email &&
+				value.emailVerified &&
+				value.uid
+			) {
+				let ispaying,
+					worked = await CheckPaymentStatus(value.uid);
+				if (worked && ispaying) {
+					paying = true;
+				}
+			} else {
+				paying = false;
+			}
+			loading = false;
+		});
+
+		return unsubFirebase;
+	});
 </script>
 
 <div class="app">
 	<Header />
 
+	{#if loading}
+		<div>loading...</div>
+	{:else if paying}
+		<div>[]</div>
+	{:else}
+		<div>AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD</div>
+	{/if}
+
 	<main>
 		<slot />
 	</main>
-
 </div>
 
 <style>

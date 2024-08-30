@@ -33,9 +33,7 @@
       }
     });
 
-    return () => {
-      unsubFirebase();
-    };
+    return unsubFirebase;
   });
 </script>
 
