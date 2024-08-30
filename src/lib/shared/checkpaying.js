@@ -1,4 +1,4 @@
-async function CheckPaymentStatus(userId) {
+export async function CheckPaymentStatus(userId) {
     const checkURL = import.meta.env.VITE_PAY_URL || 'https://pay.shortentrack.com';
     const passcode = import.meta.env.VITE_CHECK_PASSCODE;
 
