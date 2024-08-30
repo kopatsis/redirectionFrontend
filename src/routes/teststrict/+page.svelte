@@ -7,7 +7,7 @@
 
     onMount(() => {
         const unsubFirebase = userStore.subscribe((value) => {
-            firebaseUser = value;
+            let firebaseUser = value;
             ct++
             if (firebaseUser === undefined) {
             	variable = "loading";

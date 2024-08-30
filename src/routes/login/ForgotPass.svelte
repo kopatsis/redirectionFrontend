@@ -124,7 +124,7 @@
 		padding-right: 12px;
 		border: 1px solid rgb(137, 151, 155);
 		background-color: var(--main-color);
-		color: white;
+		color: black;
 		font-weight: normal;
 	}
 

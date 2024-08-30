@@ -49,26 +49,18 @@
 
     let interval;
 
-    getRedirectResult(auth)
-        .then((result) => {
-            if (result && result.user) {
-                goto("./");
-            }
-        })
-        .catch((error) => {
-            errorMessage = error.message;
-        });
-
     function startEmailVerificationCheck() {
         if (!waitingOnVerif || interval) return;
 
         interval = setInterval(async () => {
+
             await refreshUserData();
             const user = get(userStore);
+            console.log(user);
 
             if (user.emailVerified) {
                 stopEmailVerificationCheck();
-                goto("./");
+                goto("./teststrict");
             } else {
                 waitingOnVerif = true;
             }
@@ -98,7 +90,7 @@
                 waitingOnVerif = true;
                 startEmailVerificationCheck();
             } else {
-                goto("./");
+                goto("./teststrict");
             }
         } catch (error) {
             if (error.code === "auth/user-not-found") {
@@ -130,7 +122,7 @@
                     waitingOnVerif = true;
                     startEmailVerificationCheck();
                 } else {
-                    goto("./");
+                    goto("./teststrict");
                 }
             } catch (err) {
                 if (err.code === "auth/email-already-in-use") {
@@ -154,7 +146,7 @@
 
     function loginWithGoogleRedirect() {
         var provider = new GoogleAuthProvider();
-        signInWithRedirect(provider);
+        signInWithRedirect(auth, provider);
     }
 
     async function sendVerificationEmail(user) {
@@ -173,10 +165,28 @@
     }
 
     function proceed() {
-        goto("./");
+        goto("./teststrict");
     }
 
     onMount(() => {
+
+        getRedirectResult(auth)
+        .then((result) => {
+            console.log("uysdfasdfasdfsa")
+            console.log("uysdfasdfasdfsa")
+            console.log("uysdfasdfasdfsa")
+            console.log("uysdfasdfasdfsa")
+            console.log("uysdfasdfasdfsa")
+            console.log(result)
+            if (result && result.user) {
+                goto("./teststrict");
+            }
+        })
+        .catch((error) => {
+            console.log(error)
+            errorMessage = error.message;
+        });
+
         auth.onAuthStateChanged((user) => {
             if (user) {
                 exUser = user.email;
@@ -192,9 +202,7 @@
         loading = false;
     });
 
-    onDestroy(() => {
-        stopEmailVerificationCheck();
-    });
+    onDestroy(stopEmailVerificationCheck);
 </script>
 
 {#if loading}
@@ -219,7 +227,7 @@
         <div>Would you like to stay signed in?</div>
         <div class="isloggedbuttons">
             <button class="submit" on:click={proceed}>Definitely</button>
-            <button class="submit" on:click={proceed}>Sign out</button>
+            <button class="submit" on:click={logout}>Sign out</button>
         </div>
     </div>
 {:else}
@@ -382,7 +390,7 @@
         padding-right: 12px;
         border: 1px solid rgb(137, 151, 155);
         background-color: var(--main-color);
-        color: white;
+        color: black;
         font-weight: normal;
     }
 
