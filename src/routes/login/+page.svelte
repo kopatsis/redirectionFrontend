@@ -35,6 +35,8 @@
   let emailValid = false;
   let passwordActive = false;
 
+  let onDifferentDevice = false;
+
   $: emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   $: hasMinimumLength = password.length >= 10;
@@ -97,7 +99,7 @@
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
 
@@ -122,15 +124,45 @@
     }
   }
 
-async function sendLink() {
+  async function fetchIdFromServer() {
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/emailexchange`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Passcode-ID": import.meta.env.VITE_CHECK_PASSCODE,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.id || "";
+      } else {
+        return "";
+      }
+    } catch (error) {
+      return "";
+    }
+  }
+
+  async function sendLink() {
     const actionCodeSettings = {
       url: "http://localhost:5173/refer",
       handleCodeInApp: true,
     };
 
+    if (onDifferentDevice) {
+      const id = await fetchIdFromServer();
+      if (id !== "") {
+        actionCodeSettings.url += `/${id}`;
+      }
+    }
+
     window.localStorage.setItem("CBEmailForSignIn", email);
     await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-    errorMessage = "Sent!"
+    errorMessage = "Sent!";
   }
 
   async function signUpFB() {
@@ -140,7 +172,7 @@ async function sendLink() {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           email,
-          password
+          password,
         );
         const user = userCredential.user;
 
@@ -154,7 +186,8 @@ async function sendLink() {
         }
       } catch (err) {
         if (err.code === "auth/email-already-in-use") {
-          errorMessage = "Email already in use. Please login or use another email.";
+          errorMessage =
+            "Email already in use. Please login or use another email.";
         } else {
           errorMessage = err;
         }
@@ -329,6 +362,12 @@ async function sendLink() {
 
   <div>--or--</div>
   <button on:click={sendLink}>Authenticate with email link</button>
+  <div>
+    <label>
+      <input type="checkbox" bind:checked={onDifferentDevice} />
+      For a different device
+    </label>
+  </div>
   <div>--or--</div>
   <button on:click={proceed}>Use without an account</button>
 {/if}
