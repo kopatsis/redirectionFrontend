@@ -6,25 +6,24 @@
 
   let error = "";
 
-  onMount(() => {
+  onMount(async () => {
     const email = localStorage.getItem("CBEmailForSignIn");
     if (email && isSignInWithEmailLink(auth, window.location.href)) {
-      signInWithEmailLink(auth, email, window.location.href)
-        .then(() => {
-          localStorage.removeItem("CBEmailForSignIn");
-          goto("./teststrict");
-        })
-        .catch((error) => {
-          console.error("Error signing in:", error);
-        });
+      try {
+        await signInWithEmailLink(auth, email, window.location.href);
+        localStorage.removeItem("CBEmailForSignIn");
+        goto("./teststrict");
+      } catch (err) {
+        error = "Error, could not sign in: " + err;
+      }
     }
   });
 </script>
 
 <div>
   {#if !error}
-      <h1>Finishing Sign-In...</h1>
+    <h1>Finishing Sign-In...</h1>
   {:else}
-      {error}
+    {error}
   {/if}
 </div>

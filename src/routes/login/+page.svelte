@@ -15,6 +15,8 @@
   import { FirebaseError } from "firebase/app";
   import { get } from "svelte/store";
   import { refreshUserData, userStore } from "$lib/stores/firebaseuser";
+  import { page } from "$app/stores";
+  import { sendPostRequest } from "$lib/shared/postpaying";
 
   let loading = true;
   let waitingOnVerif = false;
@@ -54,20 +56,30 @@
 
   getRedirectResult(auth)
     .then((result) => {
-      console.log("uysdfasdfasdfsa");
-      console.log("uysdfasdfasdfsa");
-      console.log("uysdfasdfasdfsa");
-      console.log("uysdfasdfasdfsa");
-      console.log("uysdfasdfasdfsa");
-      console.log(result);
       if (result && result.user) {
-        goto("./teststrict");
+        handleProceed();
       }
     })
     .catch((error) => {
-      console.log(error);
       errorMessage = error.message;
     });
+
+  function isCircleRedirTrue() {
+    const queryParams = $page.url.searchParams;
+    const circleRedir = queryParams.get("circleRedir");
+    return queryParams.get("circleRedir") === "t";
+  }
+
+  async function handleProceed() {
+    const queryParams = $page.url.searchParams;
+    const circleRedir = queryParams.get("circleRedir");
+
+    if (circleRedir === "t") {
+      await sendPostRequest();
+    }
+
+    goto("./teststrict");
+  }
 
   function startEmailVerificationCheck() {
     if (!waitingOnVerif || interval) return;
@@ -79,7 +91,7 @@
 
       if (user.emailVerified) {
         stopEmailVerificationCheck();
-        goto("./teststrict");
+        handleProceed();
       } else {
         waitingOnVerif = true;
       }
@@ -109,7 +121,7 @@
         waitingOnVerif = true;
         startEmailVerificationCheck();
       } else {
-        goto("./teststrict");
+        await handleProceed();
       }
     } catch (error) {
       if (error.code === "auth/user-not-found") {
@@ -158,6 +170,8 @@
       if (id !== "") {
         actionCodeSettings.url += `/${id}`;
       }
+    } else if (isCircleRedirTrue()) {
+      actionCodeSettings.url += `/circleredir`;
     }
 
     window.localStorage.setItem("CBEmailForSignIn", email);
@@ -182,7 +196,7 @@
           waitingOnVerif = true;
           startEmailVerificationCheck();
         } else {
-          goto("./teststrict");
+          handleProceed();
         }
       } catch (err) {
         if (err.code === "auth/email-already-in-use") {
@@ -222,10 +236,6 @@
   async function sendVerificationEmailFromStore() {
     const user = get(userStore);
     await sendVerificationEmail(user);
-  }
-
-  function proceed() {
-    goto("./teststrict");
   }
 
   onMount(() => {
@@ -268,7 +278,7 @@
     </div>
     <div>Would you like to stay signed in?</div>
     <div class="isloggedbuttons">
-      <button class="submit" on:click={proceed}>Definitely</button>
+      <button class="submit" on:click={handleProceed}>Definitely</button>
       <button class="submit" on:click={logout}>Sign out</button>
     </div>
   </div>
@@ -362,14 +372,16 @@
 
   <div>--or--</div>
   <button on:click={sendLink}>Authenticate with email link</button>
-  <div>
-    <label>
-      <input type="checkbox" bind:checked={onDifferentDevice} />
-      For a different device
-    </label>
-  </div>
+  {#if !isCircleRedirTrue()}
+    <div>
+      <label>
+        <input type="checkbox" bind:checked={onDifferentDevice} />
+        For a different device
+      </label>
+    </div>
+  {/if}
   <div>--or--</div>
-  <button on:click={proceed}>Use without an account</button>
+  <button on:click={() => goto("./teststrict")}>Use without an account</button>
 {/if}
 
 <style>

@@ -4,6 +4,7 @@
     import { onMount } from "svelte";
     import { auth } from "../../../auth/firebase";
     import { page } from "$app/stores";
+    import { sendPostRequest } from "$lib/shared/postpaying";
 
     let error = "";
 
@@ -33,7 +34,7 @@
     onMount(async () => {
         const slug = $page.params.slug;
         let email;
-        if (slug) {
+        if (slug && slug !== "circleredir") {
             let email = await fetchEmailById(slug);
             if (!email) {
                 email = localStorage.getItem("CBEmailForSignIn");
@@ -43,14 +44,18 @@
         }
 
         if (email && isSignInWithEmailLink(auth, window.location.href)) {
-            signInWithEmailLink(auth, email, window.location.href)
-                .then(() => {
-                    localStorage.removeItem("CBEmailForSignIn");
-                    goto("./teststrict");
-                })
-                .catch((error) => {
-                    console.error("Error signing in:", error);
-                });
+            try {
+                await signInWithEmailLink(auth, email, window.location.href);
+                localStorage.removeItem("CBEmailForSignIn");
+
+                if (slug === "circleredir") {
+                    await sendPostRequest();
+                }
+
+                goto("./teststrict");
+            } catch (err) {
+                error = "Error, could not sign in: " + err
+            }
         }
     });
 </script>
