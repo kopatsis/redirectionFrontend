@@ -5,6 +5,8 @@
     import { auth } from "../../../auth/firebase";
     import { page } from "$app/stores";
 
+    let error = "";
+
     async function fetchEmailById(id) {
         const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -54,5 +56,9 @@
 </script>
 
 <div>
-    <h1>Finishing Sign-In...</h1>
+    {#if !error}
+        <h1>Finishing Sign-In...</h1>
+    {:else}
+        {error}
+    {/if}
 </div>

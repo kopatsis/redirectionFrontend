@@ -1,28 +1,25 @@
 <script>
-    export let email = "";
-    let name = "";
-    let subject = "";
-    let body = "";
-    let message = "";
-    let success = false;
-    let turnstileToken = "";
+    import { getRealToken } from "$lib/stores/firebaseuser";
+    import { Turnstile } from "svelte-turnstile";
 
-    async function submitForm() {
+    export let email = "";
+    let success = false;
+    let message = '';
+
+    async function submitForm(event) {
         try {
-            const response = await fetch("/helpemail", {
+            const url =
+                import.meta.env.VITE_PAY_URL || "https://pay.shortentrack.com";
+            const form = event.target;
+            const formData = new FormData(form);
+            const token = await getRealToken();
+
+            const response = await fetch(`${url}/administrative/helpemail`, {
                 method: "POST",
                 headers: {
+                    Authorization: "Bearer " + token,
                     "Content-Type": "application/json",
-                    "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
                 },
-                credentials: "include",
-                body: JSON.stringify({
-                    name,
-                    email,
-                    subject,
-                    body,
-                    "cf-turnstile-response": turnstileToken,
-                }),
             });
 
             if (!response.ok) {
@@ -32,39 +29,41 @@
             const data = await response.json();
             message = data.message || "Form submitted successfully!";
         } catch (error) {
-            message = "Failed to send the email. Please try again later.";
+            message = "Failed to send the email. Please close and try again later.";
         } finally {
             success = true;
         }
     }
 </script>
 
+{#if message}   
+    <div>{message}</div>
+{/if}
+
 {#if !success}
     <form on:submit|preventDefault={submitForm}>
         <div>
             <label for="name">Name:</label>
-            <input type="text" id="name" bind:value={name} />
+            <input type="text" id="name" />
         </div>
         <div>
             <label for="email">Email:</label>
-            <input type="email" id="email" bind:value={email} />
+            <input type="email" id="email" value={email} />
         </div>
 
         <div>
             <label for="subject">Subject:</label>
-            <input type="text" id="subject" bind:value={subject} />
+            <input type="text" id="subject" />
         </div>
         <div>
             <label for="body">Body:</label>
-            <textarea id="body" bind:value={body}></textarea>
+            <textarea id="body"></textarea>
         </div>
 
-        <!-- <div class="cf-turnstile" use:turnstile on:change={e => turnstileToken = e.detail.token} data-sitekey="0x4AAAAAAAiN0D-hYmv3ulQQ"></div> -->
+        <div>
+            <Turnstile siteKey="0x4AAAAAAAiN0D-hYmv3ulQQ" />
+        </div>
 
         <button type="submit">Send</button>
     </form>
-{/if}
-
-{#if success}
-    <div>{message}</div>
 {/if}

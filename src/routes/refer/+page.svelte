@@ -4,6 +4,8 @@
   import { onMount } from "svelte";
   import { auth } from "../../auth/firebase";
 
+  let error = "";
+
   onMount(() => {
     const email = localStorage.getItem("CBEmailForSignIn");
     if (email && isSignInWithEmailLink(auth, window.location.href)) {
@@ -20,5 +22,9 @@
 </script>
 
 <div>
-  <h1>Finishing Sign-In...</h1>
+  {#if !error}
+      <h1>Finishing Sign-In...</h1>
+  {:else}
+      {error}
+  {/if}
 </div>
