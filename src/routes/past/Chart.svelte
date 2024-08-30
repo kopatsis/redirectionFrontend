@@ -38,6 +38,7 @@
                 method: "GET",
                 headers: {
                     Authorization: token,
+                    "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
                 },
                 credentials: "include",
             });
@@ -170,6 +171,7 @@
                 method: "GET",
                 headers: {
                     Authorization: token,
+                    "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
                 },
                 credentials: "include",
             });

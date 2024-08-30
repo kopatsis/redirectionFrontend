@@ -1,27 +1,28 @@
 <script>
-    export let email = '';
-    let name = '';
-    let subject = '';
-    let body = '';
-    let message = '';
+    export let email = "";
+    let name = "";
+    let subject = "";
+    let body = "";
+    let message = "";
     let success = false;
-    let turnstileToken = '';
+    let turnstileToken = "";
 
     async function submitForm() {
         try {
-            const response = await fetch('/helpemail', {
-                method: 'POST',
+            const response = await fetch("/helpemail", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json",
+                    "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
                 },
-                credentials: 'include',
+                credentials: "include",
                 body: JSON.stringify({
                     name,
                     email,
                     subject,
                     body,
-                    'cf-turnstile-response': turnstileToken
-                })
+                    "cf-turnstile-response": turnstileToken,
+                }),
             });
 
             if (!response.ok) {
@@ -29,9 +30,9 @@
             }
 
             const data = await response.json();
-            message = data.message || 'Form submitted successfully!';
+            message = data.message || "Form submitted successfully!";
         } catch (error) {
-            message = 'Failed to send the email. Please try again later.';
+            message = "Failed to send the email. Please try again later.";
         } finally {
             success = true;
         }
@@ -42,16 +43,16 @@
     <form on:submit|preventDefault={submitForm}>
         <div>
             <label for="name">Name:</label>
-            <input type="text" id="name" bind:value={name}>
+            <input type="text" id="name" bind:value={name} />
         </div>
         <div>
             <label for="email">Email:</label>
-            <input type="email" id="email" bind:value={email}>
+            <input type="email" id="email" bind:value={email} />
         </div>
 
         <div>
             <label for="subject">Subject:</label>
-            <input type="text" id="subject" bind:value={subject}>
+            <input type="text" id="subject" bind:value={subject} />
         </div>
         <div>
             <label for="body">Body:</label>

@@ -42,6 +42,7 @@
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
+          "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
         },
         credentials: "include",
         body: JSON.stringify({
@@ -103,6 +104,7 @@
         method: "PATCH",
         headers: {
           Authorization: token,
+          "X-User-ID": localStorage.getItem('ST_USER_KEY') || '',
         },
         credentials: "include",
       });
@@ -126,6 +128,7 @@
         method: "PATCH",
         headers: {
           Authorization: token,
+          "X-User-ID": localStorage.getItem('ST_USER_KEY') || '',
         },
         credentials: "include",
       });
