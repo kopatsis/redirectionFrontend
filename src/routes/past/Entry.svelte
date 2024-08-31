@@ -230,7 +230,7 @@
     <Chart param={entryOb.param} bind:chartOrQR />
   {/if}
   {#if chartOrQR === "qr"}
-    <QrCode QRText={"https://" + url + "?q=t"} bind:chartOrQR />
+    <QrCode QRText={"https://" + url + "?q=t"} OGUrl={entryOb.url} bind:chartOrQR />
   {/if}
 {:else if state == "Message"}
   <div>URL: <a href={url}>{url}</a></div>
