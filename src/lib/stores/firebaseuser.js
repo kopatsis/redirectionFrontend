@@ -1,6 +1,6 @@
 import { get, writable } from "svelte/store";
 import { auth } from "../../auth/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { EmailAuthProvider, linkWithCredential, onAuthStateChanged } from "firebase/auth";
 import { getKey } from "../../routes/getKey";
 
 export const userStore = writable(undefined);
@@ -69,19 +69,37 @@ export const hasPassword = async () => {
       });
 
       if (!response.ok) {
-        return [false, false];
+        return false;
       }
 
       const data = await response.json();
 
       if ("HasPassword" in data) {
-        return [true, data.HasPassword];
+        return data.HasPassword;
       }
 
-      return [false, false];
+      return false;
     } catch {
-      return [false, false];
+      return false;
     }
   }
-  return [false, false];
+  return false;
 };
+
+
+export async function addPassword(newPassword) {
+  try {
+    const user = get(userStore)
+    if (user) {
+      const credential = EmailAuthProvider.credential(user.email, newPassword);
+
+      const uh = await linkWithCredential(user, credential)
+
+      return 'Password added successfully!';
+    } else {
+      return 'No User';
+    }
+  } catch (error) {
+    return 'Error adding password: ' + error;
+  }
+}

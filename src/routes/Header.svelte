@@ -3,10 +3,11 @@
   import { page } from "$app/stores";
   import { onMount } from "svelte";
   import github from "$lib/images/github.svg";
-  import { userStore } from "$lib/stores/firebaseuser";
+  import { hasPassword, userStore } from "$lib/stores/firebaseuser";
   import { sendPostRequest } from "$lib/shared/postpaying";
   import Modal from "./login/Modal.svelte";
   import Contact from "./Contact.svelte";
+    import PasswordPopup from "./PasswordPopup.svelte";
 
   let user = undefined;
   let dropdown = false;
@@ -14,6 +15,15 @@
   let errorMess = false;
 
   let contactModal = false;
+
+  let needsPass = false;
+  let passPop = false;
+
+  function popupPassword() {
+    if (needsPass) {
+      passPop = true;
+    }
+  }
 
   async function clickManage() {
     errorMess = false;
@@ -24,12 +34,15 @@
   }
 
   onMount(() => {
-    const unsubFirebase = userStore.subscribe((value) => {
-      console.log(value);
-      if (value && !(value.email && value.emailVerified)) {
-        user = null;
-      } else {
+    const unsubFirebase = userStore.subscribe(async (value) => {
+      if (value === undefined) {
+        return;
+      } else if (value && value.email && value.emailVerified) {
         user = value;
+        const hasPass = await hasPassword();
+        needsPass = !hasPass;
+      } else {
+        user = null;
       }
     });
 
@@ -78,6 +91,9 @@
       <button
         >Account {#if dropdown}▲{:else}▼{/if}</button
       >
+      {#if needsPass}
+        <button on:click={popupPassword}>!</button>
+      {/if}
     {/if}
   </div>
 
@@ -98,9 +114,12 @@
 </header>
 
 {#if contactModal}
-  <Contact email={user ? (user.Email ? user.Email : "") : ""} />
+  <Contact bind:open={contactModal} email={user ? (user.Email ? user.Email : "") : ""} />
 {/if}
 
+{#if passPop}
+  <PasswordPopup bind:open={passPop} />
+{/if}
 <style>
   header {
     display: flex;
