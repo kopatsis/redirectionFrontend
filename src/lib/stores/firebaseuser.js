@@ -24,7 +24,7 @@ export const refreshUserData = async () => {
 
 export const getToken = async () => {
   const user = get(userStore);
-  if (user) {
+  if (user && user.email && user.emailVerified) {
     const [, token] = await Promise.all([getKey(), user.getIdToken()]);
     return "Bearer " + token;
   } else {
@@ -35,7 +35,7 @@ export const getToken = async () => {
 
 export const getRealToken = async () => {
   const user = get(userStore);
-  if (user) {
+  if (user && user.email && user.emailVerified) {
     const token = await user.getIdToken();
     return token;
   }
@@ -44,7 +44,7 @@ export const getRealToken = async () => {
 
 export const hasPassword = async () => {
   const user = get(userStore);
-  if (user) {
+  if (user && user.email && user.emailVerified) {
     return;
   }
   return false, false;
@@ -52,7 +52,7 @@ export const hasPassword = async () => {
 
 export const hasPassword = async () => {
   const user = get(userStore);
-  if (user) {
+  if (user && user.email && user.emailVerified) {
     const backend =
       import.meta.env.VITE_BACKEND_URL || "https://api.shortentrack.com";
     const url = `${backend}/haspassword`;
@@ -90,7 +90,7 @@ export const hasPassword = async () => {
 export async function addPassword(newPassword) {
   try {
     const user = get(userStore)
-    if (user) {
+    if (user && user.email && user.emailVerified) {
       const credential = EmailAuthProvider.credential(user.email, newPassword);
 
       const uh = await linkWithCredential(user, credential)
