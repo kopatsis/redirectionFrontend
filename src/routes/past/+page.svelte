@@ -5,12 +5,14 @@
   import Entry from "./Entry.svelte";
   import Search from "./Search.svelte";
   import { getToken } from "$lib/stores/firebaseuser.js";
+    import { goto } from "$app/navigation";
 
   let domain = "";
   let key = 0;
 
   let error = null;
   let loading = true;
+  let signedIn = false;
 
   let searchArray = [];
   let entries = [];
@@ -64,9 +66,12 @@
 
   onMount(async () => {
     domain = import.meta.env.VITE_SHORT_DOMAIN;
-    const unsubFirebase = userStore.subscribe((value) => {
+    const unsubFirebase = userStore.subscribe(async (value) => {
       if (value !== undefined) {
-        fetchData();
+        if (value && value.email && value.emailVerified) {
+          signedIn = true;
+        }
+        await fetchData();
       }
     });
     return unsubFirebase;

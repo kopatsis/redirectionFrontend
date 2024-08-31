@@ -38,7 +38,7 @@
   let passwordActive = false;
 
   let onDifferentDevice = false;
-
+  
   $: emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   $: hasMinimumLength = password.length >= 10;
