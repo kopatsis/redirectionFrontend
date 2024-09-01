@@ -4,7 +4,6 @@ import { EmailAuthProvider, linkWithCredential, onAuthStateChanged } from "fireb
 import { getKey } from "../../routes/getKey";
 
 export const userStore = writable(undefined);
-export const localLogin = writable(false);
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -40,14 +39,6 @@ export const getRealToken = async () => {
     return token;
   }
   throw new Error("no user currently logged in");
-};
-
-export const hasPassword = async () => {
-  const user = get(userStore);
-  if (user && user.email && user.emailVerified) {
-    return;
-  }
-  return false, false;
 };
 
 export const hasPassword = async () => {

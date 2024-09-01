@@ -9,10 +9,10 @@
     let error = "";
 
     async function fetchEmailById(id) {
-        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+        const API_URL = import.meta.env.VITE_PAY_URL;
 
         try {
-            const response = await fetch(`${BACKEND_URL}/emailexchange/${id}`, {
+            const response = await fetch(`${API_URL}/administrative/emailexchange/${id}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
