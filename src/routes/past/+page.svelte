@@ -7,9 +7,12 @@
   import { getToken } from "$lib/stores/firebaseuser.js";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
+  import { CheckPaymentStatus } from "$lib/shared/checkpaying.js";
 
   let domain = "";
-  let key = 0;
+  let paying = false;
+  let loadingcsvs = false;
+  let csverror = false;
 
   let error = null;
   let loading = true;
@@ -122,15 +125,64 @@
     loading = false;
   }
 
+  async function fetchcsv() {
+    if (!paying){
+      return
+    }
+    const url = import.meta.env.VITE_BACKEND_URL;
+    loadingcsvs = true;
+    try {
+      const token = await getToken();
+      const response = await fetch(`${url}/entriescsv`, {
+        method: "GET",
+        headers: {
+          Authorization: token,
+          "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
+        },
+        credentials: "include",
+      });
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${param}-clicks.csv`;
+        document.body.appendChild(a);
+        a.click();
+        csvLoading = false;
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        csverror = false;
+      } else {
+        csverror = true;
+      }
+    } catch (error) {
+      csverror = true;
+    } finally {
+      loadingcsvs = false;
+    }
+  }
+
   onMount(async () => {
     domain = import.meta.env.VITE_SHORT_DOMAIN;
     const unsubFirebase = userStore.subscribe(async (value) => {
       if (value !== undefined) {
+        setVariables();
         if (value && value.email && value.emailVerified) {
           signedIn = true;
+
+          const [firstResult, secondResult] = await Promise.all([
+            CheckPaymentStatus(value.uid)(),
+            fetchData(),
+          ]);
+
+          const [ispaying, worked] = firstResult;
+          if (worked && ispaying) {
+            paying = true;
+          }
+        } else {
+          await fetchData();
         }
-        setVariables();
-        await fetchData();
       }
     });
     return unsubFirebase;
@@ -149,6 +201,18 @@
   {:else if error !== null}
     <div>Error fetching data</div>
   {:else}
+    {#if paying}
+      {#if loadingcsvs}
+        <div>loading...</div>
+      {:else}
+        <div>
+          <button on:click={fetchcsv}>Export CSV of all shortened links</button>
+        </div>
+      {/if}
+      {#if csverror}
+        <div>Error fetching CSV, may be a server issue or lack of internet connection...</div>
+      {/if}
+    {/if}
     <Search bind:searchParam submitFunc={changeSearch} />
 
     <div>

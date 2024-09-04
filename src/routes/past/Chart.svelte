@@ -31,6 +31,7 @@
     };
 
     async function downloadCSV() {
+        const url = import.meta.env.VITE_BACKEND_URL;
         csvLoading = true;
         try {
             const token = await getToken();
