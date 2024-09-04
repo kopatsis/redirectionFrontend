@@ -61,7 +61,6 @@
       } else {
         const resp = await response.json();
         entryOb.url = resp.url;
-        updateItem(entryOb);
         workingError = "";
       }
     } catch (err) {
@@ -95,7 +94,6 @@
 
   const undoDelete = async () => {
     state = "Present";
-    addBack(entryOb);
 
     let url = import.meta.env.VITE_BACKEND_URL;
     try {
@@ -119,7 +117,6 @@
 
   const toRemoved = async () => {
     state = "Removed";
-    removeItem(entryOb);
 
     let url = import.meta.env.VITE_BACKEND_URL;
     try {

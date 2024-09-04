@@ -5,7 +5,8 @@
   import Entry from "./Entry.svelte";
   import Search from "./Search.svelte";
   import { getToken } from "$lib/stores/firebaseuser.js";
-    import { goto } from "$app/navigation";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
 
   let domain = "";
   let key = 0;
@@ -14,32 +15,82 @@
   let loading = true;
   let signedIn = false;
 
-  let searchArray = [];
   let entries = [];
-  let displayedEntries = [];
-  let currentIndex = 0;
-  const batchSize = 4;
 
-  function updateDisplayedEntries() {
-    const nextBatch = entries.slice(currentIndex, currentIndex + batchSize);
-    displayedEntries = [...displayedEntries, ...nextBatch];
-    currentIndex += batchSize;
+  let pageParam = 1;
+  let searchParam = "";
+  let sortParam = "dd";
+
+  let more = false;
+  let less = false;
+
+  function updateURL() {
+    const url = new URL(window.location);
+
+    url.searchParams.set("p", pageParam);
+    url.searchParams.set("q", searchParam);
+    url.searchParams.set("s", sortParam);
+
+    window.history.pushState({}, "", url);
   }
 
-  function resetDisplayedEntries() {
-    entries = [...searchArray];
-    displayedEntries = [];
-    currentIndex = 0;
-    updateDisplayedEntries();
+  function setVariables() {
+    const queryParams = $page.url.searchParams;
+
+    pageParam = parseInt(queryParams.get("p")) || 1;
+    searchParam = queryParams.get("q");
+    sortParam = queryParams.get("s");
+
+    if (searchParam.length > 128) {
+      searchParam = searchParam.slice(0, 128);
+    }
   }
 
-  $: searchArray, resetDisplayedEntries();
+  async function changePage(inc = true) {
+    if (inc) {
+      pageParam++;
+    } else {
+      pageParam--;
+    }
+    pageParam = Math.max(0, pageParam);
+    await fetchData();
+  }
+
+  async function changeSearch() {
+    if (searchParam.length > 128) {
+      searchParam = searchParam.slice(0, 128);
+    }
+    await fetchData();
+  }
+
+  async function changeSort(event) {
+    const newSort = event.target.value;
+    if (
+      (newSort === "dd" ||
+        newSort === "da" ||
+        newSort === "ad" ||
+        newSort === "aa") &&
+      newSort != sortParam
+    ) {
+      sortParam = newSort;
+      await fetchData();
+    }
+  }
 
   async function fetchData() {
+    loading = true;
+
     const url = import.meta.env.VITE_BACKEND_URL;
+
+    const queryParams = new URLSearchParams();
+
+    if (pageParam) queryParams.append("p", encodeURIComponent(pageParam));
+    if (searchParam) queryParams.append("q", encodeURIComponent(searchParam));
+    if (sortParam) queryParams.append("s", encodeURIComponent(sortParam));
+
     try {
       const token = await getToken();
-      const response = await fetch(`${url}/entries`, {
+      const response = await fetch(`${url}/search?${queryParams.toString()}`, {
         method: "GET",
         headers: {
           Authorization: token,
@@ -51,12 +102,19 @@
         throw new Error("Unable to reach Service");
       }
       const data = await response.json();
+
+      pageParam = data.page ? data.page : 1;
+      searchParam = data.search ? data.search : "";
+      sortParam = data.sort ? data.sort : "dd";
+      more = data.more ? data.more : false;
+      less = data.less ? data.less : false;
+
+      updateURL();
+
       if (data.entries.length === 0) {
         entries = [];
       } else {
         entries = data.entries;
-        setData(entries);
-        searchArray = [...entries];
       }
     } catch (err) {
       error = err.message;
@@ -71,6 +129,7 @@
         if (value && value.email && value.emailVerified) {
           signedIn = true;
         }
+        setVariables();
         await fetchData();
       }
     });
@@ -90,16 +149,29 @@
   {:else if error !== null}
     <div>Error fetching data</div>
   {:else}
-    <Search bind:entryArray={searchArray} />
+    <Search bind:searchParam submitFunc={changeSearch} />
+
+    <div>
+      <div>Sort By:</div>
+      <select on:change={changeSort}>
+        <option value="dd">Date Created (Descending)</option>
+        <option value="da">Date Created (Ascending)</option>
+        <option value="ad">Alphabetical (Descending)</option>
+        <option value="aa">Alphabetical (Ascending)</option>
+      </select>
+    </div>
+
     <ul>
-      {#each displayedEntries as entry (entry.param)}
+      {#each entries as entry (entry.param)}
         <Entry {domain} entryOb={entry} />
       {/each}
-
-      {#if currentIndex < entries.length}
-        <button on:click={updateDisplayedEntries}>More</button>
-      {/if}
     </ul>
+    {#if less}
+      <button>Previous</button>
+    {/if}
+    {#if more}
+      <button>Next</button>
+    {/if}
   {/if}
 </section>
 

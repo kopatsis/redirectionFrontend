@@ -1,40 +1,28 @@
 <script>
-    import { data } from "$lib/stores/linkstore.js";
-    export let entryArray;
+    export let searchParam = "";
+    export let submitFunc = null;
 
-    let searchval = "";
-    let timeout;
-
-    let filterEntries = (sv) => {
-        const search = String(sv).toLowerCase();
-        if (search !== "") {
-            entryArray = data.filter(
-                (entry) =>
-                    entry.param.toLowerCase().includes(search) ||
-                    entry.url.toLowerCase().includes(search),
-            );
-        } else {
-            entryArray = data;
+    function clear() {
+        searchParam = "";
+        if (submitFunc) {
+            submitFunc();
         }
-    };
-
-    $: {
-        if (timeout) {
-            clearTimeout(timeout);
-        }
-        timeout = setTimeout(() => {
-            filterEntries(searchval);
-        }, 500);
     }
 </script>
 
 <div class="searchinst">Filter by original URL or new URL names:</div>
-<div class="searchcontain">
-    <input type="text" placeholder="Search..." bind:value={searchval} />
-    <!-- {#if searchval !== ""} -->
-    <button on:click={() => (searchval = "")}>&times;</button>
-    <!-- {/if} -->
-</div>
+<form on:submit|preventDefault={submitFunc} class="searchcontain">
+    <input 
+        type="text" 
+        placeholder="Search..." 
+        bind:value={searchParam} 
+        maxlength="128"
+    />
+    {#if searchParam !== ""}
+        <button type="button" on:click={clear}>&times;</button>
+    {/if}
+    <button type="submit">Search</button>
+</form>
 
 <style>
     .searchinst {
