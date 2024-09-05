@@ -63,6 +63,7 @@
     if (searchParam.length > 128) {
       searchParam = searchParam.slice(0, 128);
     }
+    pageParam = 1;
     await fetchData();
   }
 
