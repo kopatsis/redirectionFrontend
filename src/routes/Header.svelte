@@ -86,7 +86,7 @@
     {#if user === undefined}
       <button>loading...</button>
     {:else if user === null}
-      <button>Log In</button>
+      <button on:click={() => goto('./login')}>Log In</button>
     {:else}
       <button
         >Account {#if dropdown}▲{:else}▼{/if}</button
