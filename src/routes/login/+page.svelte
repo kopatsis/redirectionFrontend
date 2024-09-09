@@ -137,10 +137,10 @@
   }
 
   async function fetchIdFromServer() {
-    const API_URL = import.meta.env.VITE_PAY_URL;
+    const API_URL = import.meta.env.VITE_BACKEND_URL;
 
     try {
-      const response = await fetch(`${API_URL}/administrative/emailexchange`, {
+      const response = await fetch(`${API_URL}/emailexchange`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
