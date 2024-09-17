@@ -4,8 +4,8 @@
   import { setData } from "$lib/stores/linkstore.js";
   import Entry from "./Entry.svelte";
   import Search from "./Search.svelte";
-  import { getToken } from "$lib/stores/firebaseuser.js";
-  import { goto } from "$app/navigation";
+  import { getToken, userStore } from "$lib/stores/firebaseuser.js";
+  import { goto, pushState, replaceState } from "$app/navigation";
   import { page } from "$app/stores";
   import { CheckPaymentStatus } from "$lib/shared/checkpaying.js";
 
@@ -34,15 +34,15 @@
     url.searchParams.set("q", searchParam);
     url.searchParams.set("s", sortParam);
 
-    window.history.pushState({}, "", url);
+    pushState(url.toString(), { replaceState: true });
   }
 
   function setVariables() {
     const queryParams = $page.url.searchParams;
 
     pageParam = parseInt(queryParams.get("p")) || 1;
-    searchParam = queryParams.get("q");
-    sortParam = queryParams.get("s");
+    searchParam = queryParams.get("q") || "";
+    sortParam = queryParams.get("s") || "dd";
 
     if (searchParam.length > 128) {
       searchParam = searchParam.slice(0, 128);
@@ -79,6 +79,7 @@
       newSort != sortParam
     ) {
       sortParam = newSort;
+      pageParam = 1;
       await fetchData();
     }
   }
@@ -109,6 +110,8 @@
       }
       const data = await response.json();
 
+      console.log(data);
+
       pageParam = data.page ? data.page : 1;
       searchParam = data.search ? data.search : "";
       sortParam = data.sort ? data.sort : "dd";
@@ -117,7 +120,7 @@
 
       updateURL();
 
-      if (data.entries.length === 0) {
+      if (!data.entries || !data.entries.length || data.entries.length === 0) {
         entries = [];
       } else {
         entries = data.entries;
@@ -129,8 +132,8 @@
   }
 
   async function fetchcsv() {
-    if (!paying){
-      return
+    if (!paying) {
+      return;
     }
     const url = import.meta.env.VITE_BACKEND_URL;
     loadingcsvs = true;
@@ -172,16 +175,23 @@
       if (value !== undefined) {
         setVariables();
         if (value && value.email && value.emailVerified) {
-          signedIn = true;
+          try {
+            signedIn = true;
 
-          const [firstResult, secondResult] = await Promise.all([
-            CheckPaymentStatus(value.uid)(),
-            fetchData(),
-          ]);
+            const [firstResult, secondResult] = await Promise.all([
+              CheckPaymentStatus(value.uid),
+              fetchData(),
+            ]);
 
-          const [ispaying, worked] = firstResult;
-          if (worked && ispaying) {
-            paying = true;
+            const [ispaying, worked] = firstResult;
+            if (worked && ispaying) {
+              paying = true;
+            }
+          } catch (err) {
+            console.error(err);
+            error = err.message;
+          } finally {
+            loading = false;
           }
         } else {
           await fetchData();
@@ -213,14 +223,17 @@
         </div>
       {/if}
       {#if csverror}
-        <div>Error fetching CSV, may be a server issue or lack of internet connection...</div>
+        <div>
+          Error fetching CSV, may be a server issue or lack of internet
+          connection...
+        </div>
       {/if}
     {/if}
     <Search bind:searchParam submitFunc={changeSearch} />
 
     <div>
       <div>Sort By:</div>
-      <select on:change={changeSort}>
+      <select on:change={changeSort} value={sortParam}>
         <option value="dd">Date Created (Descending)</option>
         <option value="da">Date Created (Ascending)</option>
         <option value="ad">Alphabetical (Descending)</option>
@@ -230,16 +243,20 @@
       </select>
     </div>
 
-    <ul>
-      {#each entries as entry (entry.param)}
-        <Entry {domain} entryOb={entry} />
-      {/each}
-    </ul>
-    {#if less}
-      <button>Previous</button>
-    {/if}
-    {#if more}
-      <button>Next</button>
+    {#if !entries || !entries.length || entries.length === 0}
+      <div>Nothing yet...</div>
+    {:else}
+      <ul>
+        {#each entries as entry (entry.param)}
+          <Entry {domain} entryOb={entry} />
+        {/each}
+      </ul>
+      {#if less}
+        <button>Previous</button>
+      {/if}
+      {#if more}
+        <button>Next</button>
+      {/if}
     {/if}
   {/if}
 </section>

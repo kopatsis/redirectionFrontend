@@ -28,9 +28,9 @@
   }
 
   $: if (isogURL === true) {
-    await setQR(OGUrl);
+    setQR(OGUrl);
   } else {
-    await setQR(QRText);
+    setQR(QRText);
   }
 
   onMount(async () => {

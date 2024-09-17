@@ -17,9 +17,6 @@ export async function CheckPaymentStatus(userId) {
         });
 
         if (!response.ok) {
-            if (response.status === 400 || response.status === 500) {
-                return [false, false];
-            }
             return [false, false];
         }
 
