@@ -73,7 +73,9 @@
       (newSort === "dd" ||
         newSort === "da" ||
         newSort === "ad" ||
-        newSort === "aa") &&
+        newSort === "aa" ||
+        newSort === "cd" ||
+        newSort === "ca") &&
       newSort != sortParam
     ) {
       sortParam = newSort;
@@ -223,6 +225,8 @@
         <option value="da">Date Created (Ascending)</option>
         <option value="ad">Alphabetical (Descending)</option>
         <option value="aa">Alphabetical (Ascending)</option>
+        <option value="cd">Click Count (Descending)</option>
+        <option value="ca">Click Count (Ascending)</option>
       </select>
     </div>
 

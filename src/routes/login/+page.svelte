@@ -381,7 +381,7 @@
     </div>
   {/if}
   <div>--or--</div>
-  <button on:click={() => goto("./teststrict")}>Use without an account</button>
+  <a href="./teststrict">Use without an account</a>
 {/if}
 
 <style>

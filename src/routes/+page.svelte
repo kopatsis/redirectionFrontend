@@ -59,7 +59,13 @@
 						"Unable to reach our server :/ Check your internet but it might be us";
 				}
 			} else {
-				goto("/past");
+				const data = await response.json();
+				if (data.parameter) {
+					goto(`/past/${data.parameter}`);
+				} else {
+					workingError =
+						"Unable to reach our server :/ Check your internet but it might be us";
+				}
 			}
 		} catch (error) {
 			workingError =
@@ -93,18 +99,10 @@
 	</form>
 	{#if workingError}{workingError}{/if}
 	<br />
-	<div class="centeroverf">
-		New Feature! Generate and download QR Code: &nbsp; <button
-			on:click={() => (qrinst = !qrinst)}
-			>{#if qrinst}▲{:else}▼{/if}See More</button
-		>
+	<div>
+		<button>Past Shortened URLs</button><button>Paid Member</button>
 	</div>
-	{#if qrinst}
-		<QrMessage />
-	{/if}
-	<h2>Instructions:</h2>
-	<Instructions {size} />
-	<button on:click={toggleText}>{btext}</button>
+	
 </section>
 
 <style>
@@ -155,8 +153,5 @@
 
 	h1 {
 		width: 100%;
-	}
-	h2 {
-		font-size: 1.5em;
 	}
 </style>
