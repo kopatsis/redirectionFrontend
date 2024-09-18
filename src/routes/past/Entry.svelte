@@ -5,8 +5,10 @@
   import del from "$lib/images/delete.png";
   import QrCode from "./QRCode.svelte";
   import { getToken } from "$lib/stores/firebaseuser";
+
   export let domain;
   export let entryOb;
+  export let paying = false;
 
   let url = domain + "/" + entryOb.param;
   let date = new Date(entryOb.date);
@@ -19,6 +21,20 @@
   let workingURL = "";
   let workingError = "";
 
+  let customEditing = false;
+  let customHandle = "";
+  let customError = "";
+  let customAvail = null;
+  let customValidLoading = false;
+
+  $: customHandle, (customAvail = null);
+  $: customValid = isValid(customHandle);
+
+  function isValid(handle) {
+    const regex = /^[a-zA-Z0-9_-]*$/;
+    return handle.length >= 6 && handle.length <= 128 && regex.test(handle);
+  }
+
   let expanded = false;
 
   function toggleEditing() {
@@ -27,9 +43,27 @@
       workingError = "";
       editing = false;
     } else {
+      customHandle = "";
+      customError = "";
+      customEditing = false;
       workingURL = entryOb.url;
       workingError = "";
       editing = true;
+    }
+  }
+
+  function toggleCustomEditing() {
+    if (customEditing === true) {
+      customHandle = "";
+      customError = "";
+      customEditing = false;
+    } else {
+      workingURL = "";
+      workingError = "";
+      editing = false;
+      customHandle = entryOb.custom;
+      customError = "";
+      customEditing = true;
     }
   }
 
@@ -55,7 +89,7 @@
           workingError =
             "Error: The URL you provided is not formatted correctly and would not work. Please try again.";
         } else {
-          error =
+          workingError =
             "Unable to reach our server :/ Check your internet but it might be us";
         }
       } else {
@@ -64,7 +98,119 @@
         workingError = "";
       }
     } catch (err) {
-      error = err;
+      workingError = err;
+    }
+  };
+
+  const checkCustomAvailability = async () => {
+    if (!customValid) {
+      customAvail = false;
+      return;
+    }
+    customValidLoading = true;
+    const url = import.meta.env.VITE_BACKEND_URL;
+    const passcode = import.meta.env.VITE_CHECK_PASSCODE;
+    try {
+      const token = await getToken();
+      const response = await fetch(`${url}/customcheck/${customHandle}`, {
+        method: "GET",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+          "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
+          "X-Passcode-ID": passcode,
+        },
+        credentials: "include",
+      });
+      if (!response.ok) {
+        customError =
+          "Unable to reach our server :/ Check your internet but it might be us";
+      } else {
+        const resp = await response.json();
+        customAvail = resp.available ? resp.available === true : false;
+      }
+    } catch (err) {
+      customError =
+        "Unable to reach our server :/ Check your internet but it might be us";
+    } finally {
+      customValidLoading = false;
+    }
+  };
+
+  const submitCustomURL = async () => {
+    if (!customValid || !customAvail) {
+      customAvail = false;
+      return;
+    } 
+    customValidLoading = true;
+    const url = import.meta.env.VITE_BACKEND_URL;
+    const passcode = import.meta.env.VITE_CHECK_PASSCODE;
+    try {
+      const token = await getToken();
+      const response = await fetch(`${url}/entry/${entryOb.param}/addcustom`, {
+        method: "PATCH",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+          "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          handle: customHandle,
+        }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData["Error Type"].includes("handle already exists")) {
+          customError =
+            "Looks like that one is no longer available, please try again";
+        } else {
+          customError =
+            "Unable to reach our server :/ Check your internet but it might be us";
+        }
+      } else {
+        const resp = await response.json();
+        entryOb.custom = resp.custom;
+        customError = "";
+      }
+    } catch (err) {
+      customError =
+        "Unable to reach our server :/ Check your internet but it might be us";
+    } finally {
+      customValidLoading = false;
+    }
+  };
+
+  const deleteCustomURL = async () => {
+    customValidLoading = true;
+    const url = import.meta.env.VITE_BACKEND_URL;
+    const passcode = import.meta.env.VITE_CHECK_PASSCODE;
+    try {
+      const token = await getToken();
+      const response = await fetch(
+        `${url}/entry/${entryOb.param}/deletecustom`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+            "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
+          },
+          credentials: "include",
+        },
+      );
+      if (!response.ok) {
+        customError =
+          "Unable to reach our server :/ Check your internet but it might be us";
+      } else {
+        entryOb.custom = "";
+        customError = "";
+      }
+    } catch (err) {
+      customError =
+        "Unable to reach our server :/ Check your internet but it might be us";
+    } finally {
+      customValidLoading = false;
     }
   };
 
@@ -102,7 +248,7 @@
         method: "PATCH",
         headers: {
           Authorization: token,
-          "X-User-ID": localStorage.getItem('ST_USER_KEY') || '',
+          "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
         },
         credentials: "include",
       });
@@ -125,7 +271,7 @@
         method: "PATCH",
         headers: {
           Authorization: token,
-          "X-User-ID": localStorage.getItem('ST_USER_KEY') || '',
+          "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
         },
         credentials: "include",
       });
@@ -190,6 +336,9 @@
                   >Submit Change</button
                 >{/if}
             </div>
+            {#if workingError}
+              <div>{workingError}</div>
+            {/if}
           {:else}
             <div class="ogurl">
               Original URL:
@@ -208,6 +357,54 @@
             <button on:click={toggleEditing}>Edit</button>
           {/if}
         </div>
+        {#if paying}
+          {#if customEditing}
+            <div>
+              Custom Shortened URL: {domain + "/"}<input
+                type="text"
+                bind:value={customHandle}
+                maxlength="128"
+                placeholder="Enter custom handle"
+              />
+            </div>
+            <div>
+              <button on:click={toggleCustomEditing}>Cancel</button>
+              {#if customHandle !== entryOb.custom && customValid}
+                {#if customAvail === true}
+                  <button on:click={submitCustomURL}>Submit Change</button>
+                {:else if customAvail === false}
+                  <div>Not available</div>
+                {:else if customValidLoading}
+                  <button>loading...</button>
+                {:else}
+                  <button on:click={checkCustomAvailability}
+                    >Check Availability</button
+                  >
+                {/if}
+              {/if}
+            </div>
+            <div>
+              Must be between 6 and 128 characters, only lowercase letters,
+              uppercase letters, numbers, _, and -.
+            </div>
+            {#if customError}
+              <div>{customError}</div>
+            {/if}
+          {:else if !entryOb.custom}
+            <div>No custom shortened URL handle yet</div>
+            <button on:click={toggleCustomEditing}>Add One</button>
+          {:else}
+            <div class="ogurl">
+              Custom Shortened URL: {domain + "/" + entryOb.custom}
+            </div>
+            {#if customValidLoading}
+              <button>loading...</button>
+            {:else}
+              <button on:click={toggleCustomEditing}>Edit</button>
+              <button on:click={deleteCustomURL}>Remove</button>
+            {/if}
+          {/if}
+        {/if}
         {#if isSameCalendarDay(date, new Date())}
           <div>Created: {date.toLocaleTimeString()}</div>
         {:else}
@@ -227,7 +424,11 @@
     <Chart param={entryOb.param} bind:chartOrQR />
   {/if}
   {#if chartOrQR === "qr"}
-    <QrCode QRText={"https://" + url + "?q=t"} OGUrl={entryOb.url} bind:chartOrQR />
+    <QrCode
+      QRText={"https://" + url + "?q=t"}
+      OGUrl={entryOb.url}
+      bind:chartOrQR
+    />
   {/if}
 {:else if state == "Message"}
   <div>URL: <a href={url}>{url}</a></div>

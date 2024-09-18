@@ -28,7 +28,7 @@
   let less = false;
 
   function updateURL() {
-    const url = new URL(window.location);
+    const url = new URL(`${window.location.origin}${window.location.pathname}`);
 
     url.searchParams.set("p", pageParam);
     url.searchParams.set("q", searchParam);
@@ -108,9 +108,8 @@
       if (!response.ok) {
         throw new Error("Unable to reach Service");
       }
-      const data = await response.json();
-
-      console.log(data);
+      const resp = await response.json();
+      const data = resp.response ? resp.response : {};
 
       pageParam = data.page ? data.page : 1;
       searchParam = data.search ? data.search : "";
