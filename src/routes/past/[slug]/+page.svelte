@@ -8,6 +8,7 @@
     import { goto, pushState, replaceState } from "$app/navigation";
     import { page } from "$app/stores";
     import { CheckPaymentStatus } from "$lib/shared/checkpaying.js";
+    import SmallEntry from "../SmallEntry.svelte";
 
     let domain = "";
     let paying = false;
@@ -254,7 +255,7 @@
         {:else if singleError || singleEntry === null}
             <div>Error fetching that specific shortned URL.</div>
         {:else}
-            <div>Here is where BIG entry will go</div>
+            <Entry {domain} entryOb={singleEntry} />
         {/if}
 
         <Search bind:searchParam submitFunc={changeSearch} />
@@ -276,7 +277,7 @@
         {:else}
             <ul>
                 {#each entries as entry (entry.param)}
-                    <Entry {domain} entryOb={entry} />
+                    <SmallEntry {domain} entryOb={entry} />
                 {/each}
             </ul>
             {#if less}

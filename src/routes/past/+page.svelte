@@ -8,6 +8,7 @@
   import { goto, pushState, replaceState } from "$app/navigation";
   import { page } from "$app/stores";
   import { CheckPaymentStatus } from "$lib/shared/checkpaying.js";
+    import SmallEntry from "./SmallEntry.svelte";
 
   let domain = "";
   let paying = false;
@@ -247,7 +248,7 @@
     {:else}
       <ul>
         {#each entries as entry (entry.param)}
-          <Entry {domain} entryOb={entry} />
+          <SmallEntry {domain} entryOb={entry} />
         {/each}
       </ul>
       {#if less}

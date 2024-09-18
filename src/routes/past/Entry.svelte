@@ -410,6 +410,7 @@
         {:else}
           <div>Created: {date.toLocaleDateString()}</div>
         {/if}
+        <div>Last Click Count: {entryOb.count}</div>
       </div>
     </div>
     <div class="buttonhold">
