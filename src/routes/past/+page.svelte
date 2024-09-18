@@ -9,9 +9,9 @@
   import { page } from "$app/stores";
   import { CheckPaymentStatus } from "$lib/shared/checkpaying.js";
     import SmallEntry from "./SmallEntry.svelte";
+  import { CheckPay, paidStore } from "$lib/stores/paidStore.js";
 
   let domain = "";
-  let paying = false;
   let loadingcsvs = false;
   let csverror = false;
 
@@ -27,6 +27,11 @@
 
   let more = false;
   let less = false;
+
+  let paying = null;
+  paidStore.subscribe((value) => {
+    paying = value;
+  });
 
   function updateURL() {
     const url = new URL(`${window.location.origin}${window.location.pathname}`);
@@ -173,6 +178,7 @@
     domain = import.meta.env.VITE_SHORT_DOMAIN;
     const unsubFirebase = userStore.subscribe(async (value) => {
       if (value !== undefined) {
+        CheckPay();
         setVariables();
         if (value && value.email && value.emailVerified) {
           try {
@@ -248,7 +254,7 @@
     {:else}
       <ul>
         {#each entries as entry (entry.param)}
-          <SmallEntry {domain} entryOb={entry} />
+          <SmallEntry {domain} entryOb={entry} {paying}/>
         {/each}
       </ul>
       {#if less}

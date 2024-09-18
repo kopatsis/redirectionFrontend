@@ -4,39 +4,20 @@
 	import "./styles.css";
 	import { userStore } from "$lib/stores/firebaseuser";
 	import { CheckPaymentStatus } from "$lib/shared/checkpaying";
+  import { paidStore } from "$lib/stores/paidStore";
 
-	let loading = true;
-	let paying = false;
+	let paying = null;
 
-	onMount(() => {
-		const unsubFirebase = userStore.subscribe(async (value) => {
-			if (value === undefined) {
-				return;
-			} else if (
-				value &&
-				value.email &&
-				value.emailVerified &&
-				value.uid
-			) {
-				let ispaying,
-					worked = await CheckPaymentStatus(value.uid);
-				if (worked && ispaying) {
-					paying = true;
-				}
-			} else {
-				paying = false;
-			}
-			loading = false;
-		});
+	paidStore.subscribe((value) => {
+		paying = value;
+	})
 
-		return unsubFirebase;
-	});
 </script>
 
 <div class="app">
 	<Header />
 
-	{#if loading}
+	{#if paying === null}
 		<div>loading...</div>
 	{:else if paying}
 		<div>[]</div>

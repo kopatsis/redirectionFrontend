@@ -1,7 +1,7 @@
 import { get, writable } from "svelte/store";
 import { userStore } from "./firebaseuser";
 
-const paid = writable(false);
+export const paidStore = writable(null);
 
 export async function CheckPay() {
     let user = get(userStore);
@@ -10,7 +10,7 @@ export async function CheckPay() {
     while (user === undefined) {
         tr++
         if (tr > 10) {
-            paid.set(false)
+            paidStore.set(false)
             return
         }
         await sleep();
@@ -18,7 +18,7 @@ export async function CheckPay() {
     }
 
     if (user === null || !user || !user.email || !user.emailVerified || !user.uid) {
-        paid.set(false)
+        paidStore.set(false)
         return
     }
 
@@ -26,7 +26,7 @@ export async function CheckPay() {
     const passcode = import.meta.env.VITE_CHECK_PASSCODE;
 
     if (!passcode) {
-        paid.set(false)
+        paidStore.set(false)
         return
     }
 
@@ -41,18 +41,18 @@ export async function CheckPay() {
         });
 
         if (!response.ok) {
-            paid.set(false)
+            paidStore.set(false)
             return
         }
 
         const result = await response.json();
-        paid.set(result.paying === true);
+        paidStore.set(result.paying === true);
 
     } catch {
-        paid.set(false)
+        paidStore.set(false)
     }
 }
 
 function sleep() {
-    return new Promise(resolve => setTimeout(resolve, 250));
+    return new Promise(resolve => setTimeout(resolve, 333));
   }
