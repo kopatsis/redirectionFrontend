@@ -13,7 +13,7 @@
 
   let key = 0;
 
-  let url = "";
+  let actual_url = "";
 
   let qrinst = false;
 
@@ -29,16 +29,6 @@
   const queryParams = $page.url.searchParams;
   referred = queryParams.has("dne");
 
-  let toggleText = () => {
-    if (size === "Partial") {
-      size = "Full";
-      btext = "Less..";
-    } else {
-      size = "Partial";
-      btext = "More...";
-    }
-  };
-
   async function handleSubmit() {
     const url = import.meta.env.VITE_BACKEND_URL;
     try {
@@ -48,8 +38,10 @@
         headers: {
           Authorization: token,
           "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
+          "Content-Type": "application/json",
         },
         credentials: "include",
+        body: JSON.stringify({ url: actual_url }),
       });
 
       if (!response.ok) {
@@ -104,7 +96,7 @@
       required
       type="text"
       placeholder="Enter URL here"
-      bind:value={url}
+      bind:value={actual_url}
       style="color: dark-gray;"
     />
     <button type="submit">Create!</button>

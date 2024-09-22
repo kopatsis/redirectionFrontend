@@ -4,7 +4,7 @@
     export let paying = false;
 
     let date = new Date(entryOb.date);
-    let firstHund = firstHundredChar(entryOb.url);
+    
     let page = "/past/" + entryOb.param
 
     let firstHundredChar = (word) => {
@@ -22,6 +22,8 @@
             date1.getDate() === date2.getDate()
         );
     }
+
+    let firstHund = firstHundredChar(entryOb.url);
 </script>
 
 <div>

@@ -426,7 +426,7 @@
   {/if}
   {#if chartOrQR === "qr"}
     <QrCode
-      QRText={"https://" + url + "?q=t"}
+      QRText={ url + "?q=t"}
       OGUrl={entryOb.url}
       bind:chartOrQR
     />

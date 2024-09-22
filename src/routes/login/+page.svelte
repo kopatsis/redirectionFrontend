@@ -38,7 +38,7 @@
   let passwordActive = false;
 
   let onDifferentDevice = false;
-  
+
   $: emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   $: hasMinimumLength = password.length >= 10;
@@ -111,7 +111,7 @@
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password,
+        password
       );
       const user = userCredential.user;
 
@@ -146,6 +146,9 @@
           "Content-Type": "application/json",
           "X-Passcode-ID": import.meta.env.VITE_CHECK_PASSCODE,
         },
+        body: JSON.stringify({
+          email: email,
+        }),
       });
 
       if (response.ok) {
@@ -186,7 +189,7 @@
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           email,
-          password,
+          password
         );
         const user = userCredential.user;
 

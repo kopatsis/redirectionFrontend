@@ -7,7 +7,8 @@
   import { sendPostRequest } from "$lib/shared/postpaying";
   import Modal from "./login/Modal.svelte";
   import Contact from "./Contact.svelte";
-    import PasswordPopup from "./PasswordPopup.svelte";
+  import PasswordPopup from "./PasswordPopup.svelte";
+  import { auth } from "../auth/firebase";
 
   let user = undefined;
   let dropdown = false;
@@ -18,6 +19,11 @@
 
   let needsPass = false;
   let passPop = false;
+
+  async function logout() {
+    await auth.signOut();
+    dropdown = false;
+  }
 
   function popupPassword() {
     if (needsPass) {
@@ -86,20 +92,27 @@
     {#if user === undefined}
       <button>loading...</button>
     {:else if user === null}
-      <button on:click={() => goto('./login')}>Log In</button>
+      <button on:click={() => goto("/login")}>Log In</button>
     {:else}
-      <button
+      <button on:click={() => dropdown = !dropdown}
         >Account {#if dropdown}▲{:else}▼{/if}</button
       >
       {#if needsPass}
-        <button on:click={popupPassword}>!</button>
+        <button on:click={popupPassword}>!!!</button>
       {/if}
     {/if}
   </div>
+</header>
 
-  {#if dropdown}
+{#if dropdown}
+  <Modal bind:open={dropdown}>
+    <div class="closeline">
+      <button class="link-button" on:click={() => (dropdown = false)}
+        >&times;</button
+      >
+    </div>
     <div>
-      {#if user.email}<div>Email: {user.email}</div>{/if}
+      {#if user && user.email}<div>Email: {user && user.email ? user.email : ""}</div>{/if}
       <button on:click={clickManage}>Manage Membership</button>
       {#if errorMess}
         <div>
@@ -107,19 +120,28 @@
           issue persists, contact us please :)
         </div>
       {/if}
-      <div>Contact Us</div>
-      <div>Log Out</div>
+      <div>
+        <button on:click={() => contactModal = true}>Contact Us</button>
+      </div>
+      <div>
+        <button on:click={logout}>Sign Out</button>
+      </div>
+      
     </div>
-  {/if}
-</header>
+  </Modal>
+{/if}
 
 {#if contactModal}
-  <Contact bind:open={contactModal} email={user ? (user.Email ? user.Email : "") : ""} />
+  <Contact
+    bind:open={contactModal}
+    email={user ? (user.Email ? user.Email : "") : ""}
+  />
 {/if}
 
 {#if passPop}
   <PasswordPopup bind:open={passPop} />
 {/if}
+
 <style>
   header {
     display: flex;

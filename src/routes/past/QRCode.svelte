@@ -19,6 +19,7 @@
 
   async function setQR(string) {
     try {
+      console.log(string, QRText, OGUrl)
       qrImageURL = await QRCode.toDataURL(string, {
         width: 750,
       });

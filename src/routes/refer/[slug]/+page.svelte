@@ -35,18 +35,29 @@
         const slug = $page.params.slug;
         let email;
         if (slug && slug !== "circleredir") {
-            let email = await fetchEmailById(slug);
+            email = await fetchEmailById(slug);
+
             if (!email) {
+                console.log("UGHHHHHHHHH")
                 email = localStorage.getItem("CBEmailForSignIn");
+            } else {
+                localStorage.setItem("CBEmailForSignIn", email)
             }
         } else {
             email = localStorage.getItem("CBEmailForSignIn");
         }
 
+        console.log(slug)
+        console.log(isSignInWithEmailLink(auth, window.location.href))
+        console.log(email)
+
         if (email && isSignInWithEmailLink(auth, window.location.href)) {
+            console.log("here?")
             try {
                 await signInWithEmailLink(auth, email, window.location.href);
                 localStorage.removeItem("CBEmailForSignIn");
+
+                console.log("here??")
 
                 if (slug === "circleredir") {
                     await sendPostRequest();
