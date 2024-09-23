@@ -1,5 +1,5 @@
 <script>
-    import { addPassword } from "$lib/stores/firebaseuser";
+    import { addHasPassword } from "$lib/stores/firebaseuser";
     import Modal from "./login/Modal.svelte";
 
     export let open = true;
@@ -20,7 +20,7 @@
     $: isValidPassword = hasMinimumLength && containsLetter && containsNumber;
 
     async function submitPassword() {
-        const result = await addPassword(password);
+        const result = await addHasPassword(password);
         if (result === "Password added successfully!")   {
             success = true;
         } else {

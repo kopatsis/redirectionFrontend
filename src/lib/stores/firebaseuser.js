@@ -82,7 +82,6 @@ export const hasPassword = async () => {
 };
 
 export const addHasPassword = async () => {
-  localStorage.setItem("HASPASS", "T");
   const user = get(userStore);
   if (user && user.email) {
     const backend =

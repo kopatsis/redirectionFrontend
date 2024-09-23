@@ -143,10 +143,13 @@
       <div>
         <button on:click={logout}>Sign Out</button>
       </div>
-      {#if user && user.Email}
+      {#if user && user.email}
         <div>
           {#if !sentReset}
-            <button on:click={() => sendPasswordResetEmail(auth, user.Email)}>
+            <button on:click={async () => {
+              await sendPasswordResetEmail(auth, user.email);
+              sentReset = true;
+              }}>
               {#if needsPass}
                 !!! Add a Password to Account
               {:else}
@@ -167,7 +170,7 @@
 {#if contactModal}
   <Contact
     bind:open={contactModal}
-    email={user ? (user.Email ? user.Email : "") : ""}
+    email={user ? (user.email ? user.email : "") : ""}
   />
 {/if}
 
