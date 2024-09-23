@@ -12,6 +12,7 @@
       try {
         await signInWithEmailLink(auth, email, window.location.href);
         localStorage.removeItem("CBEmailForSignIn");
+        localStorage.removeItem("HASPASS");
         goto("./teststrict");
       } catch (err) {
         error = "Error, could not sign in: " + err;

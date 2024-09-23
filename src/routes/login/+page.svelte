@@ -14,7 +14,7 @@
   import ForgotPass from "./ForgotPass.svelte";
   import { FirebaseError } from "firebase/app";
   import { get } from "svelte/store";
-  import { refreshUserData, userStore } from "$lib/stores/firebaseuser";
+  import { addHasPassword, refreshUserData, userStore } from "$lib/stores/firebaseuser";
   import { page } from "$app/stores";
   import { sendPostRequest } from "$lib/shared/postpaying";
 
@@ -115,6 +115,8 @@
       );
       const user = userCredential.user;
 
+      await addHasPassword();
+
       if (!user.emailVerified) {
         await sendVerificationEmail(user);
         exUser = user.email;
@@ -164,7 +166,7 @@
 
   async function sendLink() {
     const actionCodeSettings = {
-      url: "http://localhost:5173/refer",
+      url: `${window.location.protocol}//${window.location.host}/refer`,
       handleCodeInApp: true,
     };
 
@@ -192,6 +194,7 @@
           password
         );
         const user = userCredential.user;
+        await addHasPassword();
 
         if (!user.emailVerified) {
           await sendVerificationEmail(user);

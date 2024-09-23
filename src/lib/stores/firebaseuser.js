@@ -1,6 +1,10 @@
 import { get, writable } from "svelte/store";
 import { auth } from "../../auth/firebase";
-import { EmailAuthProvider, linkWithCredential, onAuthStateChanged } from "firebase/auth";
+import {
+  EmailAuthProvider,
+  linkWithCredential,
+  onAuthStateChanged,
+} from "firebase/auth";
 import { getKey } from "../../routes/getKey";
 
 export const userStore = writable(undefined);
@@ -77,20 +81,35 @@ export const hasPassword = async () => {
   return false;
 };
 
+export const addHasPassword = async () => {
+  localStorage.setItem("HASPASS", "T");
+  const user = get(userStore);
+  if (user && user.email) {
+    const backend =
+      import.meta.env.VITE_BACKEND_URL || "https://api.shortentrack.com";
+    const url = `${backend}/haspassword`;
 
-export async function addPassword(newPassword) {
-  try {
-    const user = get(userStore)
-    if (user && user.email && user.emailVerified) {
-      const credential = EmailAuthProvider.credential(user.email, newPassword);
+    try {
+      const token = await getRealToken();
 
-      const uh = await linkWithCredential(user, credential)
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      return 'Password added successfully!';
-    } else {
-      return 'No User';
+      if (!response.ok) {
+        console.error("!?!?!");
+        localStorage.setItem("HASPASS", "T");
+        return;
+      }
+    } catch (err) {
+      console.error(err);
+      localStorage.setItem("HASPASS", "T");
+      return;
     }
-  } catch (error) {
-    return 'Error adding password: ' + error;
   }
-}
+  return false;
+};

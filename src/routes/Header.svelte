@@ -9,6 +9,7 @@
   import Contact from "./Contact.svelte";
   import PasswordPopup from "./PasswordPopup.svelte";
   import { auth } from "../auth/firebase";
+  import { sendPasswordResetEmail } from "firebase/auth";
 
   let user = undefined;
   let dropdown = false;
@@ -18,18 +19,23 @@
   let contactModal = false;
 
   let needsPass = false;
-  let passPop = false;
+  let sentReset = false;
 
   async function logout() {
     await auth.signOut();
     dropdown = false;
   }
 
-  function popupPassword() {
-    if (needsPass) {
-      passPop = true;
-    }
+  function swapDrop() {
+    dropdown = !dropdown;
+    sentReset = false;
   }
+
+  // function popupPassword() {
+  //   if (needsPass) {
+  //     passPop = true;
+  //   }
+  // }
 
   async function clickManage() {
     errorMess = false;
@@ -46,7 +52,16 @@
       } else if (value && value.email && value.emailVerified) {
         user = value;
         const hasPass = await hasPassword();
-        needsPass = !hasPass;
+        if (!hasPass) {
+          const hasLS = localStorage.getItem("HASPASS");
+          if (!(hasLS && hasLS === "T")) {
+            needsPass = true;
+          } else {
+            needsPass = false;
+          }
+        } else {
+          needsPass = false;
+        }
       } else {
         user = null;
       }
@@ -94,12 +109,12 @@
     {:else if user === null}
       <button on:click={() => goto("/login")}>Log In</button>
     {:else}
-      <button on:click={() => dropdown = !dropdown}
-        >Account {#if dropdown}▲{:else}▼{/if}</button
+      <button on:click={swapDrop}
+        >Account {#if dropdown}▲{:else}▼{/if}
+        {#if needsPass}
+          !!!
+        {/if}</button
       >
-      {#if needsPass}
-        <button on:click={popupPassword}>!!!</button>
-      {/if}
     {/if}
   </div>
 </header>
@@ -112,7 +127,9 @@
       >
     </div>
     <div>
-      {#if user && user.email}<div>Email: {user && user.email ? user.email : ""}</div>{/if}
+      {#if user && user.email}<div>
+          Email: {user && user.email ? user.email : ""}
+        </div>{/if}
       <button on:click={clickManage}>Manage Membership</button>
       {#if errorMess}
         <div>
@@ -121,12 +138,28 @@
         </div>
       {/if}
       <div>
-        <button on:click={() => contactModal = true}>Contact Us</button>
+        <button on:click={() => (contactModal = true)}>Contact Us</button>
       </div>
       <div>
         <button on:click={logout}>Sign Out</button>
       </div>
-      
+      {#if user && user.Email}
+        <div>
+          {#if !sentReset}
+            <button on:click={() => sendPasswordResetEmail(auth, user.Email)}>
+              {#if needsPass}
+                !!! Add a Password to Account
+              {:else}
+                Reset Password
+              {/if}
+            </button>
+          {:else if needsPass}
+            Check your email and click Reset Password to add a new password
+          {:else}
+            Check your email and click Reset Password
+          {/if}
+        </div>
+      {/if}
     </div>
   </Modal>
 {/if}
@@ -138,9 +171,9 @@
   />
 {/if}
 
-{#if passPop}
+<!-- {#if passPop}
   <PasswordPopup bind:open={passPop} />
-{/if}
+{/if} -->
 
 <style>
   header {

@@ -58,6 +58,7 @@
                 localStorage.removeItem("CBEmailForSignIn");
 
                 console.log("here??")
+                localStorage.removeItem("HASPASS");
 
                 if (slug === "circleredir") {
                     await sendPostRequest();
