@@ -2,8 +2,9 @@
     import { goto } from "$app/navigation";
     import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
     import { onMount } from "svelte";
-    import { auth } from "../../../auth/firebase";
+    import { auth } from "../../../../auth/firebase";
     import { page } from "$app/stores";
+    import { sendPostRequest } from "$lib/shared/postpaying";
 
     let error = "";
 
@@ -49,7 +50,13 @@
                 await signInWithEmailLink(auth, email, window.location.href);
                 localStorage.removeItem("CBEmailForSignIn");
                 localStorage.removeItem("HASPASS");
-                goto("/teststrict");
+
+                const worked = await sendPostRequest(false);
+                if (!worked) {
+                    error = "Unable to redirect to original login page";
+                } else {
+                    goto("/teststrict");
+                }
             } catch (err) {
                 error = "Error, could not sign in: " + err
             }

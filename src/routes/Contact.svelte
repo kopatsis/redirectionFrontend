@@ -16,11 +16,6 @@
       event.preventDefault();
 
       const formData = new FormData(event.target);
-      const jsonObject = {};
-    //   formData.forEach((value, key) => {
-    //     jsonObject[key] = value;
-    //   });
-
       const token = await getRealToken();
 
       const response = await fetch(`${url}/administrative/helpemail`, {

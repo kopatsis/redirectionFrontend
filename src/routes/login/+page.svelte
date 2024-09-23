@@ -14,9 +14,14 @@
   import ForgotPass from "./ForgotPass.svelte";
   import { FirebaseError } from "firebase/app";
   import { get } from "svelte/store";
-  import { addHasPassword, refreshUserData, userStore } from "$lib/stores/firebaseuser";
+  import {
+    addHasPassword,
+    refreshUserData,
+    userStore,
+  } from "$lib/stores/firebaseuser";
   import { page } from "$app/stores";
   import { sendPostRequest } from "$lib/shared/postpaying";
+  import { CheckTurnstile } from "$lib/shared/turnstile";
 
   let loading = true;
   let waitingOnVerif = false;
@@ -36,8 +41,6 @@
 
   let emailValid = false;
   let passwordActive = false;
-
-  let onDifferentDevice = false;
 
   $: emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -75,10 +78,26 @@
     const circleRedir = queryParams.get("circleRedir");
 
     if (circleRedir === "t") {
-      await sendPostRequest();
+      await sendPostRequest(false);
     }
 
     goto("./teststrict");
+  }
+
+  async function HandleTurnstile() {
+    const turnstileResponse = document.querySelector(
+      '[name="cf-turnstile-response"]',
+    ).value;
+    const valid = await CheckTurnstile(email, turnstileResponse);
+    if (valid === null) {
+      errorMessage = "Cannot connect to our server to verify your request";
+      return false;
+    } else if (valid === false) {
+      errorMessage =
+        "Turnstile verification failed. Please try again (if you are not a bot)";
+      return false;
+    }
+    return true;
   }
 
   function startEmailVerificationCheck() {
@@ -107,11 +126,17 @@
 
   async function signInFB() {
     loading = true;
+    const continueVerif = await HandleTurnstile();
+    if (!continueVerif) {
+      loading = false;
+      return
+    };
+
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
 
@@ -165,33 +190,46 @@
   }
 
   async function sendLink() {
+    loading = true;
+    const continueVerif = await HandleTurnstile();
+    if (!continueVerif) {
+      loading = false;
+      return
+    };
+
     const actionCodeSettings = {
       url: `${window.location.protocol}//${window.location.host}/refer`,
       handleCodeInApp: true,
     };
 
-    if (onDifferentDevice) {
+    if (isCircleRedirTrue()) {
+      actionCodeSettings.url += `/circleredir`;
+    } else {
       const id = await fetchIdFromServer();
       if (id !== "") {
         actionCodeSettings.url += `/${id}`;
       }
-    } else if (isCircleRedirTrue()) {
-      actionCodeSettings.url += `/circleredir`;
     }
 
     window.localStorage.setItem("CBEmailForSignIn", email);
     await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    loading = false;
     errorMessage = "Sent!";
   }
 
   async function signUpFB() {
     loading = true;
+    const continueVerif = await HandleTurnstile();
+    if (!continueVerif) {
+      loading = false;
+      return
+    };
     if (isValidPassword && emailValid) {
       try {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           email,
-          password
+          password,
         );
         const user = userCredential.user;
         await addHasPassword();
@@ -378,14 +416,6 @@
 
   <div>--or--</div>
   <button on:click={sendLink}>Authenticate with email link</button>
-  {#if !isCircleRedirTrue()}
-    <div>
-      <label>
-        <input type="checkbox" bind:checked={onDifferentDevice} />
-        For a different device
-      </label>
-    </div>
-  {/if}
   <div>--or--</div>
   <a href="./teststrict">Use without an account</a>
 {/if}

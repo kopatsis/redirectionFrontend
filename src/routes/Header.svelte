@@ -39,7 +39,7 @@
 
   async function clickManage() {
     errorMess = false;
-    const res = await sendPostRequest();
+    const res = await sendPostRequest(true);
     if (!res) {
       errorMess = true;
     }

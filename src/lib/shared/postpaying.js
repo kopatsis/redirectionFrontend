@@ -1,6 +1,6 @@
 import { getRealToken } from "$lib/stores/firebaseuser";
 
-export async function sendPostRequest() {
+export async function sendPostRequest(newtab = true) {
   try {
     const token = await getRealToken();
 
@@ -9,7 +9,10 @@ export async function sendPostRequest() {
     const form = document.createElement("form");
     form.method = "POST";
     form.action = url;
-    form.target = "_blank";
+    if (newtab) {
+      form.target = "_blank";
+    }
+
 
     const tokenInput = document.createElement("input");
     tokenInput.type = "hidden";
@@ -26,5 +29,5 @@ export async function sendPostRequest() {
   } catch (error) {
     console.error("Error during POST request:", error);
     return false;
-  } 
+  }
 }
