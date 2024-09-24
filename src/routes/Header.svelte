@@ -10,6 +10,7 @@
   import PasswordPopup from "./PasswordPopup.svelte";
   import { auth } from "../auth/firebase";
   import { sendPasswordResetEmail } from "firebase/auth";
+    import CookiePop from "./CookiePop.svelte";
 
   let user = undefined;
   let dropdown = false;
@@ -17,6 +18,7 @@
   let errorMess = false;
 
   let contactModal = false;
+  let cookieModal = false;
 
   let needsPass = false;
   let sentReset = false;
@@ -138,6 +140,9 @@
         </div>
       {/if}
       <div>
+        <button on:click={() => (cookieModal = true)}>Change Cookie Policy</button>
+      </div>
+      <div>
         <button on:click={() => (contactModal = true)}>Contact Us</button>
       </div>
       <div>
@@ -172,6 +177,10 @@
     bind:open={contactModal}
     email={user ? (user.email ? user.email : "") : ""}
   />
+{/if}
+
+{#if cookieModal}
+  <CookiePop bind:open={cookieModal} />
 {/if}
 
 <!-- {#if passPop}

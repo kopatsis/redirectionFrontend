@@ -5,6 +5,7 @@
   import { userStore } from "$lib/stores/firebaseuser";
   import { CheckPaymentStatus } from "$lib/shared/checkpaying";
   import { paidStore } from "$lib/stores/paidStore";
+    import CookieSmall from "./CookieSmall.svelte";
 
   let paying = null;
 
@@ -15,6 +16,8 @@
 
 <div class="app">
   <Header />
+
+  <CookieSmall />
 
   {#if paying === null}
     <div>loading...</div>
