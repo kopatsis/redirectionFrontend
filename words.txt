@@ -1,11 +1,11 @@
 Header: Shorten Track
-URL Shortener + more
+URL Shortener + QR Code Generator with Analytics Tracking
 
-4 features
-- Shortened URLs never expire
-- Proven fastest service to original URL
-- Can change what url it points to
-- History and analytics track with/without account
+Our shortened URLs
+- NEVER expire, unless you choose to delete
+- Go to your original URL faster any other service
+- Can change what URL is being shortened after
+- Track click analytics data and history 
 
 How does this service work?
 - Shorten Track's URL shortening process as as straightforward as we could possibly make it. Just enter any URL of any length in the bar above, then click "Shorten". A URL 
@@ -41,7 +41,75 @@ lengthy handles (like shk.fm/no-one-will-remember-this-super-long-url-handle-for
 
 What do you mean analytics? What can I see?
 - Every time someone clicks your shortened URL, we track and save all data that we are legally allowed to, such as the browser, city and country, and more. When you click Analytics, you can see 
-...
+this information presented with number metrics such as total click count, graphs of clicks over time, and pie charts of what browsers were used to access your shortened URL. Here's a comparison 
+of what analytics data you'll be able to see based on your membership.
+[
+FREE:
+- Total Click Counts
+- % of clicks from QR code
+- Weekly click count graph (over 6 weeks)
+- Browsers used Pie Chart
 
-You have QR Codes? Free?
-- Yes, for every shortened URL, you can generate a QR code, as well as download a high quality image of it. You can choose whether your QR code ...
+PAID:
+- Total Click Counts
+- Total Unique Visitor Counts
+- % of clicks from QR code
+- % of clicks from Bots
+- % of clicks from Mobile
+- Weekly click count graph (over 6 weeks)
+- Daily click count graph (over 1 week)
+- Browser shard Pie Chart
+- Operating Systems share Pie Chart
+- Country share Pie Chart
+- City share Pie Chart
+]
+
+You can create QR Codes? Free?
+- Yes, for every shortened URL, you can generate a QR code. You can download this as a JPG image to use if you need to efficiently share your shortened URL. You can also specify 
+whether the QR code goes to the shortened URL (or custom shortened URL if you have one) or the original URL you entered. Just bear in mind that if the QR code goes directly to 
+your original URL, you won't be able to track click analytics...
+Looking for JUST a QR code generator without any shortened URL nonsense? We have that here, where you can generate and download a QR code for any URL or other piece of text instantly. 
+
+Can access or export any of this data?
+- Yes, with a paid membership you can generate and download a CSV with detailed information of all shortened URLs on your account. You'll find the button to export it next to the search bar 
+on the Past Shortened URLs page (here). Additionally when looking at the analytics dashboard for a specific shortened URL, you can download all click analytics for that entry as a CSV. This button 
+is at the top of the window. Note that if you have a lot of data to export, it may take a second to generate and download in your browser. 
+
+Free Membership vs Paid Benefits
+BOTH 
+Unlimited Shortened URL generation
+No expiration
+QR Codes and analytics dashboard
+FREE -- PAID 
+Ad supported -- NO ads ever
+No custom shortened URL handles -- Unlimited custom shortened URL handles
+No CSVs to export -- Unlimited CSV exports of shortened URLs and click tracking analytics
+Basic entry-level analytics tracking -- Full-scale data-oriented analytics tracking
+[
+FREE:
+- Total Click Counts
+- % of clicks from QR code
+- Weekly click count graph (over 6 weeks)
+- Browsers used Pie Chart
+
+PAID:
+- Total Click Counts
+- Total Unique Visitor Counts
+- % of clicks from QR code
+- % of clicks from Bots
+- % of clicks from Mobile
+- Weekly click count graph (over 6 weeks)
+- Daily click count graph (over 1 week)
+- Browser shard Pie Chart
+- Operating Systems share Pie Chart
+- Country share Pie Chart
+- City share Pie Chart
+]
+
+$0 / month -- $4.99 / month
+
+Looking for corporate memberships? Contact Us here to let us know what you're looking for and how many are in your team, and we'll proceed from there :).
+
+
+Still have questions? Use this form to contact us with any queries, suggestions, or woes.
+
