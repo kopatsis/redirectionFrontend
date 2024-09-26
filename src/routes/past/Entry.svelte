@@ -428,6 +428,7 @@
     <QrCode
       QRText={ url + "?q=t"}
       OGUrl={entryOb.url}
+      custom={entryOb.custom ? domain + "/" + entryOb.custom + "?q=t" : ""}
       bind:chartOrQR
     />
   {/if}

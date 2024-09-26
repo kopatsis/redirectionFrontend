@@ -1,0 +1,47 @@
+Header: Shorten Track
+URL Shortener + more
+
+4 features
+- Shortened URLs never expire
+- Proven fastest service to original URL
+- Can change what url it points to
+- History and analytics track with/without account
+
+How does this service work?
+- Shorten Track's URL shortening process as as straightforward as we could possibly make it. Just enter any URL of any length in the bar above, then click "Shorten". A URL 
+like the one below will be generated for you. Our shortened URLs are MAXIMUM 12 characters total, in the format of "shk.fm/" + a randomly generated 2-5 digit string. You can use this 
+shortened URL on any device in place of your previous URL and it will take you to the same place every time. The shortened URL NEVER expires and will always work, unless you 
+choose to delete it. You can also edit what the original URL is while keeping the shortened one the same. We don't share your shortened URLs with anyone else (ex. if someone has 
+entered the same original URL as you, they'll still get a different shortened one).
+
+Do I have to make an account? 
+- No, but it's really easy if you want to. Without an account, you can use all of Shorten Track's free features and previous shortened URLs will be saved on your device. But if you 
+want to access all your shortned urls and/or use our high end paid features, you can create an account. You can either enter an email and password, verify your email, then bam, account created. 
+If that sounds like too much work (understandable), you can use the email link authentication, where you enter your email, click the link sent to that email address, and your account 
+has automatically been created and you're signed in. You can add a password to this account later if you want. 
+
+Can I see my previous shortened URLs?
+- Yes, with or without an account. After the shortened URL is generated, you will be taken to a page where you can copy, modify, or delete that shortened URL. This page is also where you 
+get the QR code, see analytics, or add a custom shortned URL handle (for paid members). Below, you'll find all of your other shortened URLs for account (or if you don't have one, your 
+current device). You can use the search bar and sorting to find any of your old ones if you have generated many of them in the past. And if you're a paid member and need a list of all 
+shortened URLs on your account, you can download a CSV with everything generated on your account. 
+
+How do shortened URLs work? Is it fast?
+- All services that offer shortened URLs use HTTP redirection to shorten URLs. This means when someone visits your shortened URL, our server searches finds your original URL, then tells 
+the browser to go there. Pretty simple. An issue many URL shortneing services run into is speed. If their server is sluggish or overused, it can take an embarassing amount of time to finally 
+get you to the original URL's page. Yikes. Not us though. Shorten Track leverages the power of Redis and Go to make sure there is no waiting for the shortened URL to work. The combination of these futuristic 
+technologies allows the redirection to the original URL to take place typically in less than 15 milliseconds or faster (1/10th of the time it takes to blink), whereas other services can take up to a second or more, making 
+users wonder what's going wrong. Our service is also set to autoscale, so it doesn't matter if everyone on earth tries to use your shortened URL at the same time, it'll still be fast. 
+
+Can I choose what my shortened URL says?
+- Yes, you can add a custom handle for shortened URLs. If you have a paid membership, you can add a custom handle (the portion after the shk.fm/) to your shortened URL. You can enter any letter, 
+number, or dashes/undercores and as long as no one else has that handle claimed, it'll work the same as your auto-generated shortened URL. Personalized, shortened URLs like this are
+excellent for SEO (search engine optimization), especially for small businesses. We recommend you try to keep the custom handle brief and memorable (like shk.fm/flowers-by-gustavo), compared to overly 
+lengthy handles (like shk.fm/no-one-will-remember-this-super-long-url-handle-for-flowers-by-gustavo). And yes those two are both taken.
+
+What do you mean analytics? What can I see?
+- Every time someone clicks your shortened URL, we track and save all data that we are legally allowed to, such as the browser, city and country, and more. When you click Analytics, you can see 
+...
+
+You have QR Codes? Free?
+- Yes, for every shortened URL, you can generate a QR code, as well as download a high quality image of it. You can choose whether your QR code ...
