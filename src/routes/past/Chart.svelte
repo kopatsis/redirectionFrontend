@@ -263,6 +263,14 @@
         </div>
 
         <div>
+            Clicks from Custom URL: <Percentile
+                numerator={status === "paid" ? allData.fromCustom : 0}
+                denominator={allData.total}
+                blocked={status === "free"}
+            />
+        </div>
+
+        <div>
             {#if status === "paid"}
                 <div><canvas bind:this={dailyChart}></canvas></div>
             {:else}
