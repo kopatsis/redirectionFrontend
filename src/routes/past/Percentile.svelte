@@ -10,7 +10,7 @@
         percentage = 0;
         text = " ??? / ??? (??%) ";
     } else {
-        percentage = (numerator / denominator) * 100;
+        percentage = denominator === 0 ? 0 : (numerator / denominator) * 100;
         text = ` ${numerator} / ${denominator} (${percentage.toFixed(2)}%) `;
     }
 </script>

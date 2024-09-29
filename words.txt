@@ -66,7 +66,7 @@ PAID:
 ]
 
 You can create QR Codes? Free?
-- Yes, for every shortened URL, you can generate a QR code. You can download this as a JPG image to use if you need to efficiently share your shortened URL. You can also specify 
+- Yes, for every shortened URL, you can generate a QR code. You can download this as a PNG image to use if you need to efficiently share your shortened URL. You can also specify 
 whether the QR code goes to the shortened URL (or custom shortened URL if you have one) or the original URL you entered. Just bear in mind that if the QR code goes directly to 
 your original URL, you won't be able to track click analytics...
 Looking for JUST a QR code generator without any shortened URL nonsense? We have that here, where you can generate and download a QR code for any URL or other piece of text instantly. 

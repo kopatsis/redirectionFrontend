@@ -9,6 +9,7 @@
   export let domain;
   export let entryOb;
   export let paying = false;
+  export let allentries = [];
 
   let url = domain + "/" + entryOb.param;
   let date = new Date(entryOb.date);
@@ -67,6 +68,26 @@
     }
   }
 
+  function updateOgUrlAll() {
+    if (allentries && allentries.length > 0) {
+      allentries.forEach((entry) => {
+        if (entry.param && entry.param === entryOb.param) {
+          entry.url = entryOb.url;
+        }
+      });
+    }
+  }
+
+  function updateCustomHandleAll() {
+    if (allentries && allentries.length > 0) {
+      allentries.forEach((entry) => {
+        if (entry.param === entryOb.param) {
+          entry.custom = entryOb.custom;
+        }
+      });
+    }
+  }
+
   const submitEdits = async () => {
     let url = import.meta.env.VITE_BACKEND_URL;
     try {
@@ -95,7 +116,10 @@
       } else {
         const resp = await response.json();
         entryOb.url = resp.url;
+        workingURL = "";
         workingError = "";
+        updateOgUrlAll();
+        editing = false;
       }
     } catch (err) {
       workingError = err;
@@ -141,7 +165,7 @@
     if (!customValid || !customAvail) {
       customAvail = false;
       return;
-    } 
+    }
     customValidLoading = true;
     const url = import.meta.env.VITE_BACKEND_URL;
     const passcode = import.meta.env.VITE_CHECK_PASSCODE;
@@ -171,7 +195,10 @@
       } else {
         const resp = await response.json();
         entryOb.custom = resp.custom;
+        customHandle = "";
         customError = "";
+        updateCustomHandleAll();
+        customEditing = false;
       }
     } catch (err) {
       customError =
@@ -197,14 +224,17 @@
             "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
           },
           credentials: "include",
-        },
+        }
       );
       if (!response.ok) {
         customError =
           "Unable to reach our server :/ Check your internet but it might be us";
       } else {
         entryOb.custom = "";
+        customHandle = "";
         customError = "";
+        updateCustomHandleAll();
+        customEditing = false;
       }
     } catch (err) {
       customError =
@@ -304,11 +334,20 @@
 
   async function copyToClipboard() {
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText("http://" + url);
     } catch (error) {
       console.error("Error copying to clipboard:", error);
     }
   }
+
+  async function copyCustomToClipBoard() {
+    try {
+      await navigator.clipboard.writeText( "http://" + domain + "/" + entryOb.custom);
+    } catch (error) {
+      console.error("Error copying to clipboard:", error);
+    }
+  }
+
 </script>
 
 <div class="line"></div>
@@ -323,7 +362,7 @@
       </div>
       <div>
         <div>
-          URL: <a href={"https://" + url}>{url}</a>
+          URL: <a href={"http://" + url}>{url}</a>
         </div>
         <div>
           {#if editing}
@@ -395,13 +434,19 @@
             <button on:click={toggleCustomEditing}>Add One</button>
           {:else}
             <div class="ogurl">
-              Custom Shortened URL: {domain + "/" + entryOb.custom}
+              Custom Shortened URL: <a
+                href={"http://" + domain + "/" + entryOb.custom}
+                >{domain + "/" + entryOb.custom}</a
+              >
             </div>
             {#if customValidLoading}
               <button>loading...</button>
             {:else}
               <button on:click={toggleCustomEditing}>Edit</button>
               <button on:click={deleteCustomURL}>Remove</button>
+              <button on:click={copyCustomToClipBoard} class="hasImg"
+                ><img src={copy} alt="copy symbol" /></button
+              >
             {/if}
           {/if}
         {/if}
@@ -426,14 +471,14 @@
   {/if}
   {#if chartOrQR === "qr"}
     <QrCode
-      QRText={ url + "?q=t"}
+      QRText={"http://" + url + "?q=t"}
       OGUrl={entryOb.url}
-      custom={entryOb.custom ? domain + "/" + entryOb.custom + "?q=t" : ""}
+      custom={entryOb.custom ? "http://" + domain + "/" + entryOb.custom + "?q=t" : ""}
       bind:chartOrQR
     />
   {/if}
 {:else if state == "Message"}
-  <div>URL: <a href={url}>{url}</a></div>
+  <div>URL: <a href={"http://" + url}>{url}</a></div>
   <div class="ogurl">
     Original URL:
     {#if entryOb.url === firstHund}
@@ -450,7 +495,7 @@
   <button on:click={toRemoved}>Yes</button>
   <button on:click={toPresent}>No</button>
 {:else if state == "Removed"}
-  <div>URL: <a href={url}>{url}</a></div>
+  <div>URL: <a href={"http://" + url}>{url}</a></div>
   <div class="ogurl">
     Original URL:
     {#if entryOb.url === firstHund}

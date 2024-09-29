@@ -258,10 +258,10 @@
         {/each}
       </ul>
       {#if less}
-        <button>Previous</button>
+        <button on:click={() => changePage(false)}>Previous</button>
       {/if}
       {#if more}
-        <button>Next</button>
+        <button on:click={changePage}>Next</button>
       {/if}
     {/if}
   {/if}

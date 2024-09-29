@@ -22,6 +22,7 @@
   import { page } from "$app/stores";
   import { sendPostRequest } from "$lib/shared/postpaying";
   import { CheckTurnstile } from "$lib/shared/turnstile";
+  import { Turnstile } from "svelte-turnstile";
 
   let loading = true;
   let waitingOnVerif = false;
@@ -85,9 +86,18 @@
   }
 
   async function HandleTurnstile() {
-    const turnstileResponse = document.querySelector(
+    const turnstileItem = document.querySelector(
       '[name="cf-turnstile-response"]',
-    ).value;
+    );
+    if (turnstileItem === null || turnstileItem === undefined) {
+      errorMessage = "Turnstile verification failed.)";
+      return false;
+    }
+    const turnstileResponse = turnstileItem.value;
+    if (!turnstileResponse) {
+      errorMessage = "Turnstile verification failed.";
+      return false;
+    }
     const valid = await CheckTurnstile(email, turnstileResponse);
     if (valid === null) {
       errorMessage = "Cannot connect to our server to verify your request";
@@ -371,6 +381,9 @@
         placeholder="Password"
         required
       />
+    </div>
+    <div>
+      <Turnstile siteKey="0x4AAAAAAAiN0D-hYmv3ulQQ" />
     </div>
     {#if !signUp}
       <div>

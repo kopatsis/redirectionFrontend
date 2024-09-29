@@ -1,4 +1,6 @@
 <script>
+  import { goto } from "$app/navigation";
+
     export let domain;
     export let entryOb;
     export let paying = false;
@@ -28,8 +30,8 @@
 
 <div>
     <div>
-        <b><a href="{page}">Shortened URL: {domain + "/" + entryOb.param}</a></b>
-        <a href="{page}">Open</a>
+        <b>Shortened URL: <a href="{"http://" + domain + "/" + entryOb.param}">{domain + "/" + entryOb.param}</a></b>
+        <button on:click={() => window.location.href=`${window.location.protocol}//${window.location.host}${page}`}>Open</button>
     </div>
     <div>Original URL: {firstHund}</div>
     {#if paying && entryOb.custom && entryOb.custom !== ""}

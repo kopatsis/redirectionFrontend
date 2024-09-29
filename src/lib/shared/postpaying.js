@@ -8,7 +8,7 @@ export async function sendPostRequest(newtab = true) {
 
     const form = document.createElement("form");
     form.method = "POST";
-    form.action = url;
+    form.action = url + "/multipass";
     if (newtab) {
       form.target = "_blank";
     }

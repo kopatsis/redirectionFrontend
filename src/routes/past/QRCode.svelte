@@ -60,19 +60,26 @@
 
     <div>What should this QR code point to:</div>
     <div>
-      <label>
-        <input type="radio" value="shortened" bind:group={pointsTo} />
-        Have QR for Shortened URL
-      </label>
-      <label>
-        <input type="radio" value="original" bind:group={pointsTo} />
-        Have QR for Original URL*
-      </label>
-      {#if custom && custom !== ""}
+      <div>
         <label>
-          <input type="radio" value="custom" bind:group={pointsTo} />
-          Have QR for Custom URL
+          <input type="radio" value="shortened" bind:group={pointsTo} />
+          Have QR for Shortened URL
         </label>
+      </div>
+      <div>
+        <label>
+          <input type="radio" value="original" bind:group={pointsTo} />
+          Have QR for Original URL*
+        </label>
+      </div>
+
+      {#if custom && custom !== ""}
+        <div>
+          <label>
+            <input type="radio" value="custom" bind:group={pointsTo} />
+            Have QR for Custom URL
+          </label>
+        </div>
       {/if}
     </div>
 

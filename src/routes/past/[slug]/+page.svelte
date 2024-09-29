@@ -253,7 +253,7 @@
     {:else if singleError || singleEntry === null}
       <div>Error fetching that specific shortned URL.</div>
     {:else}
-      <Entry {domain} entryOb={singleEntry} {paying} />
+      <Entry {domain} entryOb={singleEntry} {paying} bind:allentries={entries} />
     {/if}
 
     <Search bind:searchParam submitFunc={changeSearch} />
@@ -279,10 +279,10 @@
         {/each}
       </ul>
       {#if less}
-        <button>Previous</button>
+        <button on:click={() => changePage(false)}>Previous</button>
       {/if}
       {#if more}
-        <button>Next</button>
+        <button on:click={changePage}>Next</button>
       {/if}
     {/if}
   {/if}
