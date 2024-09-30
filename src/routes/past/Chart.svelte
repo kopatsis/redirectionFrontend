@@ -89,7 +89,7 @@
         return `${currentLabel} - ${nextLabel}`;
       });
     }
-    weeklyInstance = new Chart(weeklyChart, {
+    weeklyInstance =  new Chart(weeklyChart, {
       type: "bar",
       data: {
         labels: labels,
@@ -112,12 +112,10 @@
         },
       },
     });
-    console.log(weeklyInstance);
-    console.log(weeklyChart);
   }
 
   function createDonutChart(chartData, chartTitle) {
-    browserInstance = new Chart(browserChart, {
+    browserInstance =  new Chart(browserChart, {
       type: "doughnut",
       data: {
         labels: chartData.keys,
@@ -145,16 +143,22 @@
   }
 
   function createAllCharts() {
+    console.log(weeklyInstance);
+    console.log(weeklyChart);
+    console.log(allData.weeklyGraph);
+
     createDateChart(allData.weeklyGraph, false);
+    console.log(weeklyInstance);
+    console.log(weeklyChart);
     createDonutChart(allData.browserGraph, "Web Browsers Used");
-    if (status === "paid") {
-      dailyChart = createDateChart(allData.dailyGraph, true);
-      osChart = createDonutChart(
+    if (status === "reeeeee") {
+      dailyInstance = createDateChart(dailyChart, allData.dailyGraph, true);
+      osInstance = createDonutChart(osChart, 
         allData.operatingGraph,
         "Operating Systems Used"
       );
-      cityChart = createDonutChart(allData.cityGraph, "Cities Accessing URL");
-      countryChart = createDonutChart(
+      cityInstance = createDonutChart(cityChart, allData.cityGraph, "Cities Accessing URL");
+      countryInstance = createDonutChart(countryChart, 
         allData.countryGraph,
         "Countries Accessing URL"
       );
@@ -178,7 +182,6 @@
         return;
       }
       const result = await response.json();
-      console.log(result);
       status = result.class ? result.class : "free";
       allData = result.data ? result.data : null;
       createAllCharts();
@@ -193,7 +196,6 @@
   onMount(async () => {
     await fetchClickData();
     loading = false;
-    console.log(osChart);
   });
 
   function destroyCharts() {
@@ -276,9 +278,11 @@
         Click below to download a csv with all data for each click this entry
         has gotten
       </div>
-      <button on:click={downloadCSV}>Download CSV</button>
+      
       {#if csvLoading}
         <div>loading csv...</div>
+      {:else}
+      <button on:click={downloadCSV}>Download CSV</button>
       {/if}
       {#if csvErr}
         <div>Error downloading csv</div>

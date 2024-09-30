@@ -410,6 +410,7 @@
               <button on:click={toggleCustomEditing}>Cancel</button>
               {#if customHandle !== entryOb.custom && customValid}
                 {#if customAvail === true}
+                  <b>Available!</b>
                   <button on:click={submitCustomURL}>Submit Change</button>
                 {:else if customAvail === false}
                   <div>Not available</div>

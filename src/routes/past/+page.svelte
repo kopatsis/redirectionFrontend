@@ -157,7 +157,7 @@
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${param}-clicks.csv`;
+        a.download = `entry_data.csv`;
         document.body.appendChild(a);
         a.click();
         csvLoading = false;
