@@ -4,7 +4,7 @@
   import "./styles.css";
   import { userStore } from "$lib/stores/firebaseuser";
   import { CheckPaymentStatus } from "$lib/shared/checkpaying";
-  import { paidStore } from "$lib/stores/paidStore";
+  import { paidStore } from "$lib/stores/userInfoStore";
     import CookieSmall from "./CookieSmall.svelte";
 
   let paying = null;

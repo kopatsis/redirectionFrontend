@@ -2,6 +2,8 @@
     import { onMount } from "svelte";
     import QRCode from "qrcode";
     import down from "$lib/images/downloadb.png";
+    import { userStore } from "$lib/stores/firebaseuser";
+    import { CheckBoth } from "$lib/stores/userInfoStore";
 
     let QRText = "";
 
@@ -30,6 +32,12 @@
 
     onMount(async () => {
         await setQR("https://shortentrack.com");
+        const unsubFirebase = userStore.subscribe(async (value) => {
+            if (value !== undefined) {
+                await CheckBoth();
+            }
+        });
+        return unsubFirebase;
     });
 </script>
 

@@ -6,7 +6,13 @@
   import QrMessage from "./QRMessage.svelte";
   import { getToken, userStore } from "$lib/stores/firebaseuser.js";
   import { page } from "$app/stores";
-  import { CheckPay, paidStore } from "$lib/stores/paidStore.js";
+  import {
+    CheckBoth,
+    CheckHasPass,
+    CheckPay,
+    paidStore,
+  } from "$lib/stores/userInfoStore.js";
+  import Chart from "./past/Chart.svelte";
 
   let user = null;
   let workingError = "";
@@ -71,7 +77,7 @@
   onMount(async () => {
     const unsubFirebase = userStore.subscribe(async (value) => {
       if (value !== undefined) {
-        await CheckPay();
+        await CheckBoth();
       }
     });
     return unsubFirebase;

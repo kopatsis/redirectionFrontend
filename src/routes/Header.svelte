@@ -10,7 +10,8 @@
   import PasswordPopup from "./PasswordPopup.svelte";
   import { auth } from "../auth/firebase";
   import { sendPasswordResetEmail } from "firebase/auth";
-    import CookiePop from "./CookiePop.svelte";
+  import CookiePop from "./CookiePop.svelte";
+  import { hasPasswordStore } from "$lib/stores/userInfoStore";
 
   let user = undefined;
   let dropdown = false;
@@ -33,12 +34,6 @@
     sentReset = false;
   }
 
-  // function popupPassword() {
-  //   if (needsPass) {
-  //     passPop = true;
-  //   }
-  // }
-
   async function clickManage() {
     errorMess = false;
     const res = await sendPostRequest(true);
@@ -47,29 +42,8 @@
     }
   }
 
-  onMount(() => {
-    const unsubFirebase = userStore.subscribe(async (value) => {
-      if (value === undefined) {
-        return;
-      } else if (value && value.email && value.emailVerified) {
-        user = value;
-        const hasPass = await hasPassword();
-        if (!hasPass) {
-          const hasLS = localStorage.getItem("HASPASS");
-          if (!(hasLS && hasLS === "T")) {
-            needsPass = true;
-          } else {
-            needsPass = false;
-          }
-        } else {
-          needsPass = false;
-        }
-      } else {
-        user = null;
-      }
-    });
-
-    return unsubFirebase;
+  hasPasswordStore.subscribe((value) => {
+    needsPass = value !== true;
   });
 </script>
 
@@ -140,7 +114,9 @@
         </div>
       {/if}
       <div>
-        <button on:click={() => (cookieModal = true)}>Change Cookie Policy</button>
+        <button on:click={() => (cookieModal = true)}
+          >Change Cookie Policy</button
+        >
       </div>
       <div>
         <button on:click={() => (contactModal = true)}>Contact Us</button>
@@ -151,10 +127,12 @@
       {#if user && user.email}
         <div>
           {#if !sentReset}
-            <button on:click={async () => {
-              await sendPasswordResetEmail(auth, user.email);
-              sentReset = true;
-              }}>
+            <button
+              on:click={async () => {
+                await sendPasswordResetEmail(auth, user.email);
+                sentReset = true;
+              }}
+            >
               {#if needsPass}
                 !!! Add a Password to Account
               {:else}

@@ -83,7 +83,7 @@ export const hasPassword = async () => {
 
 export const addHasPassword = async () => {
   const user = get(userStore);
-  if (user && user.email) {
+  if (user && user.email && user.uid) {
     const backend =
       import.meta.env.VITE_BACKEND_URL || "https://api.shortentrack.com";
     const url = `${backend}/haspassword`;
@@ -100,14 +100,13 @@ export const addHasPassword = async () => {
       });
 
       if (!response.ok) {
-        console.error("!?!?!");
-        localStorage.setItem("HASPASS", "T");
-        return;
+        const ret = await response.json();
+        console.error(ret);
       }
     } catch (err) {
       console.error(err);
-      localStorage.setItem("HASPASS", "T");
-      return;
+    } finally {
+      localStorage.setItem(":HP:" + user.uid, "T");
     }
   }
   return false;

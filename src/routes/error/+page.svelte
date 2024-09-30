@@ -1,12 +1,21 @@
 <script>
 
     import { goto } from "$app/navigation";
+    import { userStore } from "$lib/stores/firebaseuser";
+    import { CheckBoth } from "$lib/stores/userInfoStore";
+    import { onMount } from "svelte";
 
-    let goHome = () => {
-      goto("./");
-    };
     export let error = "No URL exists here";
     export let status = 404;
+
+    onMount(async () => {
+        const unsubFirebase = userStore.subscribe(async (value) => {
+            if (value !== undefined) {
+                await CheckBoth();
+            }
+        });
+        return unsubFirebase;
+    });
   </script>
   
   <main>

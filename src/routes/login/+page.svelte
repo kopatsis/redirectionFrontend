@@ -23,6 +23,7 @@
   import { sendPostRequest } from "$lib/shared/postpaying";
   import { CheckTurnstile } from "$lib/shared/turnstile";
   import { Turnstile } from "svelte-turnstile";
+    import { CheckBoth, SetBothFalse } from "$lib/stores/userInfoStore";
 
   let loading = true;
   let waitingOnVerif = false;
@@ -82,7 +83,7 @@
       await sendPostRequest(false);
     }
 
-    goto("./teststrict");
+    goto("/");
   }
 
   async function HandleTurnstile() {
@@ -303,17 +304,21 @@
   }
 
   onMount(() => {
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(async (user) => {
       if (user) {
         exUser = user.email;
         if (!user.emailVerified) {
           startEmailVerificationCheck();
           waitingOnVerif = true;
+        } else {
+          isUserLoggedIn = true;
+          await CheckBoth();
         }
-        isUserLoggedIn = true;
       } else {
         isUserLoggedIn = false;
+        SetBothFalse();
       }
+
     });
     loading = false;
   });
@@ -440,7 +445,7 @@
   <div>--or--</div>
   <button on:click={sendLink}>Authenticate with email link</button>
   <div>--or--</div>
-  <a href="./teststrict">Use without an account</a>
+  <a href="/">Use without an account</a>
 {/if}
 
 <style>

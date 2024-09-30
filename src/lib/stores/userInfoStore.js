@@ -1,11 +1,52 @@
 import { get, writable } from "svelte/store";
-import { userStore } from "./firebaseuser";
+import { hasPassword, userStore } from "./firebaseuser";
 
 export const paidStore = writable(null);
+export const hasPasswordStore = writable(null);
 
-export async function CheckPay() {
+export function SetBothFalse() {
+    paidStore.set(false)
+    hasPasswordStore.set(false)
+}
+
+export async function CheckBoth() {
     let user = get(userStore);
 
+    let tr = 0;
+    while (user === undefined) {
+        tr++
+        if (tr > 10) {
+            paidStore.set(false)
+            hasPasswordStore.set(false)
+            return
+        }
+        await sleep();
+        let user = get(userStore)
+    }
+
+    if (user === null || !user || !user.email || !user.emailVerified || !user.uid) {
+        paidStore.set(false)
+        hasPasswordStore.set(false)
+        return
+    }
+
+    if (localStorage.getItem(":HP:" + user.uid) !== "") {
+        await CheckPay(user);
+    } else {
+        const [_, has] = await Promise.all([CheckPay(user), CheckHasPass()]);
+        if (has) {
+            localStorage.setItem(":HP:" + user.uid, "T");
+        }
+    }
+}
+
+export async function CheckHasPass() {
+    const has = await hasPassword();
+    hasPasswordStore.set(has);
+    return has;
+}
+
+export async function CheckPay(user) {
     let tr = 0;
     while (user === undefined) {
         tr++
@@ -55,4 +96,4 @@ export async function CheckPay() {
 
 function sleep() {
     return new Promise(resolve => setTimeout(resolve, 333));
-  }
+}

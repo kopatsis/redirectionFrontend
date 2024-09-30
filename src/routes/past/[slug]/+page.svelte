@@ -9,7 +9,7 @@
   import { page } from "$app/stores";
   import { CheckPaymentStatus } from "$lib/shared/checkpaying.js";
   import SmallEntry from "../SmallEntry.svelte";
-  import { CheckPay, paidStore } from "$lib/stores/paidStore";
+  import { CheckBoth, CheckPay, paidStore } from "$lib/stores/userInfoStore";
 
   let domain = "";
   let loadingcsvs = false;
@@ -189,7 +189,6 @@
     domain = import.meta.env.VITE_SHORT_DOMAIN;
     const unsubFirebase = userStore.subscribe(async (value) => {
       if (value !== undefined) {
-        CheckPay();
         setVariables();
         if (value && value.email && value.emailVerified) {
           try {
@@ -213,6 +212,7 @@
         } else {
           await fetchData();
         }
+        await CheckBoth();
       }
     });
     return unsubFirebase;

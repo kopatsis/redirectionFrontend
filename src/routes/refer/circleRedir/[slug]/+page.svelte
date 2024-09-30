@@ -49,13 +49,12 @@
             try {
                 await signInWithEmailLink(auth, email, window.location.href);
                 localStorage.removeItem("CBEmailForSignIn");
-                localStorage.removeItem("HASPASS");
 
                 const worked = await sendPostRequest(false);
                 if (!worked) {
                     error = "Unable to redirect to original login page";
                 } else {
-                    goto("/teststrict");
+                    goto("/");
                 }
             } catch (err) {
                 error = "Error, could not sign in: " + err
