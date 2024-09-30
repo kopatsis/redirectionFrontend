@@ -87,7 +87,7 @@
 
   async function HandleTurnstile() {
     const turnstileItem = document.querySelector(
-      '[name="cf-turnstile-response"]',
+      '[name="cf-turnstile-response"]'
     );
     if (turnstileItem === null || turnstileItem === undefined) {
       errorMessage = "Turnstile verification failed.)";
@@ -135,18 +135,22 @@
   }
 
   async function signInFB() {
+    if (!emailValid) {
+      errorMessage = "Invalid email, please fill it correctly in to login";
+      return;
+    }
     loading = true;
     const continueVerif = await HandleTurnstile();
     if (!continueVerif) {
       loading = false;
-      return
-    };
+      return;
+    }
 
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password,
+        password
       );
       const user = userCredential.user;
 
@@ -200,12 +204,16 @@
   }
 
   async function sendLink() {
+    if (!emailValid) {
+      errorMessage = "Invalid email, please fill it in to get a login link";
+      return;
+    }
     loading = true;
     const continueVerif = await HandleTurnstile();
     if (!continueVerif) {
       loading = false;
-      return
-    };
+      return;
+    }
 
     const actionCodeSettings = {
       url: `${window.location.protocol}//${window.location.host}/refer`,
@@ -214,11 +222,10 @@
 
     if (isCircleRedirTrue()) {
       actionCodeSettings.url += `/circleredir`;
-    } else {
-      const id = await fetchIdFromServer();
-      if (id !== "") {
-        actionCodeSettings.url += `/${id}`;
-      }
+    }
+    const id = await fetchIdFromServer();
+    if (id !== "") {
+      actionCodeSettings.url += `/${id}`;
     }
 
     window.localStorage.setItem("CBEmailForSignIn", email);
@@ -228,40 +235,43 @@
   }
 
   async function signUpFB() {
+    if (!emailValid || !isValidPassword) {
+      errorMessage =
+        "Invalid email and/or password, please fill those in correctly";
+      return;
+    }
     loading = true;
     const continueVerif = await HandleTurnstile();
     if (!continueVerif) {
       loading = false;
-      return
-    };
-    if (isValidPassword && emailValid) {
-      try {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password,
-        );
-        const user = userCredential.user;
-        await addHasPassword();
+      return;
+    }
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      await addHasPassword();
 
-        if (!user.emailVerified) {
-          await sendVerificationEmail(user);
-          exUser = user.email;
-          waitingOnVerif = true;
-          startEmailVerificationCheck();
-        } else {
-          handleProceed();
-        }
-      } catch (err) {
-        if (err.code === "auth/email-already-in-use") {
-          errorMessage =
-            "Email already in use. Please login or use another email.";
-        } else {
-          errorMessage = err;
-        }
-      } finally {
-        loading = false;
+      if (!user.emailVerified) {
+        await sendVerificationEmail(user);
+        exUser = user.email;
+        waitingOnVerif = true;
+        startEmailVerificationCheck();
+      } else {
+        handleProceed();
       }
+    } catch (err) {
+      if (err.code === "auth/email-already-in-use") {
+        errorMessage =
+          "Email already in use. Please login or use another email.";
+      } else {
+        errorMessage = err;
+      }
+    } finally {
+      loading = false;
     }
   }
 

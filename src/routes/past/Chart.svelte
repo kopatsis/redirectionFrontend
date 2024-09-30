@@ -31,6 +31,9 @@
   let osInstance = null;
   let browserInstance = null;
 
+  let showFree = false;
+  let showPaid = false;
+
   let csvErr = false;
   let csvLoading = false;
 
@@ -73,7 +76,7 @@
     }
   }
 
-  function createDateChart(chartData, isdaily = true) {
+  function createDateChart(thisChart, chartData, isdaily = true) {
     let labels;
     if (isdaily) {
       labels = chartData.keys.map((date) =>
@@ -89,7 +92,7 @@
         return `${currentLabel} - ${nextLabel}`;
       });
     }
-    weeklyInstance =  new Chart(weeklyChart, {
+    return new Chart(thisChart, {
       type: "bar",
       data: {
         labels: labels,
@@ -114,8 +117,8 @@
     });
   }
 
-  function createDonutChart(chartData, chartTitle) {
-    browserInstance =  new Chart(browserChart, {
+  function createDonutChart(thisChart, chartData, chartTitle) {
+    return new Chart(thisChart, {
       type: "doughnut",
       data: {
         labels: chartData.keys,
@@ -143,22 +146,29 @@
   }
 
   function createAllCharts() {
-    console.log(weeklyInstance);
-    console.log(weeklyChart);
-    console.log(allData.weeklyGraph);
+    showFree = true;
+    weeklyInstance = createDateChart(weeklyChart, allData.weeklyGraph, false);
+    browserInstance = createDonutChart(
+      browserChart,
+      allData.browserGraph,
+      "Web Browsers Used"
+    );
 
-    createDateChart(allData.weeklyGraph, false);
-    console.log(weeklyInstance);
-    console.log(weeklyChart);
-    createDonutChart(allData.browserGraph, "Web Browsers Used");
-    if (status === "reeeeee") {
+    if (status === "paid") {
+      showPaid = true;
       dailyInstance = createDateChart(dailyChart, allData.dailyGraph, true);
-      osInstance = createDonutChart(osChart, 
+      osInstance = createDonutChart(
+        osChart,
         allData.operatingGraph,
         "Operating Systems Used"
       );
-      cityInstance = createDonutChart(cityChart, allData.cityGraph, "Cities Accessing URL");
-      countryInstance = createDonutChart(countryChart, 
+      cityInstance = createDonutChart(
+        cityChart,
+        allData.cityGraph,
+        "Cities Accessing URL"
+      );
+      countryInstance = createDonutChart(
+        countryChart,
         allData.countryGraph,
         "Countries Accessing URL"
       );
@@ -278,11 +288,11 @@
         Click below to download a csv with all data for each click this entry
         has gotten
       </div>
-      
+
       {#if csvLoading}
         <div>loading csv...</div>
       {:else}
-      <button on:click={downloadCSV}>Download CSV</button>
+        <button on:click={downloadCSV}>Download CSV</button>
       {/if}
       {#if csvErr}
         <div>Error downloading csv</div>
@@ -292,40 +302,40 @@
     <div>Error loading analytics, please close and try again</div>
   {/if}
   <div>
-    <div class:null={dailyInstance === null}><canvas bind:this={dailyChart}></canvas></div>
+    <div><canvas class:null={!showPaid} bind:this={dailyChart}></canvas></div>
     {#if !loading && !error & (status === "free")}
       <div>Start a paid membership to see clicks by day</div>
     {/if}
 
-    <div class:null={weeklyInstance === null}>
-      <canvas bind:this={weeklyChart}></canvas>
+    <div>
+      <canvas class:null={!showFree} bind:this={weeklyChart}></canvas>
     </div>
 
-    <div class:null={cityInstance === null}><canvas bind:this={cityChart}></canvas></div>
+    <div><canvas class:null={!showPaid} bind:this={cityChart}></canvas></div>
     {#if !loading && !error & (status === "free")}
       <div>Start a paid membership to see share of clicks by city</div>
     {/if}
 
-    <div class:null={countryInstance === null}><canvas bind:this={countryChart}></canvas></div>
+    <div><canvas class:null={!showPaid} bind:this={countryChart}></canvas></div>
     {#if !loading && !error & (status === "free")}
       <div>Start a paid membership to see share of clicks by country</div>
     {/if}
 
-    <div class:null={osInstance === null}><canvas bind:this={osChart}></canvas></div>
+    <div><canvas class:null={!showPaid} bind:this={osChart}></canvas></div>
     {#if !loading && !error & (status === "free")}
       <div>
         Start a paid membership to see share of clicks by operating system
       </div>
     {/if}
 
-    <div class:null={browserInstance === null}>
-      <canvas bind:this={browserChart}></canvas>
+    <div>
+      <canvas class:null={!showFree} bind:this={browserChart}></canvas>
     </div>
   </div>
 </Modal>
 
 <style>
-    .null {
-        display: none;
-    }
+  .null {
+    display: none;
+  }
 </style>

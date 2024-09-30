@@ -60,6 +60,8 @@
             } catch (err) {
                 error = "Error, could not sign in: " + err
             }
+        } else {
+            error = "Something went wrong on the signin process, please try again. Sorry :/"
         }
     });
 </script>

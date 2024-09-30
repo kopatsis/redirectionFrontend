@@ -160,7 +160,6 @@
         a.download = `entry_data.csv`;
         document.body.appendChild(a);
         a.click();
-        csvLoading = false;
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         csverror = false;
