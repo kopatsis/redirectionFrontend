@@ -5,11 +5,13 @@ export const paidStore = writable(null);
 export const hasPasswordStore = writable(null);
 
 export function SetBothFalse() {
+    console.log("Both FALSE");
     paidStore.set(false)
     hasPasswordStore.set(false)
 }
 
 export async function CheckBoth() {
+    console.log("check both");
     let user = get(userStore);
 
     let tr = 0;
@@ -32,11 +34,13 @@ export async function CheckBoth() {
 
     if (localStorage.getItem(":HP:" + user.uid) !== "") {
         await CheckPay(user);
+        hasPasswordStore.set(true);
     } else {
         const [_, has] = await Promise.all([CheckPay(user), CheckHasPass()]);
         if (has) {
             localStorage.setItem(":HP:" + user.uid, "T");
         }
+        hasPasswordStore.set(has);
     }
 }
 

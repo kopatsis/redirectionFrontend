@@ -43,8 +43,15 @@
   }
 
   hasPasswordStore.subscribe((value) => {
+    console.log(value);
     needsPass = value !== true;
   });
+
+  onMount(() => {
+    userStore.subscribe((value) => {
+      user = value;
+    })
+  })
 </script>
 
 <header>
