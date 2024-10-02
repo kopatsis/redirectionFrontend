@@ -38,13 +38,17 @@
   });
 
   function updateURL() {
-    const url = new URL(`${window.location.origin}${window.location.pathname}`);
+    if (window) {
+      const url = new URL(
+        `${window.location.origin}${window.location.pathname}`,
+      );
 
-    url.searchParams.set("p", pageParam);
-    url.searchParams.set("q", searchParam);
-    url.searchParams.set("s", sortParam);
+      url.searchParams.set("p", pageParam);
+      url.searchParams.set("q", searchParam);
+      url.searchParams.set("s", sortParam);
 
-    pushState(url.toString(), { replaceState: true });
+      pushState(url.toString(), { replaceState: true });
+    }
   }
 
   // function setVariables() {
