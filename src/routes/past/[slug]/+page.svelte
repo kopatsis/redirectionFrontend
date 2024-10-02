@@ -47,17 +47,17 @@
     pushState(url.toString(), { replaceState: true });
   }
 
-  function setVariables() {
-    const queryParams = $page.url.searchParams;
+  // function setVariables() {
+  //   const queryParams = $page.url.searchParams;
 
-    pageParam = parseInt(queryParams.get("p")) || 1;
-    searchParam = queryParams.get("q") || "";
-    sortParam = queryParams.get("s") || "dd";
+  //   pageParam = parseInt(queryParams.get("p")) || 1;
+  //   searchParam = queryParams.get("q") || "";
+  //   sortParam = queryParams.get("s") || "dd";
 
-    if (searchParam.length > 128) {
-      searchParam = searchParam.slice(0, 128);
-    }
-  }
+  //   if (searchParam.length > 128) {
+  //     searchParam = searchParam.slice(0, 128);
+  //   }
+  // }
 
   async function changePage(inc = true) {
     if (inc) {
@@ -117,7 +117,7 @@
             "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
           },
           credentials: "include",
-        }
+        },
       );
       if (!response.ok) {
         throw new Error("Unable to reach Service");
@@ -189,7 +189,16 @@
     domain = import.meta.env.VITE_SHORT_DOMAIN;
     const unsubFirebase = userStore.subscribe(async (value) => {
       if (value !== undefined) {
-        setVariables();
+        const queryParams = $page.url.searchParams;
+
+        pageParam = parseInt(queryParams.get("p")) || 1;
+        searchParam = queryParams.get("q") || "";
+        sortParam = queryParams.get("s") || "dd";
+
+        if (searchParam.length > 128) {
+          searchParam = searchParam.slice(0, 128);
+        }
+
         if (value && value.email && value.emailVerified) {
           try {
             signedIn = true;
@@ -252,7 +261,12 @@
     {:else if singleError || singleEntry === null}
       <div>Error fetching that specific shortned URL.</div>
     {:else}
-      <Entry {domain} entryOb={singleEntry} {paying} bind:allentries={entries} />
+      <Entry
+        {domain}
+        entryOb={singleEntry}
+        {paying}
+        bind:allentries={entries}
+      />
     {/if}
 
     <Search bind:searchParam submitFunc={changeSearch} />

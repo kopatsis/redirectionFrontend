@@ -8,7 +8,7 @@
   import { goto, pushState, replaceState } from "$app/navigation";
   import { page } from "$app/stores";
   import { CheckPaymentStatus } from "$lib/shared/checkpaying.js";
-    import SmallEntry from "./SmallEntry.svelte";
+  import SmallEntry from "./SmallEntry.svelte";
   import { CheckBoth, CheckPay, paidStore } from "$lib/stores/userInfoStore.js";
 
   let domain = "";
@@ -34,26 +34,30 @@
   });
 
   function updateURL() {
-    const url = new URL(`${window.location.origin}${window.location.pathname}`);
+    if (window) {
+      const url = new URL(
+        `${window.location.origin}${window.location.pathname}`,
+      );
 
-    url.searchParams.set("p", pageParam);
-    url.searchParams.set("q", searchParam);
-    url.searchParams.set("s", sortParam);
+      url.searchParams.set("p", pageParam);
+      url.searchParams.set("q", searchParam);
+      url.searchParams.set("s", sortParam);
 
-    pushState(url.toString(), { replaceState: true });
-  }
-
-  function setVariables() {
-    const queryParams = $page.url.searchParams;
-
-    pageParam = parseInt(queryParams.get("p")) || 1;
-    searchParam = queryParams.get("q") || "";
-    sortParam = queryParams.get("s") || "dd";
-
-    if (searchParam.length > 128) {
-      searchParam = searchParam.slice(0, 128);
+      pushState(url.toString(), { replaceState: true });
     }
   }
+
+  // function setVariables() {
+  //   const queryParams = $page.url.searchParams;
+
+  //   pageParam = parseInt(queryParams.get("p")) || 1;
+  //   searchParam = queryParams.get("q") || "";
+  //   sortParam = queryParams.get("s") || "dd";
+
+  //   if (searchParam.length > 128) {
+  //     searchParam = searchParam.slice(0, 128);
+  //   }
+  // }
 
   async function changePage(inc = true) {
     if (inc) {
@@ -177,7 +181,16 @@
     domain = import.meta.env.VITE_SHORT_DOMAIN;
     const unsubFirebase = userStore.subscribe(async (value) => {
       if (value !== undefined) {
-        setVariables();
+        const queryParams = $page.url.searchParams;
+
+        pageParam = parseInt(queryParams.get("p")) || 1;
+        searchParam = queryParams.get("q") || "";
+        sortParam = queryParams.get("s") || "dd";
+
+        if (searchParam.length > 128) {
+          searchParam = searchParam.slice(0, 128);
+        }
+
         if (value && value.email && value.emailVerified) {
           try {
             signedIn = true;
@@ -253,7 +266,7 @@
     {:else}
       <ul>
         {#each entries as entry (entry.param)}
-          <SmallEntry {domain} entryOb={entry} {paying}/>
+          <SmallEntry {domain} entryOb={entry} {paying} />
         {/each}
       </ul>
       {#if less}
