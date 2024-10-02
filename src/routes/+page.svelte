@@ -32,9 +32,6 @@
     paying = value;
   });
 
-  const queryParams = $page.url.searchParams;
-  referred = queryParams.has("dne");
-
   async function handleSubmit() {
     const url = import.meta.env.VITE_BACKEND_URL;
     try {
@@ -75,6 +72,8 @@
   }
 
   onMount(async () => {
+    const queryParams = $page.url.searchParams;
+    referred = queryParams.has("dne");
     const unsubFirebase = userStore.subscribe(async (value) => {
       if (value !== undefined) {
         await CheckBoth();
