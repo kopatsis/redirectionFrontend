@@ -111,3 +111,31 @@ export const addHasPassword = async () => {
   }
   return false;
 };
+
+export const noEmailSubs = async () => {
+  const user = get(userStore);
+  if (user && user.email && user.uid) {
+    const backend =
+      import.meta.env.VITE_BACKEND_URL || "https://api.shortentrack.com";
+    const url = `${backend}/emailsubbed`;
+
+    try {
+      const token = await getRealToken();
+
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const ret = await response.json();
+        console.error(ret);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+};

@@ -1,7 +1,7 @@
 <script>
   import { auth } from "../../auth/firebase";
   import { onDestroy, onMount } from "svelte";
-  import { goto } from "$app/navigation";
+  import { goto, pushState } from "$app/navigation";
   import {
     createUserWithEmailAndPassword,
     getRedirectResult,
@@ -16,6 +16,7 @@
   import { get } from "svelte/store";
   import {
     addHasPassword,
+    noEmailSubs,
     refreshUserData,
     userStore,
   } from "$lib/stores/firebaseuser";
@@ -44,6 +45,8 @@
   let emailValid = false;
   let passwordActive = false;
 
+  let allowsEmails = true;
+
   $: emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   $: hasMinimumLength = password.length >= 10;
@@ -53,8 +56,7 @@
   $: isValidPassword = hasMinimumLength && containsLetter && containsNumber;
 
   $: if (signUp === oldSignUp) {
-    password = "";
-    oldSignUp = !signUp;
+    swapSignUp();
   }
 
   let interval;
@@ -68,6 +70,19 @@
     .catch((error) => {
       errorMessage = error.message;
     });
+
+  function swapSignUp() {
+    password = "";
+    email = "";
+    const url = new URL(window.location);
+    if (signUp) {
+      url.searchParams.set("new", "t");
+    } else {
+      url.searchParams.delete("new");
+    }
+    pushState(url.toString(), { replaceState: true });
+    oldSignUp = !signUp;
+  }
 
   function isCircleRedirTrue() {
     const queryParams = $page.url.searchParams;
@@ -88,7 +103,7 @@
 
   async function HandleTurnstile() {
     const turnstileItem = document.querySelector(
-      '[name="cf-turnstile-response"]',
+      '[name="cf-turnstile-response"]'
     );
     if (turnstileItem === null || turnstileItem === undefined) {
       errorMessage = "Turnstile verification failed.)";
@@ -151,7 +166,7 @@
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password,
+        password
       );
       const user = userCredential.user;
 
@@ -251,10 +266,14 @@
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
-        password,
+        password
       );
       const user = userCredential.user;
       await addHasPassword();
+
+      if (!allowsEmails) {
+        await noEmailSubs();
+      }
 
       if (!user.emailVerified) {
         await sendVerificationEmail(user);
@@ -306,7 +325,7 @@
   onMount(() => {
     const queryParams = $page.url.searchParams;
     signUp = queryParams.has("new");
-    
+
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         exUser = user.email;
@@ -419,6 +438,11 @@
         {#if containsNumber}&check;{:else}&times;{/if} Password must contain at least
         one number
       </div>
+
+      <label>
+        <input type="checkbox" bind:checked={allowsEmails} />
+        Allow Non-Essential Emails
+      </label>
 
       {#if isValidPassword && emailValid}
         <button class="submit" type="submit">Sign Up</button>
