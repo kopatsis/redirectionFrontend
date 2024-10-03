@@ -23,7 +23,7 @@
   import { sendPostRequest } from "$lib/shared/postpaying";
   import { CheckTurnstile } from "$lib/shared/turnstile";
   import { Turnstile } from "svelte-turnstile";
-    import { CheckBoth, SetBothFalse } from "$lib/stores/userInfoStore";
+  import { CheckBoth, SetBothFalse } from "$lib/stores/userInfoStore";
 
   let loading = true;
   let waitingOnVerif = false;
@@ -88,7 +88,7 @@
 
   async function HandleTurnstile() {
     const turnstileItem = document.querySelector(
-      '[name="cf-turnstile-response"]'
+      '[name="cf-turnstile-response"]',
     );
     if (turnstileItem === null || turnstileItem === undefined) {
       errorMessage = "Turnstile verification failed.)";
@@ -151,7 +151,7 @@
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
 
@@ -251,7 +251,7 @@
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
       await addHasPassword();
@@ -304,6 +304,9 @@
   }
 
   onMount(() => {
+    const queryParams = $page.url.searchParams;
+    signUp = queryParams.has("new");
+    
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         exUser = user.email;
@@ -318,7 +321,6 @@
         isUserLoggedIn = false;
         SetBothFalse();
       }
-
     });
     loading = false;
   });
