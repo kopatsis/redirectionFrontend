@@ -5,13 +5,23 @@
   import { userStore } from "$lib/stores/firebaseuser";
   import { CheckPaymentStatus } from "$lib/shared/checkpaying";
   import { paidStore } from "$lib/stores/userInfoStore";
-    import CookieSmall from "./CookieSmall.svelte";
+  import CookieSmall from "./CookieSmall.svelte";
 
   let paying = null;
+
+  let hasScrolled = false;
+
+  function handleScroll() {
+    hasScrolled = window.scrollY > 15;
+  }
 
   paidStore.subscribe((value) => {
     paying = value;
   });
+
+  onMount(() => {
+	window.addEventListener('scroll', handleScroll)
+  })
 </script>
 
 <div class="app">
@@ -30,6 +40,10 @@
   <main>
     <slot />
   </main>
+
+  {#if hasScrolled}
+  	<a class="scrolltop" href="#header-scrto">^</a>
+  {/if}
 </div>
 
 <style>
@@ -47,6 +61,17 @@
     max-width: 64rem;
     margin: 0 auto;
     box-sizing: border-box;
+  }
+
+  .scrolltop {
+	width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: orange;
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+	text-align: center;
   }
 
   /* footer {

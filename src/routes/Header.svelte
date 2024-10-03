@@ -54,7 +54,7 @@
   })
 </script>
 
-<header>
+<header id="header-scrto">
   <div class="corner">
     <a href="https://github.com/kopatsis" target="_blank">
       <img src={github} alt="GitHub" />
@@ -161,6 +161,7 @@
   <Contact
     bind:open={contactModal}
     email={user ? (user.email ? user.email : "") : ""}
+    loggedIn={user && user.email}
   />
 {/if}
 

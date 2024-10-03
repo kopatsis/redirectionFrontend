@@ -5,6 +5,7 @@
 
   export let email = "";
   export let open = true;
+  export let loggedIn = false;
   let success = false;
   let message = "";
 
@@ -16,6 +17,11 @@
       event.preventDefault();
 
       const formData = new FormData(event.target);
+
+      if (!loggedIn) {
+        await new Promise((resolve) => setTimeout(resolve, 1750));
+      }
+
       const token = await getRealToken();
 
       const response = await fetch(`${url}/administrative/helpemail`, {
