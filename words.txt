@@ -1,14 +1,21 @@
 Header: Shorten Track
-URL Shortener + QR Code Generator with Analytics Tracking
+The shortest, fastest, easiest, all around best URL Shortener + Analytics Tracker + QR Code generator + more
 
-Our shortened URLs
-- NEVER expire, unless you choose to delete
-- Go to your original URL faster any other service
-- Can change what URL is being shortened after
-- Track click analytics data and history 
+In Round about
+- The shortest possible URLs
+- No expiration ever
+- Unlimited shortened URL generation
+- The fastest speed to original URL
+- Custom SEO-friendly shortened URL handles
+- Click tracking analytics dashboard
+- Custom QR Code generation for shortened URLs
+- Editable original URL after shortening
+- Easy pain-free deletion
+- CSV export for data analytics
+
 
 How does this service work?
-- Shorten Track's URL shortening process as as straightforward as we could possibly make it. Just enter any URL of any length in the bar above, then click "Shorten". A URL 
+- Shorten Track's URL shortening process as as straightforward as we could possibly make it. Just enter any URL of any length in the bar above, then click "Shorten!". A URL 
 like the one below will be generated for you. Our shortened URLs are MAXIMUM 12 characters total, in the format of "shk.fm/" + a randomly generated 2-5 digit string. You can use this 
 shortened URL on any device in place of your previous URL and it will take you to the same place every time. The shortened URL NEVER expires and will always work, unless you 
 choose to delete it. You can also edit what the original URL is while keeping the shortened one the same. We don't share your shortened URLs with anyone else (ex. if someone has 
@@ -110,8 +117,30 @@ PAID:
 
 $0 / month -- $4.99 / month
 
-Looking for corporate memberships? Contact Us here to let us know what you're looking for and how many are in your team, and we'll proceed from there :).
+Trying to find corporate memberships? Contact Us here to let us know what you're looking for and how many are in your team, and we'll proceed from there :).
 
 
 Still have questions? Use this form to contact us with any queries, suggestions, or woes.
+
+Quick FAQs:
+- Do I need to enter the https:// and/or www in the URL I want to shorten.
+* No, if you leave either of those out it will still work correctly. 
+- Do I need to enter the https:// before the shk.fm/... when accessing a shortened URL?
+* No, browsers do not need it to access the shortened URL. 
+- Can I upload a CSV/Excel/other file to create many shortnened URLs at once? 
+* Not yet, but we are working on adding that feature for paid users.
+- What is the limit of shortened URLs I can create?
+* There is no limit. 
+- Can I get more personal info, such as name or address, from users accessing my shortened URL?
+* No that is illegal.
+- If I visit a shk.fm shortened URL, is my IP address stored by Shorten Track. 
+* No, visitor IP addresses are securely encrypted before we do anything with them, so they are directly stored and cannot be accessed by anyone. 
+- Do shortened URLs work in all countries?
+* Yes, anywhere with internet.
+- Why do some of my shortened URLs show that bots have accessed them?
+* Sometimes, when you share a shortened URL via text or social media and the title, image, etc from the original URL show up, this is recorded as a bot visiting the shortened URL. 
+In rarer cases, sometimes search engines like Google index the shortened URL, but this is very rare. 
+- What happens if the original URL doesn't work or leads nowhere?
+* We still shorten the URL and it will still track analytics, but the user will be taken to the exact same page as if you entered the inexistent URL directly in the browser. 
+So if you shorten http://fakesitedoesntexist.com, the shortened URL will show whatever that site shows in the browser. 
 

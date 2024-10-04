@@ -87,47 +87,24 @@
     </a>
   </div>
 
-  <nav>
-    <svg viewBox="0 0 2 3" aria-hidden="true">
-      <path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
-    </svg>
-    <ul>
-      <li aria-current={$page.url.pathname === "/" ? "page" : undefined}>
-        <a href="/">Home</a>
-      </li>
-      <li>
-        <a href="/" class="main message small">EZPZ</a>
-        <a href="/" class="main message large">EZPZ URL Shortener</a>
-      </li>
-      <li
-        aria-current={$page.url.pathname.startsWith("/past")
-          ? "page"
-          : undefined}
-      >
-        <a href="/past">History</a>
-      </li>
-    </ul>
-    <svg viewBox="0 0 2 3" aria-hidden="true">
-      <path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
-    </svg>
-  </nav>
+      <a href="/" class="main message large">Shorten Track</a>
 
   <div class="corner">
-    <!-- {#if user === undefined}
-      <button>loading...</button>
-    {:else if user === null}
-      <button on:click={() => goto("/login")}>Log In</button>
-    {:else} -->
     <button on:click={swapDrop}
       >Account {#if dropdown}▲{:else}▼{/if}
       {#if needsPass}
         !!!
       {/if}</button
     >
-    <!-- {/if}
-  </div> -->
   </div>
 </header>
+
+<nav>
+  <a href="/">Home</a>
+  <a href="/past">History</a>
+  <a href="/articles">Articles</a>
+  <a href="/justqr">QR Codes</a>
+</nav>
 
 {#if dropdown}
   <Modal bind:open={dropdown}>
@@ -140,6 +117,7 @@
       {#if user === undefined}
         <div>loading...</div>
       {:else if !user}
+        <div style="color: red;">You are not logged in</div>
         <a href="/login">Log in</a>
         <a href="/login?new=t">Create account</a>
         <div>
@@ -155,7 +133,7 @@
       {:else if user && user.email}
         <div>Account: {firstFortyEmail(user.email)}</div>
         {#if !user.emailVerified}
-          <div style="color: red;">Verify your email to finish sign in</div>
+          <div style="color: red;">Verify your email to finish signin</div>
           {#if sentVerif}
             <div>Verification email sent!</div>
           {:else}
@@ -272,7 +250,7 @@
     --background: rgba(255, 255, 255, 0.7);
   }
 
-  svg {
+  /* svg {
     width: 2em;
     height: 3em;
     display: block;
@@ -310,7 +288,7 @@
     left: calc(50% - var(--size));
     border: var(--size) solid transparent;
     border-top: var(--size) solid var(--color-theme-1);
-  }
+  } */
 
   nav a {
     display: flex;
@@ -326,9 +304,9 @@
     transition: color 0.2s linear;
   }
 
-  nav a.main {
+  /* nav a.main {
     font-size: 1.5em;
-  }
+  } */
 
   a:hover {
     color: var(--color-theme-1);
@@ -344,6 +322,22 @@
     color: white;
     outline: none;
   }
+
+  .link-button {
+    background: none;
+    border: none;
+    color: rgb(59, 59, 59);
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  .link-button:hover,
+  .link-button:focus {
+    text-decoration: none;
+  }
   /* .headuser {
     margin-right: 5px;
   } */
@@ -354,7 +348,7 @@
     }
   } */
 
-  @media (max-width: 667px) {
+  /* @media (max-width: 667px) {
     nav a.main {
       font-size: 1em;
     }
@@ -381,5 +375,5 @@
     .message.large {
       display: flex;
     }
-  }
+  } */
 </style>
