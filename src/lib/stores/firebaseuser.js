@@ -139,3 +139,64 @@ export const noEmailSubs = async () => {
     }
   }
 };
+
+export const addEmailSubs = async () => {
+  const user = get(userStore);
+  if (user && user.email && user.uid) {
+    const backend =
+      import.meta.env.VITE_BACKEND_URL || "https://api.shortentrack.com";
+    const url = `${backend}/emailsubbed`;
+
+    try {
+      const token = await getRealToken();
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const ret = await response.json();
+        console.error(ret);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+};
+
+export const getEmailSubs = async () => {
+  const user = get(userStore);
+  if (user && user.email && user.uid) {
+    const backend =
+      import.meta.env.VITE_BACKEND_URL || "https://api.shortentrack.com";
+    const url = `${backend}/emailsubbed`;
+
+    try {
+      const token = await getRealToken();
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const ret = await response.json();
+        return true, ret && ret.AllowsEmails ? ret.AllowsEmails : false;
+      } else {
+        return true, false;
+      }
+    } catch (err) {
+      console.error(err);
+      return true, false;
+    }
+  } else {
+    return false, null;
+  }
+};
