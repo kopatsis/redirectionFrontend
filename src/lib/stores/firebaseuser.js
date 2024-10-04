@@ -4,6 +4,7 @@ import {
   EmailAuthProvider,
   linkWithCredential,
   onAuthStateChanged,
+  sendEmailVerification,
 } from "firebase/auth";
 import { getKey } from "../../routes/getKey";
 
@@ -16,6 +17,19 @@ onAuthStateChanged(auth, (user) => {
     userStore.set(null);
   }
 });
+
+export const emailVerifEmail = async () => {
+  const user = get(userStore);
+  if (user && !user.emailVerified) {
+    try {
+      await sendEmailVerification(user);
+      return true
+    } catch (err) {
+      return false
+    }
+  }
+  return false
+}
 
 export const refreshUserData = async () => {
   const user = get(userStore);

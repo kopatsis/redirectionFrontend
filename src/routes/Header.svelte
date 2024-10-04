@@ -3,7 +3,11 @@
   import { page } from "$app/stores";
   import { onMount } from "svelte";
   import github from "$lib/images/github.svg";
-  import { hasPassword, userStore } from "$lib/stores/firebaseuser";
+  import {
+    emailVerifEmail,
+    hasPassword,
+    userStore,
+  } from "$lib/stores/firebaseuser";
   import { sendPostRequest } from "$lib/shared/postpaying";
   import Modal from "./login/Modal.svelte";
   import Contact from "./Contact.svelte";
@@ -24,6 +28,9 @@
   let needsPass = false;
   let sentReset = false;
 
+  let sentVerif = false;
+  let verifError = false;
+
   async function logout() {
     await auth.signOut();
     dropdown = false;
@@ -32,6 +39,16 @@
   function swapDrop() {
     dropdown = !dropdown;
     sentReset = false;
+    sentVerif = false;
+    verifError = false;
+    errorMess = false;
+  }
+
+  function firstFortyEmail(email) {
+    if (email && email.length && email.length > 40) {
+      return email.slice(0, 37) + "...";
+    }
+    return email;
   }
 
   async function clickManage() {
@@ -39,6 +56,15 @@
     const res = await sendPostRequest(true);
     if (!res) {
       errorMess = true;
+    }
+  }
+
+  async function resendVerif() {
+    let sent = await emailVerifEmail();
+    if (sent) {
+      sentVerif = true;
+    } else {
+      verifError = false;
     }
   }
 
@@ -50,8 +76,8 @@
   onMount(() => {
     userStore.subscribe((value) => {
       user = value;
-    })
-  })
+    });
+  });
 </script>
 
 <header id="header-scrto">
@@ -87,18 +113,19 @@
   </nav>
 
   <div class="corner">
-    {#if user === undefined}
+    <!-- {#if user === undefined}
       <button>loading...</button>
     {:else if user === null}
       <button on:click={() => goto("/login")}>Log In</button>
-    {:else}
-      <button on:click={swapDrop}
-        >Account {#if dropdown}▲{:else}▼{/if}
-        {#if needsPass}
-          !!!
-        {/if}</button
-      >
-    {/if}
+    {:else} -->
+    <button on:click={swapDrop}
+      >Account {#if dropdown}▲{:else}▼{/if}
+      {#if needsPass}
+        !!!
+      {/if}</button
+    >
+    <!-- {/if}
+  </div> -->
   </div>
 </header>
 
@@ -110,48 +137,92 @@
       >
     </div>
     <div>
-      {#if user && user.email}<div>
-          Email: {user && user.email ? user.email : ""}
-        </div>{/if}
-      <button on:click={clickManage}>Manage Membership</button>
-      {#if errorMess}
+      {#if user === undefined}
+        <div>loading...</div>
+      {:else if !user}
+        <a href="/login">Log in</a>
+        <a href="/login?new=t">Create account</a>
         <div>
-          Error opening up membership management window :/ Try again and if the
-          issue persists, contact us please :)
+          <button class="link-button" on:click={() => (cookieModal = true)}
+            >Privacy Policy</button
+          >
         </div>
-      {/if}
-      <div>
-        <button on:click={() => (cookieModal = true)}
-          >Change Cookie Policy</button
-        >
-      </div>
-      <div>
-        <button on:click={() => (contactModal = true)}>Contact Us</button>
-      </div>
-      <div>
-        <button on:click={logout}>Sign Out</button>
-      </div>
-      {#if user && user.email}
         <div>
-          {#if !sentReset}
-            <button
-              on:click={async () => {
-                await sendPasswordResetEmail(auth, user.email);
-                sentReset = true;
-              }}
-            >
-              {#if needsPass}
-                !!! Add a Password to Account
-              {:else}
-                Reset Password
-              {/if}
-            </button>
-          {:else if needsPass}
-            Check your email and click Reset Password to add a new password
+          <button class="link-button" on:click={() => (contactModal = true)}
+            >Contact Us</button
+          >
+        </div>
+      {:else if user && user.email}
+        <div>Account: {firstFortyEmail(user.email)}</div>
+        {#if !user.emailVerified}
+          <div style="color: red;">Verify your email to finish sign in</div>
+          {#if sentVerif}
+            <div>Verification email sent!</div>
           {:else}
-            Check your email and click Reset Password
+            {#if verifError}
+              <div>Couldn't send verification email, please try again</div>
+            {/if}
+            <div>
+              <button class="link-button">Re-send verification email</button>
+            </div>
           {/if}
-        </div>
+          <div>
+            <button class="link-button" on:click={() => (cookieModal = true)}
+              >Privacy Policy</button
+            >
+          </div>
+          <div>
+            <button class="link-button" on:click={() => (contactModal = true)}
+              >Contact Us</button
+            >
+          </div>
+          <a href="/login">Change Account</a>
+        {:else}
+
+          <div><button on:click={clickManage}>Manage Subscription</button></div>
+          {#if errorMess}
+            <div style="color: red;">
+              Error opening up membership management window :/ Try again and if
+              the issue persists, contact us please :)
+            </div>
+          {/if}
+
+          <div>
+            <button class="link-button" on:click={() => (cookieModal = true)}
+              >Privacy Policy</button
+            >
+          </div>
+          <div>
+            <button class="link-button" on:click={() => (contactModal = true)}
+              >Contact Us</button
+            >
+          </div>
+
+          <div>
+            {#if !sentReset}
+              <button
+                class="link-button"
+                on:click={async () => {
+                  await sendPasswordResetEmail(auth, user.email);
+                  sentReset = true;
+                }}
+              >
+                {#if needsPass}
+                  ! Add a Password to Account
+                {:else}
+                  Reset Password
+                {/if}
+              </button>
+            {:else}
+              Check your email for the next step
+            {/if}
+          </div>
+
+          <div><button class="link-button" on:click={logout}>Sign Out</button></div>
+
+        {/if}
+      {:else}
+        <div>loading...</div>
       {/if}
     </div>
   </Modal>
@@ -168,10 +239,6 @@
 {#if cookieModal}
   <CookiePop bind:open={cookieModal} />
 {/if}
-
-<!-- {#if passPop}
-  <PasswordPopup bind:open={passPop} />
-{/if} -->
 
 <style>
   header {
