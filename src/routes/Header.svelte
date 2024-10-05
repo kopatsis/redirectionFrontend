@@ -16,6 +16,7 @@
   import { sendPasswordResetEmail } from "firebase/auth";
   import CookiePop from "./CookiePop.svelte";
   import { hasPasswordStore } from "$lib/stores/userInfoStore";
+  import loginLogo from "$lib/images/loginR-awhite.png"
 
   let user = undefined;
   let dropdown = false;
@@ -82,19 +83,19 @@
 
 <header id="header-scrto">
   <div class="corner">
-    <a href="https://github.com/kopatsis" target="_blank">
-      <img src={github} alt="GitHub" />
+    <a href="/" class="special-head">
+      ST
     </a>
   </div>
 
       <a href="/" class="main message large">Shorten Track</a>
 
   <div class="corner">
-    <button on:click={swapDrop}
-      >Account {#if dropdown}▲{:else}▼{/if}
-      {#if needsPass}
-        !!!
-      {/if}</button
+    <button class="logheadbutton" on:click={swapDrop}> 
+      <img class="forheadimg" src={loginLogo} alt="user login head logo">
+      <span>{#if dropdown}▲{:else}▼{/if}</span>
+      
+    </button
     >
   </div>
 </header>
@@ -221,7 +222,13 @@
 <style>
   header {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    width: 95%;
+  }
+
+  .forheadimg {
+    height: 1.5em;
+    width: 1.5em;
   }
 
   .corner {
@@ -238,10 +245,11 @@
     height: 100%;
   }
 
-  .corner img {
-    width: 2em;
-    height: 2em;
-    object-fit: contain;
+  .special-head {
+    font-family: "Anton", Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: white;
+    text-decoration: none;
+    font-size: 2em;
   }
 
   nav {
@@ -337,6 +345,11 @@
   .link-button:hover,
   .link-button:focus {
     text-decoration: none;
+  }
+
+  .logheadbutton {
+    display: flex;
+    flex-direction: row;
   }
   /* .headuser {
     margin-right: 5px;
