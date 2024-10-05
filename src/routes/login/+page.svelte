@@ -25,6 +25,8 @@
   import { CheckTurnstile } from "$lib/shared/turnstile";
   import { Turnstile } from "svelte-turnstile";
   import { CheckBoth, SetBothFalse } from "$lib/stores/userInfoStore";
+  import TermsOfService from "../TermsOfService.svelte";
+  import EmailLinkPop from "./EmailLinkPop.svelte";
 
   let loading = true;
   let waitingOnVerif = false;
@@ -46,6 +48,8 @@
   let passwordActive = false;
 
   let allowsEmails = true;
+  let tosOpen = false;
+  let emailLinkPop = false;
 
   $: emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -222,7 +226,7 @@
   async function sendLink() {
     if (!emailValid) {
       errorMessage = "Invalid email, please fill it in to get a login link";
-      return;
+      return false, errorMessage;
     }
     loading = true;
     const continueVerif = await HandleTurnstile();
@@ -419,7 +423,9 @@
       />
     </div>
     <div>
-      <Turnstile siteKey="0x4AAAAAAAiN0D-hYmv3ulQQ" />
+      {#if !emailLinkPop}
+        <Turnstile siteKey="0x4AAAAAAAiN0D-hYmv3ulQQ" />
+      {/if}
     </div>
     {#if !signUp}
       <div>
@@ -444,6 +450,13 @@
         Allow Non-Essential Emails
       </label>
 
+      <div>
+        By creating an account, you agree to our <button
+          class="link-button"
+          on:click={() => (tosOpen = true)}>Terms of Service</button
+        >
+      </div>
+
       {#if isValidPassword && emailValid}
         <button class="submit" type="submit">Sign Up</button>
         <div class="verif complete">Ready to submit!</div>
@@ -466,7 +479,15 @@
     {#if forgotPass}
       <ForgotPass {email} bind:open={forgotPass} />
     {/if}
+
+    {#if emailLinkPop}
+      <EmailLinkPop bind:email bind:open={emailLinkPop} />
+    {/if}
   </form>
+
+  {#if tosOpen}
+    <TermsOfService bind:open={tosOpen} />
+  {/if}
 
   <div>--or--</div>
   <button on:click={sendLink}>Authenticate with email link</button>

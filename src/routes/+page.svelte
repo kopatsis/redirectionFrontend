@@ -142,34 +142,30 @@
       <div>
         <h4>How does this service work?</h4>
         <div>
-          Shorten Track's URL shortening process is as straightforward as we
-          could possibly make it. Just enter any URL of any length in the bar
-          above, then click "Shorten!". A URL like the one below will be
-          generated for you. Our shortened URLs are MAXIMUM 12 characters total,
-          in the format of "shk.fm/" + a randomly generated 2-5 digit string.
-          You can use this shortened URL on any device in place of your previous
-          URL and it will take you to the same place every time. The shortened
-          URL NEVER expires and will always work, unless you choose to delete
-          it. You can also edit what the original URL is while keeping the
-          shortened one the same. We don't share your shortened URLs with anyone
-          else (ex. if someone has entered the same original URL as you, they'll
-          still get a different shortened one).
+          Shorten Track's URL shortening process is simple. Just enter any URL
+          of any length in the input above, then click "Shorten!", and a URL
+          like the one above will be generated for you. Our shortened URLs are
+          max 12 characters total, in the format of "shk.fm/" + a randomly
+          generated 2-5 digit string. You can use this shortened URL on any
+          device in place of your previous URL and it will take you to the same
+          place every time. The shortened URL NEVER expires and will always
+          work, unless you choose to delete it. You can also edit what the
+          original URL is while keeping the shortened one the same.
         </div>
       </div>
 
       <div>
         <h4>Do I have to make an account?</h4>
         <div>
-          No, but it's really easy if you want to. Without an account, you can
-          use all of Shorten Track's free features and previous shortened URLs
-          will be saved on your device. But if you want to access all your
-          shortened URLs and/or use our high-end paid features, you can create
-          an account. You can either enter an email and password, verify your
-          email, then bam, account created. If that sounds like too much work
-          (understandable), you can use the email link authentication, where you
-          enter your email, click the link sent to that email address, and your
-          account has automatically been created and you're signed in. You can
-          add a password to this account later if you want.
+          No, but it's recommended. Without an account, you can use all of
+          Shorten Track's free features and past shortened URLs will be saved on
+          your device itself. But if you want to access all your shortened URLs
+          and/or use paid features, you must create an account. You can either
+          use a typical email and password, or if that sounds like too much work
+          (understandable), you can use the email link authentication. With
+          that, you enter your email, click the link sent to that email address,
+          and your account has automatically been created and you're signed in.
+          You can add a password to this account later if you want.
         </div>
       </div>
 
@@ -180,50 +176,44 @@
           you will be taken to a page where you can copy, modify, or delete that
           shortened URL. This page is also where you get the QR code, see
           analytics, or add a custom shortened URL handle (for paid members).
-          Below, you'll find all of your other shortened URLs for your account
-          (or if you don't have one, your current device). You can use the
-          search bar and sorting to find any of your old ones if you have
-          generated many of them in the past. And if you're a paid member and
-          need a list of all shortened URLs on your account, you can download a
-          CSV with everything generated on your account.
+          Below, you'll find all of your other shortened URLs for your
+          account/device. If you're a paid member and need a list of ALL
+          shortened URLs on your account, you can download a CSV with everything
+          generated on your account.
         </div>
       </div>
 
       <div>
         <h4>How do shortened URLs work? Is it fast?</h4>
         <div>
-          All services that offer shortened URLs use HTTP redirection to shorten
-          URLs. This means when someone visits your shortened URL, our server
-          searches for your original URL, then tells the browser to go there.
-          Pretty simple. An issue many URL shortening services run into is
-          speed. If their server is sluggish or overused, it can take an
-          embarrassing amount of time to finally get you to the original URL's
-          page. Yikes. Not us though. Shorten Track leverages the power of Redis
-          and Go to make sure there is no waiting for the shortened URL to work.
-          The combination of these futuristic technologies allows the
-          redirection to the original URL to take place typically in less than
-          15 milliseconds or faster (1/10th of the time it takes to blink),
-          whereas other services can take up to a second or more, making users
-          wonder what's going wrong. Our service is also set to autoscale, so it
-          doesn't matter if everyone on earth tries to use your shortened URL at
-          the same time, it'll still be fast.
+          All services offering shortened URLs use HTTP redirection. This means
+          when someone visits your shortened URL, our server searches for your
+          original URL, then tells the browser to go there. Pretty simple. An
+          issue many URL shortening services run into is speed. If their server
+          is sluggish or too busy, it can take an embarrassing amount of time to
+          finally get you to the original URL's page. Not us though. Shorten
+          Track leverages the power of Redis and Go to make sure there is no
+          waiting for the shortened URL to work. The combination of these
+          futuristic technologies allows the redirection to the original URL to
+          take place typically in less than 50 milliseconds (1/4th of the time
+          it takes to blink), no matter how many people are using it. Other
+          services can take up to a second or more, making users wonder what's
+          going wrong. Yikes.
         </div>
       </div>
 
       <div>
-        <h4>Can I choose what my shortened URL says?</h4>
+        <h4>Can I choose what my shortened URL's handle says?</h4>
         <div>
-          Yes, you can add a custom handle for shortened URLs. If you have a
-          paid membership, you can add a custom handle (the portion after the
-          shk.fm/) to your shortened URL. You can enter any letter, number, or
-          dashes/underscores and as long as no one else has that handle claimed,
-          it'll work the same as your auto-generated shortened URL.
-          Personalized, shortened URLs like this are excellent for SEO (search
-          engine optimization), especially for small businesses. We recommend
-          you try to keep the custom handle brief and memorable (like
-          shk.fm/flowers-by-gustavo), compared to overly lengthy handles (like
-          shk.fm/no-one-will-remember-this-super-long-url-handle-for-flowers-by-gustavo).
-          And yes, those two are both taken.
+          Yes, you can add a custom handle (the part after shk.fm/) for
+          shortened URLs if you have a paid membership. You can enter any
+          combination of letters, numbers, or dashes/underscores and as long as
+          no one else has that handle claimed, it's yours. Personalized
+          shortened URLs like this are excellent for SEO (search engine
+          optimization), especially for small businesses. We recommend you try
+          to keep the custom handle brief and memorable (like
+          shk.fm/flowers-by-gustavo), compared to lengthy handles (like
+          shk.fm/no-one-will-remember-this-long-url-for-flowers-by-gustavo).
         </div>
       </div>
 
@@ -231,7 +221,7 @@
         <h4>What do you mean by analytics? What can I see?</h4>
         <div>
           Every time someone clicks your shortened URL, we track and save all
-          data that we are legally allowed to, such as the browser, city and
+          data that we are legally allowed to, such as their browser, city and
           country, and more. When you click Analytics, you can see this
           information presented with number metrics such as total click count,
           graphs of clicks over time, and pie charts of what browsers were used
@@ -239,7 +229,7 @@
           data you'll be able to see based on your membership.
           <br /><br />
           FREE:<br />
-          - Total Click Counts<br />
+          - Total Click Count<br />
           - % of clicks from QR code<br />
           - Weekly click count graph (over 6 weeks)<br />
           - Browsers used Pie Chart<br /><br />
@@ -264,14 +254,13 @@
         <h4>You can create QR Codes? Free?</h4>
         <div>
           Yes, for every shortened URL, you can generate a QR code. You can
-          download this as a PNG image to use if you need to efficiently share
+          download it as a PNG image to use if you need to efficiently share
           your shortened URL. You can also specify whether the QR code goes to
           the shortened URL (or custom shortened URL if you have one) or the
           original URL you entered. Just bear in mind that if the QR code goes
           directly to your original URL, you won't be able to track click
-          analytics... Looking for JUST a QR code generator without any
-          shortened URL nonsense? We have that here, where you can generate and
-          download a QR code for any URL or other piece of text instantly.
+          analytics.<br> Looking for JUST a QR code generator without any
+          shortened URL nonsense? We have that <a href="/justqr">here</a>.
         </div>
       </div>
 
@@ -281,9 +270,9 @@
           Yes, with a paid membership you can generate and download a CSV with
           detailed information of all shortened URLs on your account. You'll
           find the button to export it next to the search bar on the Past
-          Shortened URLs page (here). Additionally, when looking at the
-          analytics dashboard for a specific shortened URL, you can download all
-          click analytics for that entry as a CSV. This button is at the top of
+          Shortened URLs page <a href="/past">here</a>. Additionally, on the
+          analytics dashboard for a shortened URL, you can download all
+          click analytics for that URL as a CSV. This button is at the top of
           the window. Note that if you have a lot of data to export, it may take
           a second to generate and download in your browser.
         </div>
