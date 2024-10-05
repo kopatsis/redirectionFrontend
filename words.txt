@@ -1,16 +1,16 @@
 Header: Shorten Track
 The shortest, fastest, easiest, all around best URL Shortener + Analytics Tracker + QR Code generator + more
 
-In Round about
+In roundabout
 - The shortest possible URLs
-- No expiration ever
+- Shortened URLs never expire
 - Unlimited shortened URL generation
 - The fastest speed to original URL
-- Custom SEO-friendly shortened URL handles
+- Custom, SEO-friendly shortened URL handles
 - Click tracking analytics dashboard
 - Custom QR Code generation for shortened URLs
 - Editable original URL after shortening
-- Easy pain-free deletion
+- Easy, pain-free removal if needed
 - CSV export for data analytics
 
 
@@ -123,9 +123,9 @@ Trying to find corporate memberships? Contact Us here to let us know what you're
 Still have questions? Use this form to contact us with any queries, suggestions, or woes.
 
 Quick FAQs:
-- Do I need to enter the https:// and/or www in the URL I want to shorten.
-* No, if you leave either of those out it will still work correctly. 
-- Do I need to enter the https:// before the shk.fm/... when accessing a shortened URL?
+- Do I need to enter the "https://" or "www" in the URL I want to shorten.
+* No, if you leave those out, it will still work correctly. 
+- Do I need to enter the "https://" before the shk.fm/... when accessing a shortened URL?
 * No, browsers do not need it to access the shortened URL. 
 - Can I upload a CSV/Excel/other file to create many shortnened URLs at once? 
 * Not yet, but we are working on adding that feature for paid users.
@@ -142,5 +142,18 @@ Quick FAQs:
 In rarer cases, sometimes search engines like Google index the shortened URL, but this is very rare. 
 - What happens if the original URL doesn't work or leads nowhere?
 * We still shorten the URL and it will still track analytics, but the user will be taken to the exact same page as if you entered the inexistent URL directly in the browser. 
-So if you shorten http://fakesitedoesntexist.com, the shortened URL will show whatever that site shows in the browser. 
+So if you shorten https://fakesitenoexist.com, the shortened URL will show whatever that site shows in the browser. 
 
+Some colors:
+F7F9FA - whiteish
+FEFEFF - almost white
+24282A - greyish
+0A1113 - blackish
+0A0A0A - almost black
+03BF00 - green
+BF1313 - red
+E25B25 - orange
+
+"LOGO": https://fonts.google.com/specimen/Anton?preview.text=ST
+Showcase font: https://www.jetbrains.com/lp/mono/
+Workhorse font: https://fonts.google.com/specimen/Poppins
