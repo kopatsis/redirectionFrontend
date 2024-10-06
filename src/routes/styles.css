@@ -16,14 +16,15 @@
 
 
 :root {
-	--font-body: "JetBrains Mono", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-		Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-	--font-mono: monospace;
+	--font-body: "JetBrains Mono", "Courier New", monospace;
+	--font-mono: "JetBrains Mono", "Courier New", monospace;
 	--color-bg-0: rgb(202, 216, 228);
-	--color-bg-1: #1b1d1f;;
+	--color-bg-1: #01031c;;
 	--color-bg-2: hsl(224, 44%, 95%);
+	--color-bg-3: #01031c;
 	--color-theme-1: #ff3e00;
 	--color-theme-2: #4075a6;
+	--color-theme-red: #BF1313;
 	--color-text: #F7F9FA;
 	--column-width: 42rem;
 	--column-margin-top: 4rem;
@@ -39,7 +40,7 @@ body {
 	min-height: 100vh;
 	margin: 0;
 	/* background-attachment: fixed; */
-	background-color: var(--color-bg-1);
+	background-color: var(--color-bg-3);
 	background-size: 100vw 100vh;
 	/* background-image: radial-gradient(
 			50% 50% at 50% 50%,

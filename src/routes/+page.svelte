@@ -14,6 +14,7 @@
   } from "$lib/stores/userInfoStore.js";
   import Chart from "./past/Chart.svelte";
   import Contact from "./Contact.svelte";
+  import Animate from "./Animate.svelte";
 
   let user = null;
   let workingError = "";
@@ -93,41 +94,43 @@
 </svelte:head>
 
 <section>
-  <div>
+  <!-- <div>
     The shortest, fastest, easiest, all around best URL Shortener + Analytics
     Tracker + QR Code generator + more
-  </div>
+  </div> -->
   {#if referred}
     <div>
       Looks like that shortened URL didn't lead to anything that exists. But you
       can still make one here! :)
     </div>
   {/if}
-  <h3>Enter your URL to shorten here:</h3>
-  <form on:submit|preventDefault={handleSubmit} class="centeroverf">
-    <input
-      required
-      type="text"
-      placeholder="Enter URL here"
-      bind:value={actual_url}
-      style="color: dark-gray;"
-    />
-    <button type="submit">Shorten!</button>
-  </form>
+  <div class="mainportion">
+    <h1>Enter your URL to shorten here:</h1>
+    <form on:submit|preventDefault={handleSubmit} class="centeroverf">
+      <input
+        class="urlin"
+        required
+        type="text"
+        placeholder="https://example.com"
+        bind:value={actual_url}
+        style="color: dark-gray;"
+      />
+      <button type="submit">Shorten!</button>
+    </form>
+  </div>
+
   {#if workingError}{workingError}{/if}
 
-  <div>
-    <div>The shortest possible URLs</div>
-    <div>Shortened URLs never expire</div>
+  <!-- <div>
+    <div>The shortest possible URLs</div> 
+    <div>Shortened URLs never expire</div> 
     <div>Unlimited shortened URL generation</div>
-    <div>The fastest speed to original URL</div>
-    <div>Custom, SEO-friendly shortened URL handles</div>
     <div>Click tracking analytics dashboard</div>
-    <div>Custom QR Code generation for shortened URLs</div>
-    <div>Editable original URL after shortening</div>
-    <div>Easy, pain-free removal if needed</div>
-    <div>CSV export for data analytics</div>
-  </div>
+    <div>QR Code generation for shortened URLs</div>
+    <div>Easy to edit and delete at any time</div>
+  </div> -->
+
+  <Animate />
 
   <div>
     <div>
@@ -259,7 +262,7 @@
           the shortened URL (or custom shortened URL if you have one) or the
           original URL you entered. Just bear in mind that if the QR code goes
           directly to your original URL, you won't be able to track click
-          analytics.<br> Looking for JUST a QR code generator without any
+          analytics.<br /> Looking for JUST a QR code generator without any
           shortened URL nonsense? We have that <a href="/justqr">here</a>.
         </div>
       </div>
@@ -271,10 +274,10 @@
           detailed information of all shortened URLs on your account. You'll
           find the button to export it next to the search bar on the Past
           Shortened URLs page <a href="/past">here</a>. Additionally, on the
-          analytics dashboard for a shortened URL, you can download all
-          click analytics for that URL as a CSV. This button is at the top of
-          the window. Note that if you have a lot of data to export, it may take
-          a second to generate and download in your browser.
+          analytics dashboard for a shortened URL, you can download all click
+          analytics for that URL as a CSV. This button is at the top of the
+          window. Note that if you have a lot of data to export, it may take a
+          second to generate and download in your browser.
         </div>
       </div>
     </div>
@@ -426,6 +429,17 @@
 {/if}
 
 <style>
+  form {
+    display: flex;
+    width: 100%;
+  }
+
+  .mainportion {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
   section {
     display: flex;
     flex-direction: column;
@@ -440,7 +454,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     width: 80vw;
-    max-width: 500px;
+    max-width: 700px;
     min-width: 300px;
   }
   input:focus {
@@ -473,5 +487,9 @@
 
   h3 {
     width: 100%;
+  }
+
+  .urlin {
+    flex: 1;
   }
 </style>

@@ -20,30 +20,24 @@
   });
 
   onMount(() => {
-	window.addEventListener('scroll', handleScroll)
-  })
+    window.addEventListener("scroll", handleScroll);
+  });
 </script>
 
 <div class="app">
-  <Header />
+  <div class="inner">
+    <Header />
 
-  <CookieSmall />
+    <CookieSmall />
 
-  {#if paying === null}
-    <div>loading...</div>
-  {:else if paying}
-    <div>[]</div>
-  {:else}
-    <div>AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD AD</div>
-  {/if}
+    <main>
+      <slot />
+    </main>
 
-  <main>
-    <slot />
-  </main>
-
-  {#if hasScrolled}
-  	<a class="scrolltop" href="#header-scrto">^</a>
-  {/if}
+    {#if hasScrolled}
+      <a class="scrolltop" href="#header-scrto">^</a>
+    {/if}
+  </div>
 </div>
 
 <style>
@@ -51,6 +45,17 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    max-width: 100vw;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+	align-items: center;
+  }
+
+  .inner {
+	width: min(80rem, 100vw);
+	/* background-color: var(--color-bg-1); */
+	position: relative;
   }
 
   main {
@@ -58,20 +63,20 @@
     flex-direction: column;
     padding: 1rem;
     /* width: 100%; */
-    max-width: 64rem;
+    max-width: 80rem;
     margin: 0 auto;
     box-sizing: border-box;
   }
 
   .scrolltop {
-	width: 50px;
+    width: 50px;
     height: 50px;
     border-radius: 50%;
     background-color: orange;
     position: fixed;
     bottom: 50px;
     right: 50px;
-	text-align: center;
+    text-align: center;
   }
 
   /* footer {

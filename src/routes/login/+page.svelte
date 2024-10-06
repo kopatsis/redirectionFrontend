@@ -327,10 +327,13 @@
   }
 
   onMount(() => {
-    const queryParams = $page.url.searchParams;
-    signUp = queryParams.has("new");
+    const usub = userStore.subscribe(async (user) => {
+      if (user === undefined) {
+        return;
+      }
+      const queryParams = $page.url.searchParams;
+      signUp = queryParams.has("new");
 
-    auth.onAuthStateChanged(async (user) => {
       if (user) {
         exUser = user.email;
         if (!user.emailVerified) {
@@ -344,8 +347,10 @@
         isUserLoggedIn = false;
         SetBothFalse();
       }
+      loading = false;
     });
-    loading = false;
+
+    return usub;
   });
 
   onDestroy(stopEmailVerificationCheck);
@@ -490,7 +495,9 @@
   {/if}
 
   <div>--or--</div>
-  <button on:click={sendLink}>Authenticate with email link</button>
+  <button on:click={() => (emailLinkPop = true)}
+    >Authenticate with email link</button
+  >
   <div>--or--</div>
   <a href="/">Use without an account</a>
 {/if}

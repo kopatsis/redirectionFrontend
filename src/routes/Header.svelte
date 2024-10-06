@@ -16,7 +16,8 @@
   import { sendPasswordResetEmail } from "firebase/auth";
   import CookiePop from "./CookiePop.svelte";
   import { hasPasswordStore } from "$lib/stores/userInfoStore";
-  import loginLogo from "$lib/images/loginR-awhite.png"
+  import loginLogo from "$lib/images/loginR-awhite.png";
+  import loginLogoBright from "$lib/images/loginR-bright.png";
 
   let user = undefined;
   let dropdown = false;
@@ -32,6 +33,8 @@
   let sentVerif = false;
   let verifError = false;
 
+  let logo = loginLogo;
+
   async function logout() {
     await auth.signOut();
     dropdown = false;
@@ -43,10 +46,15 @@
     sentVerif = false;
     verifError = false;
     errorMess = false;
+    if (dropdown) {
+      logo = loginLogoBright;
+    } else {
+      logo = loginLogo;
+    }
   }
 
-  function firstFortyEmail(email) {
-    if (email && email.length && email.length > 40) {
+  function firstFiftyEmail(email) {
+    if (email && email.length && email.length > 50) {
       return email.slice(0, 37) + "...";
     }
     return email;
@@ -83,44 +91,53 @@
 
 <header id="header-scrto">
   <div class="corner">
-    <a href="/" class="special-head">
-      ST
-    </a>
+    <a href="/" class="special-head orange"> ST </a>
   </div>
 
-      <a href="/" class="main message large">Shorten Track</a>
+  <a href="/" class="main-message">Shorten Track</a>
 
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div class="corner">
-    <button class="logheadbutton" on:click={swapDrop}> 
-      <img class="forheadimg" src={loginLogo} alt="user login head logo">
-      <span>{#if dropdown}▲{:else}▼{/if}</span>
-      
-    </button
-    >
+    <button class="logheadbutton" on:click={swapDrop}>
+      <img class="forheadimg" src={logo} alt="user login head logo" />
+      <span class:orange={dropdown}
+        >{#if dropdown}▲{:else}▼{/if}</span
+      >
+    </button>
   </div>
 </header>
 
 <nav>
-  <a href="/">Home</a>
-  <a href="/past">History</a>
-  <a href="/articles">Articles</a>
-  <a href="/justqr">QR Codes</a>
+  <a class:orange={$page.url.pathname === "/"} href="/">Home</a>
+  <a class:orange={$page.url.pathname === "/past"} href="/past">History</a>
+  <a class:orange={$page.url.pathname === "/articles"} href="/articles"
+    >Articles</a
+  >
+  <a class:orange={$page.url.pathname === "/justqr"} href="/justqr">QR Codes</a>
 </nav>
 
 {#if dropdown}
-  <Modal bind:open={dropdown}>
-    <div class="closeline">
-      <button class="link-button" on:click={() => (dropdown = false)}
-        >&times;</button
-      >
-    </div>
+  <div class="dropdown-m">
     <div>
+      <div class="undernav">
+        {#if !user}
+          <div>Not currently logged in</div>
+        {:else if !user.emailVerified}
+          <div>Verify your email to finish login</div>
+        {:else}
+          <div>{firstFiftyEmail(user.email)}</div>
+        {/if}
+      </div>
       {#if user === undefined}
         <div>loading...</div>
       {:else if !user}
-        <div style="color: red;">You are not logged in</div>
-        <a href="/login">Log in</a>
-        <a href="/login?new=t">Create account</a>
+        <div>
+          <a class="link-button" href="/login">Log in</a>
+        </div>
+        <div>
+          <a class="link-button" href="/login?new=t">Create account</a>
+        </div>
+
         <div>
           <button class="link-button" on:click={() => (cookieModal = true)}
             >Privacy Policy</button
@@ -132,9 +149,7 @@
           >
         </div>
       {:else if user && user.email}
-        <div>Account: {firstFortyEmail(user.email)}</div>
         {#if !user.emailVerified}
-          <div style="color: red;">Verify your email to finish signin</div>
           {#if sentVerif}
             <div>Verification email sent!</div>
           {:else}
@@ -155,10 +170,15 @@
               >Contact Us</button
             >
           </div>
-          <a href="/login">Change Account</a>
+          <div>
+            <a class="link-button" href="/login">Change Account</a>
+          </div>
         {:else}
-
-          <div><button on:click={clickManage}>Manage Subscription</button></div>
+          <div>
+            <button class="link-button" on:click={clickManage}
+              >Manage Subscription</button
+            >
+          </div>
           {#if errorMess}
             <div style="color: red;">
               Error opening up membership management window :/ Try again and if
@@ -197,14 +217,15 @@
             {/if}
           </div>
 
-          <div><button class="link-button" on:click={logout}>Sign Out</button></div>
-
+          <div>
+            <button class="link-button" on:click={logout}>Sign Out</button>
+          </div>
         {/if}
       {:else}
         <div>loading...</div>
       {/if}
     </div>
-  </Modal>
+  </div>
 {/if}
 
 {#if contactModal}
@@ -220,20 +241,47 @@
 {/if}
 
 <style>
+  .dropdown-m {
+    z-index: 1000;
+    position: absolute;
+    top: 64px;
+    right: 0;
+    background-color: var(--color-bg-3);
+    min-width: 160px;
+    padding: 20px;
+  }
+
+  .main-message {
+    font-size: 3em;
+    font-weight: bold;
+    text-decoration: none;
+    position: absolute;
+    left: 50%;
+    color: var(--color-text);
+    transform: translateX(-50%);
+  }
+
+  .main-message:hover,
+  .main-message:focus{
+    color: var(--color-text);
+  }
+
   header {
     display: flex;
     justify-content: space-between;
-    width: 95%;
+    width: 100%;
+    position: relative;
   }
 
   .forheadimg {
-    height: 1.5em;
-    width: 1.5em;
+    height: 2em;
+    width: 2em;
   }
 
   .corner {
-    width: 3em;
+    /* width: 3em; */
     height: 3em;
+    padding: 5px;
     display: flex;
   }
 
@@ -243,11 +291,12 @@
     justify-content: center;
     width: 100%;
     height: 100%;
+    font-size: 3em;
   }
 
   .special-head {
-    font-family: "Anton", Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    color: white;
+    font-family: "Anton", Impact, Haettenschweiler, "Arial Narrow Bold",
+      sans-serif;
     text-decoration: none;
     font-size: 2em;
   }
@@ -255,7 +304,13 @@
   nav {
     display: flex;
     justify-content: center;
+    padding-left: 5px;
+    padding-right: 5px;
     --background: rgba(255, 255, 255, 0.7);
+  }
+
+  span {
+    font-size: 1.25em;
   }
 
   /* svg {
@@ -305,7 +360,7 @@
     padding: 0 0.5rem;
     color: var(--color-text);
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     text-decoration: none;
@@ -340,17 +395,44 @@
     padding: 0;
     font-family: inherit;
     font-size: inherit;
+    color: var(--color-text);
   }
 
   .link-button:hover,
   .link-button:focus {
     text-decoration: none;
+    background: none;
+    color: var(--color-theme-1);
   }
 
   .logheadbutton {
     display: flex;
     flex-direction: row;
+    background-color: transparent;
+    cursor: pointer;
+    align-items: center;
+    height: 100%;
+    color: var(--color-text);
   }
+
+  .logheadbutton:focus,
+  .logheadbutton:hover {
+    background-color: transparent;
+  }
+
+  .orange {
+    color: var(--color-theme-1);
+  }
+
+  .undernav {
+    display: flex;
+    width: 100%;
+    font-size: 1em;
+    margin-top: 6px;
+    font-family: "Poppins", Arial, Helvetica, sans-serif;
+    color: var(--color-theme-1);
+  }
+
   /* .headuser {
     margin-right: 5px;
   } */

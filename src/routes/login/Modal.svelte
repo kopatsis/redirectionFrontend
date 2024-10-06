@@ -80,7 +80,7 @@
 
 	.modal {
 		padding: 20px;
-		background: white;
+		background: var(--color-bg-1);
 		border-radius: 5px;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 		z-index: 2001;

@@ -64,7 +64,7 @@
     <button class="link-button" on:click={closerFunc}>&times;</button>
   </div>
 
-  <h1>Cookie Policy</h1>
+  <h1>Privacy Policy</h1>
 
   <p>
     This Cookie Policy explains how our website uses cookies and similar
