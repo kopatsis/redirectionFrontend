@@ -51,7 +51,7 @@
     {/if}
   </td>
 
-  <td>{entryOb.count}</td>
+  <td class="count">{entryOb.count}</td>
 
   {#if paying}
     <td>
@@ -79,5 +79,14 @@
     background: var(--color-theme-1);
     color: white;
     outline: none;
+  }
+
+  td {
+    border: 1px solid white;
+    padding: 8px;
+  }
+
+  .count {
+    text-align: center;
   }
 </style>

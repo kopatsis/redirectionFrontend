@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { getKey } from "./getKey.js";
   import { goto } from "$app/navigation";
   import Instructions from "./Instructions.svelte";
@@ -36,6 +36,18 @@
   paidStore.subscribe((value) => {
     paying = value;
   });
+
+  let observer;
+
+  const handleIntersection = (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("observed");
+      } else {
+        entry.target.classList.remove("observed");
+      }
+    });
+  };
 
   async function handleSubmit() {
     const url = import.meta.env.VITE_BACKEND_URL;
@@ -77,6 +89,17 @@
   }
 
   onMount(async () => {
+    observer = new IntersectionObserver(handleIntersection, {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.1,
+    });
+
+    const items = document.querySelectorAll(".observe");
+    items.forEach((item) => {
+      observer.observe(item);
+    });
+
     const queryParams = $page.url.searchParams;
     referred = queryParams.has("dne");
     const unsubFirebase = userStore.subscribe(async (value) => {
@@ -87,6 +110,10 @@
     });
     return unsubFirebase;
   });
+
+  //   onDestroy(() => {
+  //     observer.disconnect();
+  //   });
 </script>
 
 <svelte:head>
@@ -100,14 +127,13 @@
     Tracker + QR Code generator + more
   </div> -->
   {#if referred}
-    <div>
+    <div class="observe">
       Looks like that shortened URL didn't lead to anything that exists. But you
       can still make one here! :)
     </div>
   {/if}
-  <h1>Enter your URL to shorten here:</h1>
-  <div class="sides">
-    
+  <h1 class="observe">Enter your URL to shorten here:</h1>
+  <div class="sides observe">
     <div class="mainportion">
       <form on:submit|preventDefault={handleSubmit} class="centeroverf">
         <input
@@ -139,7 +165,7 @@
   </div> -->
 
   <div>
-    <div class="inpage">
+    <div class="observe inpage">
       <div><a href="#about-mp">About</a></div>
       <div><a href="#benefits-mp">Paid Membership</a></div>
       <div><a href="#faq-mp">FAQs</a></div>
@@ -147,8 +173,8 @@
     </div>
 
     <div>
-      <h3 id="about-mp">More Details About Us</h3>
-      <div>
+      <h3 class="observe" id="about-mp">More Details About Us</h3>
+      <div class="observe">
         <h4>How does this service work?</h4>
         <div>
           Shorten Track's URL shortening process is simple. Just enter any URL
@@ -163,7 +189,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="observe">
         <h4>Do I have to make an account?</h4>
         <div>
           No, but it's recommended. Without an account, you can use all of
@@ -178,7 +204,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="observe">
         <h4>Can I see my previous shortened URLs?</h4>
         <div>
           Yes, with or without an account. After the shortened URL is generated,
@@ -192,7 +218,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="observe">
         <h4>How do shortened URLs work? Is it fast?</h4>
         <div>
           All services offering shortened URLs use HTTP redirection. This means
@@ -211,7 +237,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="observe">
         <h4>Can I choose what my shortened URL's handle says?</h4>
         <div>
           Yes, you can add a custom handle (the part after shk.fm/) for
@@ -226,7 +252,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="observe">
         <h4>What do you mean by analytics? What can I see?</h4>
         <div>
           Every time someone clicks your shortened URL, we track and save all
@@ -259,7 +285,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="observe">
         <h4>You can create QR Codes? Free?</h4>
         <div>
           Yes, for every shortened URL, you can generate a QR code. You can
@@ -273,7 +299,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="observe">
         <h4>Can I access or export any of this data?</h4>
         <div>
           Yes, with a paid membership you can generate and download a CSV with
@@ -288,7 +314,7 @@
       </div>
     </div>
 
-    <div>
+    <div class="observe">
       <h3 id="benefits-mp">Free Membership vs Paid Benefits</h3>
       <div>
         BOTH <br />
@@ -334,9 +360,9 @@
     </div>
 
     <div>
-      <h3 id="faq-mp">Some Frequently Asked Questions</h3>
+      <h3 class="observe" id="faq-mp">Some Frequently Asked Questions</h3>
 
-      <div>
+      <div class="observe">
         <div>
           Do I need to enter the "https://" or "www" in the URL I want to
           shorten.
@@ -344,7 +370,7 @@
         <div>No, if you leave those out, it will still work correctly.</div>
       </div>
 
-      <div>
+      <div class="observe">
         <div>
           Do I need to enter the "https://" before the shk.fm/... when accessing
           a shortened URL?
@@ -352,7 +378,7 @@
         <div>No, browsers do not need it to access the shortened URL.</div>
       </div>
 
-      <div>
+      <div class="observe">
         <div>
           Can I upload a CSV/Excel/other file to create many shortened URLs at
           once?
@@ -362,12 +388,12 @@
         </div>
       </div>
 
-      <div>
+      <div class="observe">
         <div>What is the limit of shortened URLs I can create?</div>
         <div>There is no limit.</div>
       </div>
 
-      <div>
+      <div class="observe">
         <div>
           Can I get more personal info, such as name or address, from users
           accessing my shortened URL?
@@ -375,7 +401,7 @@
         <div>No that is illegal.</div>
       </div>
 
-      <div>
+      <div class="observe">
         <div>
           If I visit a shk.fm shortened URL, is my IP address stored by Shorten
           Track?
@@ -387,12 +413,12 @@
         </div>
       </div>
 
-      <div>
+      <div class="observe">
         <div>Do shortened URLs work in all countries?</div>
         <div>Yes, anywhere with internet.</div>
       </div>
 
-      <div>
+      <div class="observe">
         <div>
           Why do some of my shortened URLs show that bots have accessed them?
         </div>
@@ -403,7 +429,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="observe">
         <div>
           What happens if the original URL doesn't work or leads nowhere?
         </div>
@@ -415,7 +441,7 @@
       </div>
     </div>
 
-    <div>
+    <div class="observe">
       <h3 id="contact-mp">Contact Us</h3>
       <div>
         Still have questions? Use this form to contact us with any queries,
@@ -427,14 +453,34 @@
 </section>
 
 {#if contact}
-  <Contact
-    bind:open={contact}
-    email={user ? (user.email ? user.email : "") : ""}
-    loggedIn={user && user.email}
-  />
+  <div class="observe observed">
+    <Contact
+      bind:open={contact}
+      email={user ? (user.email ? user.email : "") : ""}
+      loggedIn={user && user.email}
+    />
+  </div>
 {/if}
 
 <style>
+  .observe {
+    opacity: 0;
+    transform: translateY(25px);
+    -webkit-transform: translateY(25px);
+    transition:
+      transform 0.5s,
+      opacity 0.9s;
+    -webkit-transition:
+      -webkit-transform 0.5s,
+      opacity 0.9s;
+  }
+
+  .observe.observed {
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+  }
+
   .sides {
     display: flex;
   }
@@ -448,7 +494,7 @@
   }
 
   .imgcontain {
-	padding: 10px;
+    padding: 10px;
   }
 
   form {
@@ -457,21 +503,21 @@
   }
 
   h1 {
-	width: 100%;
-	text-align: left;
+    width: 100%;
+    text-align: left;
   }
 
   .inpage {
-	display: flex;
-	justify-content: space-between;
-	max-width: 800px;
+    display: flex;
+    justify-content: space-between;
+    max-width: 800px;
   }
 
   .inpage > div > a {
-	font-size: 2em;
-	text-decoration: none;
-	color: var(--color-text);
-	cursor: pointer;
+    font-size: 2em;
+    text-decoration: none;
+    color: var(--color-text);
+    cursor: pointer;
   }
 
   .mainportion {
@@ -527,7 +573,7 @@
 
   h3 {
     width: 100%;
-	font-size: 1.5em;
+    font-size: 1.5em;
   }
 
   .urlin {

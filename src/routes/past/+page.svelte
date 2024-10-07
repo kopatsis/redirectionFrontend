@@ -232,6 +232,54 @@
   {:else if error !== null}
     <div>Error fetching data</div>
   {:else}
+
+    <div class="mainpage">
+      <div class="searchsort">
+        <Search bind:searchParam submitFunc={changeSearch} />
+
+        <div>
+          <div>Sort By:</div>
+          <select on:change={changeSort} value={sortParam}>
+            <option value="dd">Date Created (Descending)</option>
+            <option value="da">Date Created (Ascending)</option>
+            <option value="ad">Alphabetical (Descending)</option>
+            <option value="aa">Alphabetical (Ascending)</option>
+            <option value="cd">Click Count (Descending)</option>
+            <option value="ca">Click Count (Ascending)</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        {#if !entries || !entries.length || entries.length === 0}
+          Nothing yet...
+        {:else}
+          <table>
+            <thead>
+              <tr>
+                <th>Link</th>
+                <th>Shortened URL</th>
+                <th>Original URL</th>
+                <th>Created</th>
+                <th>Clicks</th>
+                <th>Custom URL</th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each entries as entry (entry.param)}
+                <SmallEntry {domain} entryOb={entry} {paying} />
+              {/each}
+            </tbody>
+          </table>
+          {#if less}
+            <button on:click={() => changePage(false)}>Previous</button>
+          {/if}
+          {#if more}
+            <button on:click={changePage}>Next</button>
+          {/if}
+        {/if}
+      </div>
+    </div>
+
     {#if paying}
       {#if loadingcsvs}
         <div>loading...</div>
@@ -245,50 +293,6 @@
           Error fetching CSV, may be a server issue or lack of internet
           connection...
         </div>
-      {/if}
-    {/if}
-
-    <div class="searchsort">
-      <Search bind:searchParam submitFunc={changeSearch} />
-
-      <div>
-        <div>Sort By:</div>
-        <select on:change={changeSort} value={sortParam}>
-          <option value="dd">Date Created (Descending)</option>
-          <option value="da">Date Created (Ascending)</option>
-          <option value="ad">Alphabetical (Descending)</option>
-          <option value="aa">Alphabetical (Ascending)</option>
-          <option value="cd">Click Count (Descending)</option>
-          <option value="ca">Click Count (Ascending)</option>
-        </select>
-      </div>
-    </div>
-
-    {#if !entries || !entries.length || entries.length === 0}
-      <div>Nothing yet...</div>
-    {:else}
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Shortened URL</th>
-            <th>Original URL</th>
-            <th>Created</th>
-            <th>Clicks</th>
-            <th>Custom URL</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each entries as entry (entry.param)}
-            <SmallEntry {domain} entryOb={entry} {paying} />
-          {/each}
-        </tbody>
-      </table>
-      {#if less}
-        <button on:click={() => changePage(false)}>Previous</button>
-      {/if}
-      {#if more}
-        <button on:click={changePage}>Next</button>
       {/if}
     {/if}
   {/if}
@@ -331,4 +335,25 @@
     padding: 0.5rem;
     font-family: inherit;
   }
+
+  .mainpage {
+    width: fit-content;
+  }
+
+  table {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th {
+    border: 1px solid white;
+    padding: 8px;
+  }
+
+  th {
+    text-align: left;
+  }
+
 </style>
