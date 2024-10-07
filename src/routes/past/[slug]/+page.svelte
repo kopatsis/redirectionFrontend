@@ -40,7 +40,7 @@
   function updateURL() {
     if (window) {
       const url = new URL(
-        `${window.location.origin}${window.location.pathname}`,
+        `${window.location.origin}${window.location.pathname}`
       );
 
       url.searchParams.set("p", pageParam);
@@ -121,7 +121,7 @@
             "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
           },
           credentials: "include",
-        },
+        }
       );
       if (!response.ok) {
         throw new Error("Unable to reach Service");
@@ -273,28 +273,42 @@
       />
     {/if}
 
-    <Search bind:searchParam submitFunc={changeSearch} />
+    <div class="searchsort">
+      <Search bind:searchParam submitFunc={changeSearch} />
 
-    <div>
-      <div>Sort By:</div>
-      <select on:change={changeSort} value={sortParam}>
-        <option value="dd">Date Created (Descending)</option>
-        <option value="da">Date Created (Ascending)</option>
-        <option value="ad">Alphabetical (Descending)</option>
-        <option value="aa">Alphabetical (Ascending)</option>
-        <option value="cd">Click Count (Descending)</option>
-        <option value="ca">Click Count (Ascending)</option>
-      </select>
+      <div>
+        <div>Sort By:</div>
+        <select on:change={changeSort} value={sortParam}>
+          <option value="dd">Date Created (Descending)</option>
+          <option value="da">Date Created (Ascending)</option>
+          <option value="ad">Alphabetical (Descending)</option>
+          <option value="aa">Alphabetical (Ascending)</option>
+          <option value="cd">Click Count (Descending)</option>
+          <option value="ca">Click Count (Ascending)</option>
+        </select>
+      </div>
     </div>
 
     {#if !entries || !entries.length || entries.length === 0}
       <div>Nothing yet...</div>
     {:else}
-      <ul>
-        {#each entries as entry (entry.param)}
-          <SmallEntry {domain} entryOb={entry} {paying} />
-        {/each}
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Shortened URL</th>
+            <th>Original URL</th>
+            <th>Created</th>
+            <th>Clicks</th>
+            <th>Custom URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each entries as entry (entry.param)}
+            <SmallEntry {domain} entryOb={entry} {paying} />
+          {/each}
+        </tbody>
+      </table>
       {#if less}
         <button on:click={() => changePage(false)}>Previous</button>
       {/if}
@@ -327,8 +341,40 @@
     flex-direction: column;
     align-items: center;
   }
-  ul {
+  .searchsort {
+    display: flex;
+    justify-content: space-between;
     width: 100%;
-    padding: 30px;
   }
+
+  /* select {
+    background: none;
+    border: none;
+    border: none;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    font-size: 1em;
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    color: rgba(0, 0, 0, 0.847);
+  } */
+
+  /* select:focus,
+  select:hover {
+    color: var(--color-text);
+  } */
+
+  select {
+    border-radius: 0;
+    color: var(--color-bg-3);
+    font-size: inherit;
+    /* border-radius: 0px; */
+    background: rgba(255, 255, 255, 0.5);
+    padding: 0.5rem;
+    font-family: inherit;
+  }
+
+  /* .wrapper:hover {
+    color: var(--color-text);
+  } */
 </style>

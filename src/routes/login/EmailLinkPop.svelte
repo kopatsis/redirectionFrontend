@@ -129,3 +129,28 @@
     {/if}
   </form>
 </Modal>
+
+<style>
+    .link-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+    font-size: 24px;
+    color: var(--color-text);
+  }
+
+  .link-button:hover,
+  .link-button:focus {
+    background: none;
+    color: var(--color-text);
+  }
+
+  .closeline {
+    display: flex;
+    justify-content: right;
+    width: 100%;
+  }
+</style>

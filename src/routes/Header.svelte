@@ -53,6 +53,15 @@
     }
   }
 
+  $: if ($page.url.pathname) {
+    dropdown = false;
+    sentReset = false;
+    sentVerif = false;
+    verifError = false;
+    errorMess = false;
+    logo = loginLogo;
+  }
+
   function firstFiftyEmail(email) {
     if (email && email.length && email.length > 50) {
       return email.slice(0, 37) + "...";
@@ -89,12 +98,22 @@
   });
 </script>
 
-<header id="header-scrto">
+<header id="header">
   <div class="corner">
     <a href="/" class="special-head orange"> ST </a>
+    <a href="/" class="main-message">Shorten Track</a>
   </div>
 
-  <a href="/" class="main-message">Shorten Track</a>
+  <nav>
+    <a class:orange={$page.url.pathname === "/"} href="/">Home</a>
+    <a class:orange={$page.url.pathname === "/past"} href="/past">History</a>
+    <a class:orange={$page.url.pathname === "/articles"} href="/articles"
+      >Articles</a
+    >
+    <a class:orange={$page.url.pathname === "/justqr"} href="/justqr"
+      >QR Codes</a
+    >
+  </nav>
 
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div class="corner">
@@ -105,128 +124,118 @@
       >
     </button>
   </div>
-</header>
-
-<nav>
-  <a class:orange={$page.url.pathname === "/"} href="/">Home</a>
-  <a class:orange={$page.url.pathname === "/past"} href="/past">History</a>
-  <a class:orange={$page.url.pathname === "/articles"} href="/articles"
-    >Articles</a
-  >
-  <a class:orange={$page.url.pathname === "/justqr"} href="/justqr">QR Codes</a>
-</nav>
-
-{#if dropdown}
-  <div class="dropdown-m">
-    <div>
-      <div class="undernav">
-        {#if !user}
-          <div>Not currently logged in</div>
-        {:else if !user.emailVerified}
-          <div>Verify your email to finish login</div>
-        {:else}
-          <div>{firstFiftyEmail(user.email)}</div>
-        {/if}
-      </div>
-      {#if user === undefined}
-        <div>loading...</div>
-      {:else if !user}
-        <div>
-          <a class="link-button" href="/login">Log in</a>
-        </div>
-        <div>
-          <a class="link-button" href="/login?new=t">Create account</a>
-        </div>
-
-        <div>
-          <button class="link-button" on:click={() => (cookieModal = true)}
-            >Privacy Policy</button
-          >
-        </div>
-        <div>
-          <button class="link-button" on:click={() => (contactModal = true)}
-            >Contact Us</button
-          >
-        </div>
-      {:else if user && user.email}
-        {#if !user.emailVerified}
-          {#if sentVerif}
-            <div>Verification email sent!</div>
+  {#if dropdown}
+    <div class="dropdown-m">
+      <div>
+        <div class="undernav">
+          {#if !user}
+            <div>Not currently logged in</div>
+          {:else if !user.emailVerified}
+            <div>Verify your email to finish login</div>
           {:else}
-            {#if verifError}
-              <div>Couldn't send verification email, please try again</div>
+            <div>{firstFiftyEmail(user.email)}</div>
+          {/if}
+        </div>
+        {#if user === undefined}
+          <div>loading...</div>
+        {:else if !user}
+          <div>
+            <a class="link-button" href="/login">Log in</a>
+          </div>
+          <div>
+            <a class="link-button" href="/login?new=t">Create account</a>
+          </div>
+
+          <div>
+            <button class="link-button" on:click={() => (cookieModal = true)}
+              >Privacy Policy</button
+            >
+          </div>
+          <div>
+            <button class="link-button" on:click={() => (contactModal = true)}
+              >Contact Us</button
+            >
+          </div>
+        {:else if user && user.email}
+          {#if !user.emailVerified}
+            {#if sentVerif}
+              <div>Verification email sent!</div>
+            {:else}
+              {#if verifError}
+                <div>Couldn't send verification email, please try again</div>
+              {/if}
+              <div>
+                <button class="link-button">Re-send verification email</button>
+              </div>
             {/if}
             <div>
-              <button class="link-button">Re-send verification email</button>
-            </div>
-          {/if}
-          <div>
-            <button class="link-button" on:click={() => (cookieModal = true)}
-              >Privacy Policy</button
-            >
-          </div>
-          <div>
-            <button class="link-button" on:click={() => (contactModal = true)}
-              >Contact Us</button
-            >
-          </div>
-          <div>
-            <a class="link-button" href="/login">Change Account</a>
-          </div>
-        {:else}
-          <div>
-            <button class="link-button" on:click={clickManage}
-              >Manage Subscription</button
-            >
-          </div>
-          {#if errorMess}
-            <div style="color: red;">
-              Error opening up membership management window :/ Try again and if
-              the issue persists, contact us please :)
-            </div>
-          {/if}
-
-          <div>
-            <button class="link-button" on:click={() => (cookieModal = true)}
-              >Privacy Policy</button
-            >
-          </div>
-          <div>
-            <button class="link-button" on:click={() => (contactModal = true)}
-              >Contact Us</button
-            >
-          </div>
-
-          <div>
-            {#if !sentReset}
-              <button
-                class="link-button"
-                on:click={async () => {
-                  await sendPasswordResetEmail(auth, user.email);
-                  sentReset = true;
-                }}
+              <button class="link-button" on:click={() => (cookieModal = true)}
+                >Privacy Policy</button
               >
-                {#if needsPass}
-                  ! Add a Password to Account
-                {:else}
-                  Reset Password
-                {/if}
-              </button>
-            {:else}
-              Check your email for the next step
+            </div>
+            <div>
+              <button class="link-button" on:click={() => (contactModal = true)}
+                >Contact Us</button
+              >
+            </div>
+            <div>
+              <a class="link-button" href="/login">Change Account</a>
+            </div>
+          {:else}
+            <div>
+              <button class="link-button" on:click={clickManage}
+                >Manage Subscription</button
+              >
+            </div>
+            {#if errorMess}
+              <div style="color: red;">
+                Error opening up membership management window :/ Try again and
+                if the issue persists, contact us please :)
+              </div>
             {/if}
-          </div>
 
-          <div>
-            <button class="link-button" on:click={logout}>Sign Out</button>
-          </div>
+            <div>
+              <button class="link-button" on:click={() => (cookieModal = true)}
+                >Privacy Policy</button
+              >
+            </div>
+            <div>
+              <button class="link-button" on:click={() => (contactModal = true)}
+                >Contact Us</button
+              >
+            </div>
+
+            <div>
+              {#if !sentReset}
+                <button
+                  class="link-button"
+                  on:click={async () => {
+                    await sendPasswordResetEmail(auth, user.email);
+                    sentReset = true;
+                  }}
+                >
+                  {#if needsPass}
+                    ! Add a Password to Account
+                  {:else}
+                    Reset Password
+                  {/if}
+                </button>
+              {:else}
+                Check your email for the next step
+              {/if}
+            </div>
+
+            <div>
+              <button class="link-button" on:click={logout}>Sign Out</button>
+            </div>
+          {/if}
+        {:else}
+          <div>loading...</div>
         {/if}
-      {:else}
-        <div>loading...</div>
-      {/if}
+      </div>
     </div>
-  </div>
-{/if}
+  {/if}
+</header>
 
 {#if contactModal}
   <Contact
@@ -244,25 +253,26 @@
   .dropdown-m {
     z-index: 1000;
     position: absolute;
-    top: 64px;
+    top: 58px;
     right: 0;
-    background-color: var(--color-bg-3);
+    background: #24282a;
     min-width: 160px;
     padding: 20px;
   }
 
   .main-message {
+    margin-left: 18px;
     font-size: 3em;
     font-weight: bold;
     text-decoration: none;
-    position: absolute;
-    left: 50%;
+    /* position: absolute;
+    left: 50%; */
     color: var(--color-text);
-    transform: translateX(-50%);
+    /* transform: translateX(-50%); */
   }
 
   .main-message:hover,
-  .main-message:focus{
+  .main-message:focus {
     color: var(--color-text);
   }
 
@@ -289,7 +299,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    /* width: 100%; */
     height: 100%;
     font-size: 3em;
   }
@@ -311,6 +321,10 @@
 
   span {
     font-size: 1.25em;
+  }
+
+  header {
+    width: min(80rem, 100vw);
   }
 
   /* svg {

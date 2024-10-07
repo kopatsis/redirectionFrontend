@@ -31,11 +31,11 @@
 	/**
 	 * @param {{ key: string; }} event
 	 */
-	function handleKeydownOuter(event) {
-		if (event.key === 'Enter') {
-			closerAny()
-		}
-	}
+	// function handleKeydownOuter(event) {
+	// 	if (event.key === 'Enter') {
+	// 		closerAny()
+	// 	}
+	// }
 
 	onMount(() => {
 		window.addEventListener('keydown', handleKeydown);
@@ -45,12 +45,12 @@
 	});
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="backdrop"
 	class:none={!display}
 	on:click={closerAny}
 	tabindex="0"
-	on:keydown={handleKeydownOuter}
 	role="button"
 	aria-label="Close modal"
 >
@@ -79,10 +79,11 @@
 	}
 
 	.modal {
+		box-shadow: rgba(255, 62, 0, 0.4) 5px 5px, rgba(255, 62, 0, 0.3) 10px 10px, rgba(255, 62, 0, 0.2) 15px 15px, rgba(255, 62, 0, 0.1) 20px 20px, rgba(255, 62, 0, 0.05) 25px 25px;
 		padding: 20px;
-		background: var(--color-bg-1);
+		background: #1a1d1e;
 		border-radius: 5px;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		/* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 		z-index: 2001;
 		display: flex;
 		flex-direction: column;

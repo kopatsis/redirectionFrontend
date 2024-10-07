@@ -342,12 +342,13 @@
 
   async function copyCustomToClipBoard() {
     try {
-      await navigator.clipboard.writeText( "http://" + domain + "/" + entryOb.custom);
+      await navigator.clipboard.writeText(
+        "http://" + domain + "/" + entryOb.custom
+      );
     } catch (error) {
       console.error("Error copying to clipboard:", error);
     }
   }
-
 </script>
 
 <div class="line"></div>
@@ -474,7 +475,9 @@
     <QrCode
       QRText={"http://" + url + "?q=t"}
       OGUrl={entryOb.url}
-      custom={entryOb.custom ? "http://" + domain + "/" + entryOb.custom + "?q=t" : ""}
+      custom={entryOb.custom
+        ? "http://" + domain + "/" + entryOb.custom + "?q=t"
+        : ""}
       bind:chartOrQR
     />
   {/if}

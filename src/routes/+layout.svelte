@@ -25,9 +25,10 @@
 </script>
 
 <div class="app">
-  <div class="inner">
+  <div class="headerhold">
     <Header />
-
+  </div>
+  <div class="inner">
     <CookieSmall />
 
     <main>
@@ -35,7 +36,7 @@
     </main>
 
     {#if hasScrolled}
-      <a class="scrolltop" href="#header-scrto">^</a>
+      <a class="scrolltop" href="#header">^</a>
     {/if}
   </div>
 </div>
@@ -49,13 +50,22 @@
     display: flex;
     flex-direction: column;
     /* justify-content: center; */
-	align-items: center;
+    align-items: center;
+  }
+
+  .headerhold {
+    background: #24282a;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+	padding-bottom: 6px;
   }
 
   .inner {
-	width: min(80rem, 100vw);
-	/* background-color: var(--color-bg-1); */
-	position: relative;
+    width: min(80rem, 100vw);
+    /* background-color: var(--color-bg-1); */
+    position: relative;
   }
 
   main {
@@ -63,7 +73,7 @@
     flex-direction: column;
     padding: 1rem;
     /* width: 100%; */
-    max-width: 80rem;
+    /* max-width: 80rem; */
     margin: 0 auto;
     box-sizing: border-box;
   }
@@ -72,11 +82,26 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: orange;
+    background-color: var(--color-theme-1);
     position: fixed;
     bottom: 50px;
     right: 50px;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+	font-size: 2em;
+	color: var(--color-text);
+	text-decoration: none;
+	cursor: pointer;
+	font-family: "Poppins", Arial, Helvetica, sans-serif;
+  }
+
+  .scrolltop:hover,
+  .scrolltop:focus {
+	color: var(--color-text);
+	text-decoration: none;
+	cursor: pointer;
   }
 
   /* footer {

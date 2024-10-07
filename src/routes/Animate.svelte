@@ -5,7 +5,7 @@
   let currentTop = " ";
   let currentBottom = " ";
 
-  const altBottom = "^ Example Shortened URL ^";
+  const altBottom = "Example Shortened URL";
 
   let arrayNum = 1;
   let iterator = 0;

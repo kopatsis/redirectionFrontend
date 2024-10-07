@@ -15,6 +15,7 @@
   import Chart from "./past/Chart.svelte";
   import Contact from "./Contact.svelte";
   import Animate from "./Animate.svelte";
+  import Example from "$lib/images/examplegraph.png";
 
   let user = null;
   let workingError = "";
@@ -104,38 +105,43 @@
       can still make one here! :)
     </div>
   {/if}
-  <div class="mainportion">
-    <h1>Enter your URL to shorten here:</h1>
-    <form on:submit|preventDefault={handleSubmit} class="centeroverf">
-      <input
-        class="urlin"
-        required
-        type="text"
-        placeholder="https://example.com"
-        bind:value={actual_url}
-        style="color: dark-gray;"
-      />
-      <button type="submit">Shorten!</button>
-    </form>
+  <h1>Enter your URL to shorten here:</h1>
+  <div class="sides">
+    
+    <div class="mainportion">
+      <form on:submit|preventDefault={handleSubmit} class="centeroverf">
+        <input
+          class="urlin"
+          required
+          type="text"
+          placeholder="https://example.com"
+          bind:value={actual_url}
+          style="color: dark-gray;"
+        />
+        <button type="submit">Shorten!</button>
+      </form>
+      <Animate />
+    </div>
+    <div class="imgcontain">
+      <img class="example" src={Example} alt="example of analytics graph" />
+    </div>
   </div>
 
   {#if workingError}{workingError}{/if}
 
   <!-- <div>
-    <div>The shortest possible URLs</div> 
-    <div>Shortened URLs never expire</div> 
-    <div>Unlimited shortened URL generation</div>
-    <div>Click tracking analytics dashboard</div>
-    <div>QR Code generation for shortened URLs</div>
-    <div>Easy to edit and delete at any time</div>
+    <div>The shortest possible URLs</div> Magnifying glass
+    <div>Shortened URLs never expire</div> Calendar
+    <div>Unlimited shortened URL generation</div> Infinity sign
+    <div>Click tracking analytics dashboard</div> Document symbol
+    <div>QR Code generation for shortened URLs</div> Camera icon
+    <div>Easy to edit and delete at any time</div> Pen icon
   </div> -->
 
-  <Animate />
-
   <div>
-    <div>
+    <div class="inpage">
       <div><a href="#about-mp">About</a></div>
-      <div><a href="#benefits-mp">Subscription Benefits</a></div>
+      <div><a href="#benefits-mp">Paid Membership</a></div>
       <div><a href="#faq-mp">FAQs</a></div>
       <div><a href="#contact-mp">Contact</a></div>
     </div>
@@ -429,9 +435,43 @@
 {/if}
 
 <style>
+  .sides {
+    display: flex;
+  }
+
+  .sides > div {
+    flex: 1;
+  }
+
+  .example {
+    width: 100%;
+  }
+
+  .imgcontain {
+	padding: 10px;
+  }
+
   form {
     display: flex;
     width: 100%;
+  }
+
+  h1 {
+	width: 100%;
+	text-align: left;
+  }
+
+  .inpage {
+	display: flex;
+	justify-content: space-between;
+	max-width: 800px;
+  }
+
+  .inpage > div > a {
+	font-size: 2em;
+	text-decoration: none;
+	color: var(--color-text);
+	cursor: pointer;
   }
 
   .mainportion {
@@ -487,6 +527,7 @@
 
   h3 {
     width: 100%;
+	font-size: 1.5em;
   }
 
   .urlin {

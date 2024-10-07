@@ -243,43 +243,92 @@
   {:else if allData}
     <div>All Click Data for {domain + "/" + param}</div>
     <div>Current extended url: {allData.realUrl}</div>
-    <div>Total Clicks: {allData.total}</div>
-    {#if status === "paid"}
-      <div>Total Unique Visitors by IP: {allData.uniqueVisits}</div>
-    {:else}
-      <div>Total Unique Visitors by IP: ???</div>
-    {/if}
+    <div class="gridcontain">
+      <div>Total Clicks: {allData.total}</div>
+      {#if status === "paid"}
+        <div>Total Unique Visitors by IP: {allData.uniqueVisits}</div>
+      {:else}
+        <div>Total Unique Visitors by IP: ???</div>
+      {/if}
 
-    <div>
-      Clicks from QR Code: <Percentile
-        numerator={allData.fromQr}
-        denominator={allData.total}
-        blocked={false}
-      />
+      <div>Clicks from QR Code:</div>
+
+      <div>
+        <Percentile
+          numerator={allData.fromQr}
+          denominator={allData.total}
+          blocked={false}
+        />
+      </div>
+
+      <div>Clicks from Bots:</div>
+      <div>
+        <Percentile
+          numerator={status === "paid" ? allData.fromBot : 0}
+          denominator={allData.total}
+          blocked={status === "free"}
+        />
+      </div>
+
+      <div>Clicks from Mobile Devices:</div>
+      <div>
+        <Percentile
+          numerator={status === "paid" ? allData.fromMobile : 0}
+          denominator={allData.total}
+          blocked={status === "free"}
+        />
+      </div>
+
+      <div>Clicks from Custom URL:</div>
+
+      <div>
+        <Percentile
+          numerator={status === "paid" ? allData.fromCustom : 0}
+          denominator={allData.total}
+          blocked={status === "free"}
+        />
+      </div>
+    </div>
+  {:else}
+    <div>Error loading analytics, please close and try again</div>
+  {/if}
+  <div>
+    <div class="chartrow">
+      <div><canvas class:null={!showPaid} bind:this={dailyChart}></canvas></div>
+      {#if !loading && !error & (status === "free")}
+        <div>Start a paid membership to see clicks by day</div>
+      {/if}
+
+      <div>
+        <canvas class:null={!showFree} bind:this={weeklyChart}></canvas>
+      </div>
     </div>
 
-    <div>
-      Clicks from Bots: <Percentile
-        numerator={status === "paid" ? allData.fromBot : 0}
-        denominator={allData.total}
-        blocked={status === "free"}
-      />
+    <div class="chartrow">
+      <div><canvas class:null={!showPaid} bind:this={cityChart}></canvas></div>
+      {#if !loading && !error & (status === "free")}
+        <div>Start a paid membership to see share of clicks by city</div>
+      {/if}
+
+      <div>
+        <canvas class:null={!showPaid} bind:this={countryChart}></canvas>
+      </div>
+      {#if !loading && !error & (status === "free")}
+        <div>Start a paid membership to see share of clicks by country</div>
+      {/if}
     </div>
 
-    <div>
-      Clicks from Mobile Devices: <Percentile
-        numerator={status === "paid" ? allData.fromMobile : 0}
-        denominator={allData.total}
-        blocked={status === "free"}
-      />
-    </div>
+    <div class="chartrow">
+      <div><canvas class:null={!showPaid} bind:this={osChart}></canvas></div>
+      {#if !loading && !error & (status === "free")}
+        <div>
+          Start a paid membership to see share of clicks by operating system
+        </div>
+      {/if}
 
-    <div>
-      Clicks from Custom URL: <Percentile
-        numerator={status === "paid" ? allData.fromCustom : 0}
-        denominator={allData.total}
-        blocked={status === "free"}
-      />
+      <div>
+        <canvas class:null={!showFree} bind:this={browserChart}></canvas>
+      </div>
     </div>
 
     {#if status === "paid"}
@@ -298,44 +347,43 @@
         <div>Error downloading csv</div>
       {/if}
     {/if}
-  {:else}
-    <div>Error loading analytics, please close and try again</div>
-  {/if}
-  <div>
-    <div><canvas class:null={!showPaid} bind:this={dailyChart}></canvas></div>
-    {#if !loading && !error & (status === "free")}
-      <div>Start a paid membership to see clicks by day</div>
-    {/if}
-
-    <div>
-      <canvas class:null={!showFree} bind:this={weeklyChart}></canvas>
-    </div>
-
-    <div><canvas class:null={!showPaid} bind:this={cityChart}></canvas></div>
-    {#if !loading && !error & (status === "free")}
-      <div>Start a paid membership to see share of clicks by city</div>
-    {/if}
-
-    <div><canvas class:null={!showPaid} bind:this={countryChart}></canvas></div>
-    {#if !loading && !error & (status === "free")}
-      <div>Start a paid membership to see share of clicks by country</div>
-    {/if}
-
-    <div><canvas class:null={!showPaid} bind:this={osChart}></canvas></div>
-    {#if !loading && !error & (status === "free")}
-      <div>
-        Start a paid membership to see share of clicks by operating system
-      </div>
-    {/if}
-
-    <div>
-      <canvas class:null={!showFree} bind:this={browserChart}></canvas>
-    </div>
   </div>
 </Modal>
 
 <style>
   .null {
     display: none;
+  }
+
+  .chartrow {
+    display: flex;
+  }
+
+  .gridcontain {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .link-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+    font-size: 24px;
+    color: var(--color-text);
+  }
+
+  .link-button:hover,
+  .link-button:focus {
+    background: none;
+    color: var(--color-text);
+  }
+
+  .closeline {
+    display: flex;
+    justify-content: right;
+    width: 100%;
   }
 </style>
