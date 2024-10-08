@@ -202,15 +202,15 @@ export const getEmailSubs = async () => {
 
       if (response.ok) {
         const ret = await response.json();
-        return true, ret && ret.AllowsEmails ? ret.AllowsEmails : false;
+        return [true, ret && ret.AllowsEmails ? ret.AllowsEmails : false];
       } else {
-        return true, false;
+        return [true, false];
       }
     } catch (err) {
       console.error(err);
-      return true, false;
+      return [true, false];
     }
   } else {
-    return false, null;
+    return [false, null];
   }
 };

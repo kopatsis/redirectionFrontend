@@ -63,6 +63,8 @@
         [None]
       {/if}
     </td>
+    {:else}
+    <td>N/A</td>
   {/if}
 </tr>
 

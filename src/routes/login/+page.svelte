@@ -107,7 +107,7 @@
 
   async function HandleTurnstile() {
     const turnstileItem = document.querySelector(
-      '[name="cf-turnstile-response"]'
+      '[name="cf-turnstile-response"]',
     );
     if (turnstileItem === null || turnstileItem === undefined) {
       errorMessage = "Turnstile verification failed.)";
@@ -170,7 +170,7 @@
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
 
@@ -270,7 +270,7 @@
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
       await addHasPassword();
@@ -366,10 +366,10 @@
       >{/if}. Just click the link and this page will be automatically update to
     complete your sign in. No special code needed.
   </div>
-  <button on:click={sendVerificationEmailFromStore}
+  <button type="button" on:click={sendVerificationEmailFromStore}
     >Re-send verification email</button
   >
-  <button on:click={logout}>Sign Out</button>
+  <button type="button" on:click={logout}>Sign Out</button>
 {:else if isUserLoggedIn}
   <div class="isloggedin">
     <div>
@@ -377,8 +377,10 @@
     </div>
     <div>Would you like to stay signed in?</div>
     <div class="isloggedbuttons">
-      <button class="submit" on:click={handleProceed}>Definitely</button>
-      <button class="submit" on:click={logout}>Sign out</button>
+      <button type="button" class="submit" on:click={handleProceed}
+        >Definitely</button
+      >
+      <button type="button" class="submit" on:click={logout}>Sign out</button>
     </div>
   </div>
 {:else}
@@ -427,6 +429,26 @@
         required
       />
     </div>
+    {#if signUp}
+      <div>
+        <div class="verif" class:complete={hasMinimumLength}>
+          {#if hasMinimumLength}<span style="color: green;">&check;</span
+            >{:else}<span style="color: red;">&times;</span>{/if}&nbsp;Password must be
+          at least 10 characters
+        </div>
+        <div class="verif" class:complete={containsLetter}>
+          {#if containsLetter}<span style="color: green;">&check;</span
+            >{:else}<span style="color: red;">&times;</span>{/if}&nbsp;Password must contain at
+          least one letter
+        </div>
+        <div class="verif" class:complete={containsNumber}>
+          {#if containsNumber}<span style="color: green;">&check;</span
+            >{:else}<span style="color: red;">&times;</span>{/if}&nbsp;Password must contain at
+          least one number
+        </div>
+      </div>
+    {/if}
+
     <div>
       {#if !emailLinkPop}
         <br />
@@ -439,42 +461,30 @@
         <button class="submit" type="submit">Sign In</button>
       </div>
     {:else}
-      <div class="verif" class:complete={hasMinimumLength}>
-        {#if hasMinimumLength}&check;{:else}&times;{/if} Password must be at least
-        10 characters
-      </div>
-      <div class="verif" class:complete={containsLetter}>
-        {#if containsLetter}&check;{:else}&times;{/if} Password must contain at least
-        one letter
-      </div>
-      <div class="verif" class:complete={containsNumber}>
-        {#if containsNumber}&check;{:else}&times;{/if} Password must contain at least
-        one number
-      </div>
-
       <div>
         <div class="checkbox-wrapper-13">
-          <input id="c1-13" type="checkbox" bind:value={allowsEmails} />
+          <input id="c1-13" type="checkbox" bind:checked={allowsEmails} />
           <label for="c1-13">Allow Non-Essential Emails</label>
         </div>
       </div>
 
       <div>
-        By creating an account, you agree to our <button
+        By signing up, you agree to our <button
           class="link-button"
+          type="button"
           on:click={() => (tosOpen = true)}>Terms of Service</button
         >
       </div>
 
       {#if isValidPassword && emailValid}
         <button class="submit" type="submit">Sign Up</button>
-        <div class="verif complete">Ready to submit!</div>
+        <div style="color: green;" class="verif complete">Ready to submit!</div>
       {:else}
         <button class="submit" type="button">Sign Up</button>
         {#if isValidPassword}
-          <div class="verif">Please enter a valid email address</div>
+          <div style="color: red;" class="verif">Please enter a valid email address</div>
         {:else}
-          <div class="verif">Please complete all required fields</div>
+          <div style="color: red;" class="verif">Please complete all required fields</div>
         {/if}
       {/if}
     {/if}
@@ -489,15 +499,14 @@
         >
       </div>
     {/if}
-    {#if forgotPass}
-      <ForgotPass {email} bind:open={forgotPass} />
-    {/if}
-
-    {#if emailLinkPop}
-      <EmailLinkPop bind:email bind:open={emailLinkPop} />
-    {/if}
   </form>
 
+  {#if emailLinkPop}
+    <EmailLinkPop bind:email bind:open={emailLinkPop} />
+  {/if}
+  {#if forgotPass}
+    <ForgotPass {email} bind:open={forgotPass} />
+  {/if}
   {#if tosOpen}
     <TermsOfService bind:open={tosOpen} />
   {/if}
@@ -505,7 +514,7 @@
   <div class="bottomrow">
     <br />
     <div>--or--</div>
-    <button on:click={() => (emailLinkPop = true)}
+    <button type="button" on:click={() => (emailLinkPop = true)}
       >Authenticate with email link</button
     >
     <div>--or--</div>
@@ -624,8 +633,7 @@
   }
 
   input[type="password"],
-  input[type="email"],
-  input[type="text"] {
+  input[type="email"] {
     border: 1px solid rgb(137, 151, 155);
     border-radius: 0px;
     transition: border-color 150ms ease-in-out 0s;
@@ -654,11 +662,11 @@
 
   @supports (-webkit-appearance: none) or (-moz-appearance: none) {
     .checkbox-wrapper-13 input[type="checkbox"] {
-      --active: #275efe;
+      --active: var(--color-theme-1);
       --active-inner: #fff;
       --focus: 2px rgba(39, 94, 254, 0.3);
       --border: #bbc1e1;
-      --border-hover: #275efe;
+      --border-hover: var(--color-theme-1);
       --background: #fff;
       --disabled: #f6f8ff;
       --disabled-inner: #e1e6f9;

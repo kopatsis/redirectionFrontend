@@ -52,7 +52,8 @@
   onMount(async () => {
     cookiePolicy = localStorage.getItem("CookiePolicy") !== "NONE";
     oldCookiePolicy = cookiePolicy;
-    loggedIn, (emailAllowed = await getEmailSubs());
+    [loggedIn, emailAllowed] = await getEmailSubs();
+    console.log(loggedIn, emailAllowed);
     if (loggedIn) {
       oldEmailAllowed = emailAllowed;
     }
@@ -183,7 +184,7 @@
       </div>
     {/if}
     <div>
-      <button on:click={selectAll}>Select All</button>
+      <button class="link-button" on:click={selectAll}>Select All</button>
     </div>
     <div>
       <button on:click={saveAndClose}>Save and Close</button><button
@@ -194,26 +195,40 @@
 </Modal>
 
 <style>
-    .link-button {
+  .link-button {
     background: none;
     border: none;
+    color: var(--color-text);
+    text-decoration: underline;
     cursor: pointer;
     padding: 0;
     font-family: inherit;
     font-size: inherit;
-    font-size: 24px;
-    color: var(--color-text);
   }
 
   .link-button:hover,
   .link-button:focus {
-    background: none;
-    color: var(--color-text);
+    text-decoration: none;
   }
 
   .closeline {
     display: flex;
     justify-content: right;
     width: 100%;
+  }
+
+  button {
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+    border: none;
+    margin: 4px;
+  }
+
+  button:focus,
+  button:hover {
+    background: var(--color-theme-1);
+    color: white;
+    outline: none;
   }
 </style>

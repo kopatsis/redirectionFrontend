@@ -80,14 +80,20 @@
     let labels;
     if (isdaily) {
       labels = chartData.keys.map((date) =>
-        new Date(date).toLocaleDateString("en-US")
+        new Date(date).toLocaleDateString("en-US"),
       );
     } else {
       labels = chartData.keys.map((date, index, array) => {
-        const currentLabel = new Date(date).toLocaleDateString("en-US");
+        const currentLabel = new Date(date).toLocaleDateString("en-US", {
+          month: "numeric",
+          day: "numeric",
+        });
         const nextLabel =
           index < array.length - 1
-            ? new Date(array[index + 1]).toLocaleDateString("en-US")
+            ? new Date(array[index + 1]).toLocaleDateString("en-US", {
+                month: "numeric",
+                day: "numeric",
+              })
             : "Now";
         return `${currentLabel} - ${nextLabel}`;
       });
@@ -151,7 +157,7 @@
     browserInstance = createDonutChart(
       browserChart,
       allData.browserGraph,
-      "Web Browsers Used"
+      "Web Browsers Used",
     );
 
     if (status === "paid") {
@@ -160,17 +166,17 @@
       osInstance = createDonutChart(
         osChart,
         allData.operatingGraph,
-        "Operating Systems Used"
+        "Operating Systems Used",
       );
       cityInstance = createDonutChart(
         cityChart,
         allData.cityGraph,
-        "Cities Accessing URL"
+        "Cities Accessing URL",
       );
       countryInstance = createDonutChart(
         countryChart,
         allData.countryGraph,
-        "Countries Accessing URL"
+        "Countries Accessing URL",
       );
     }
   }
@@ -244,11 +250,13 @@
     <div>All Click Data for {domain + "/" + param}</div>
     <div>Current extended url: {allData.realUrl}</div>
     <div class="gridcontain">
-      <div>Total Clicks: {allData.total}</div>
+      <div>Total Clicks:</div>
+      <div>{allData.total}</div>
+      <div>Total Unique Visitors by IP:</div>
       {#if status === "paid"}
-        <div>Total Unique Visitors by IP: {allData.uniqueVisits}</div>
+        <div>{allData.uniqueVisits}</div>
       {:else}
-        <div>Total Unique Visitors by IP: ???</div>
+        <div>?</div>
       {/if}
 
       <div>Clicks from QR Code:</div>
@@ -294,39 +302,53 @@
   {/if}
   <div>
     <div class="chartrow">
-      <div><canvas class:null={!showPaid} bind:this={dailyChart}></canvas></div>
+      <div class:charthold={showPaid}>
+        <canvas class:null={!showPaid} bind:this={dailyChart}></canvas>
+      </div>
       {#if !loading && !error & (status === "free")}
-        <div>Start a paid membership to see clicks by day</div>
+        <div class="charthold" class:empty={!showPaid}>
+          Start a paid membership to see clicks by day
+        </div>
       {/if}
 
-      <div>
+      <div class="charthold">
         <canvas class:null={!showFree} bind:this={weeklyChart}></canvas>
       </div>
     </div>
 
     <div class="chartrow">
-      <div><canvas class:null={!showPaid} bind:this={cityChart}></canvas></div>
+      <div class:charthold={showPaid}>
+        <canvas class:null={!showPaid} bind:this={cityChart}></canvas>
+      </div>
       {#if !loading && !error & (status === "free")}
-        <div>Start a paid membership to see share of clicks by city</div>
+        <div class="charthold" class:empty={!showPaid}>
+          <p>Start a paid membership to see share of clicks by city</p>
+        </div>
       {/if}
 
-      <div>
+      <div class:charthold={showPaid}>
         <canvas class:null={!showPaid} bind:this={countryChart}></canvas>
       </div>
       {#if !loading && !error & (status === "free")}
-        <div>Start a paid membership to see share of clicks by country</div>
+        <div class="charthold" class:empty={!showPaid}>
+          <p>Start a paid membership to see share of clicks by country</p>
+        </div>
       {/if}
     </div>
 
     <div class="chartrow">
-      <div><canvas class:null={!showPaid} bind:this={osChart}></canvas></div>
+      <div class:charthold={showPaid}>
+        <canvas class:null={!showPaid} bind:this={osChart}></canvas>
+      </div>
       {#if !loading && !error & (status === "free")}
-        <div>
-          Start a paid membership to see share of clicks by operating system
+        <div class="charthold" class:empty={!showPaid}>
+          <p>
+            Start a paid membership to see share of clicks by operating system
+          </p>
         </div>
       {/if}
 
-      <div>
+      <div class="charthold">
         <canvas class:null={!showFree} bind:this={browserChart}></canvas>
       </div>
     </div>
@@ -334,8 +356,10 @@
     {#if status === "paid"}
       <div>Source for data analytics:</div>
       <div>
-        Click below to download a csv with all data for each click this entry
-        has gotten
+        <p>
+          Click below to download a csv with all data for each click this entry
+          has gotten
+        </p>
       </div>
 
       {#if csvLoading}
@@ -357,6 +381,12 @@
 
   .chartrow {
     display: flex;
+    width: 100%;
+  }
+
+  .charthold {
+    flex: 1;
+    min-height: 260px;
   }
 
   .gridcontain {
@@ -386,4 +416,41 @@
     justify-content: right;
     width: 100%;
   }
+
+  button {
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+    border: none;
+  }
+
+  button:focus,
+  button:hover {
+    background: var(--color-theme-1);
+    color: white;
+    outline: none;
+  }
+
+  .empty {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    background-image: repeating-linear-gradient(
+      45deg,
+      #464646 0,
+      #464646 2px,
+      transparent 0,
+      transparent 50%
+    );
+    background-size: 18px 18px;
+    background-color: #2b2b2b;
+    min-height: 160px;
+    box-sizing: border-box;
+  }
+
+  p {
+    margin: 10px;
+  }
+
 </style>

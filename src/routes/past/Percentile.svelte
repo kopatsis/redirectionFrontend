@@ -8,7 +8,7 @@
 
     if (blocked) {
         percentage = 0;
-        text = " ??? / ??? (??%) ";
+        text = " ? / ? (?%) ";
     } else {
         percentage = denominator === 0 ? 0 : (numerator / denominator) * 100;
         text = ` ${numerator} / ${denominator} (${percentage.toFixed(2)}%) `;
@@ -35,7 +35,7 @@
         top: 0;
         left: 0;
         height: 100%;
-        background-color: green;
+        background-color: rgba(0, 128, 0, 0.75);
         z-index: -1;
     }
 

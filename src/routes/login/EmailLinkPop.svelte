@@ -22,6 +22,32 @@
     return queryParams.get("circleRedir") === "t";
   }
 
+  async function fetchIdFromServer() {
+    const API_URL = import.meta.env.VITE_BACKEND_URL;
+
+    try {
+      const response = await fetch(`${API_URL}/emailexchange`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Passcode-ID": import.meta.env.VITE_CHECK_PASSCODE,
+        },
+        body: JSON.stringify({
+          email: email,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.id || "";
+      } else {
+        return "";
+      }
+    } catch (error) {
+      return "";
+    }
+  }
+
   async function sendLink() {
     if (!emailValid) {
       errorMessage = "Invalid email, please fill it in to get a login link";
