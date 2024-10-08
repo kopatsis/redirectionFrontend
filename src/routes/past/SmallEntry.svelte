@@ -59,7 +59,7 @@
         <a href={"http://" + domain + "/" + entryOb.custom}
           >{domain + "/" + entryOb.custom}</a
         >
-        {:else}
+      {:else}
         [None]
       {/if}
     </td>
@@ -67,7 +67,7 @@
 </tr>
 
 <style>
-    button {
+  button {
     padding: 0.5rem;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 2px;

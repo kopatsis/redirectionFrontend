@@ -494,19 +494,22 @@
     <TermsOfService bind:open={tosOpen} />
   {/if}
 
-  <div>--or--</div>
-  <button on:click={() => (emailLinkPop = true)}
-    >Authenticate with email link</button
-  >
-  <div>--or--</div>
-  <a href="/">Use without an account</a>
+  <div class="bottomrow">
+    <br>
+    <div>--or--</div>
+    <button on:click={() => (emailLinkPop = true)}
+      >Authenticate with email link</button
+    >
+    <div>--or--</div>
+    <a href="/">Use without an account</a>
+  </div>
 {/if}
 
 <style>
   .link-button {
     background: none;
     border: none;
-    color: rgb(59, 59, 59);
+    color: var(--color-text);
     text-decoration: underline;
     cursor: pointer;
     padding: 0;
@@ -517,6 +520,28 @@
   .link-button:hover,
   .link-button:focus {
     text-decoration: none;
+  }
+
+  .bottomrow {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  button {
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+    border: none;
+  }
+
+  button:focus,
+  button:hover {
+    background: var(--color-theme-1);
+    color: white;
+    outline: none;
   }
 
   .logintxt {
@@ -555,7 +580,7 @@
     }
   }
 
-  .submit {
+  /* .submit {
     border-radius: 0px;
     transition: border-color 150ms ease-in-out 0s;
     outline: none;
@@ -573,7 +598,7 @@
 
   .submit:hover {
     background-color: aliceblue;
-  }
+  } */
 
   button {
     cursor: pointer;

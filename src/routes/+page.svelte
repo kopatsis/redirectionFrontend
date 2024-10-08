@@ -176,7 +176,7 @@
       <h3 class="observe" id="about-mp">More Details About Us</h3>
       <div class="observe">
         <h4>How does this service work?</h4>
-        <div>
+        <div class="normalwrite">
           Shorten Track's URL shortening process is simple. Just enter any URL
           of any length in the input above, then click "Shorten!", and a URL
           like the one above will be generated for you. Our shortened URLs are
@@ -191,7 +191,7 @@
 
       <div class="observe">
         <h4>Do I have to make an account?</h4>
-        <div>
+        <div class="normalwrite">
           No, but it's recommended. Without an account, you can use all of
           Shorten Track's free features and past shortened URLs will be saved on
           your device itself. But if you want to access all your shortened URLs
@@ -206,7 +206,7 @@
 
       <div class="observe">
         <h4>Can I see my previous shortened URLs?</h4>
-        <div>
+        <div class="normalwrite">
           Yes, with or without an account. After the shortened URL is generated,
           you will be taken to a page where you can copy, modify, or delete that
           shortened URL. This page is also where you get the QR code, see
@@ -220,7 +220,7 @@
 
       <div class="observe">
         <h4>How do shortened URLs work? Is it fast?</h4>
-        <div>
+        <div class="normalwrite">
           All services offering shortened URLs use HTTP redirection. This means
           when someone visits your shortened URL, our server searches for your
           original URL, then tells the browser to go there. Pretty simple. An
@@ -239,7 +239,7 @@
 
       <div class="observe">
         <h4>Can I choose what my shortened URL's handle says?</h4>
-        <div>
+        <div class="normalwrite">
           Yes, you can add a custom handle (the part after shk.fm/) for
           shortened URLs if you have a paid membership. You can enter any
           combination of letters, numbers, or dashes/underscores and as long as
@@ -254,7 +254,7 @@
 
       <div class="observe">
         <h4>What do you mean by analytics? What can I see?</h4>
-        <div>
+        <div class="normalwrite">
           Every time someone clicks your shortened URL, we track and save all
           data that we are legally allowed to, such as their browser, city and
           country, and more. When you click Analytics, you can see this
@@ -287,7 +287,7 @@
 
       <div class="observe">
         <h4>You can create QR Codes? Free?</h4>
-        <div>
+        <div class="normalwrite">
           Yes, for every shortened URL, you can generate a QR code. You can
           download it as a PNG image to use if you need to efficiently share
           your shortened URL. You can also specify whether the QR code goes to
@@ -301,7 +301,7 @@
 
       <div class="observe">
         <h4>Can I access or export any of this data?</h4>
-        <div>
+        <div class="normalwrite">
           Yes, with a paid membership you can generate and download a CSV with
           detailed information of all shortened URLs on your account. You'll
           find the button to export it next to the search bar on the Past
@@ -365,9 +365,9 @@
       <div class="observe">
         <div>
           Do I need to enter the "https://" or "www" in the URL I want to
-          shorten.
+          shorten?
         </div>
-        <div>No, if you leave those out, it will still work correctly.</div>
+        <div class="normalwrite">No, if you leave those out, it will still work correctly.</div>
       </div>
 
       <div class="observe">
@@ -375,7 +375,7 @@
           Do I need to enter the "https://" before the shk.fm/... when accessing
           a shortened URL?
         </div>
-        <div>No, browsers do not need it to access the shortened URL.</div>
+        <div class="normalwrite">No, browsers do not need it to access the shortened URL.</div>
       </div>
 
       <div class="observe">
@@ -383,14 +383,14 @@
           Can I upload a CSV/Excel/other file to create many shortened URLs at
           once?
         </div>
-        <div>
+        <div class="normalwrite">
           Not yet, but we are working on adding that feature for paid users.
         </div>
       </div>
 
       <div class="observe">
         <div>What is the limit of shortened URLs I can create?</div>
-        <div>There is no limit.</div>
+        <div class="normalwrite">There is no limit.</div>
       </div>
 
       <div class="observe">
@@ -398,7 +398,7 @@
           Can I get more personal info, such as name or address, from users
           accessing my shortened URL?
         </div>
-        <div>No that is illegal.</div>
+        <div class="normalwrite">No that is illegal.</div>
       </div>
 
       <div class="observe">
@@ -406,7 +406,7 @@
           If I visit a shk.fm shortened URL, is my IP address stored by Shorten
           Track?
         </div>
-        <div>
+        <div class="normalwrite">
           No, visitor IP addresses are securely encrypted before we do anything
           with them, so they are directly stored and cannot be accessed by
           anyone.
@@ -415,14 +415,14 @@
 
       <div class="observe">
         <div>Do shortened URLs work in all countries?</div>
-        <div>Yes, anywhere with internet.</div>
+        <div class="normalwrite">Yes, anywhere with internet.</div>
       </div>
 
       <div class="observe">
         <div>
           Why do some of my shortened URLs show that bots have accessed them?
         </div>
-        <div>
+        <div class="normalwrite">
           Sometimes, when you share a shortened URL via text or social media and
           the title, image, etc from the original URL show up, this is recorded
           as a bot visiting the shortened URL.
@@ -433,7 +433,7 @@
         <div>
           What happens if the original URL doesn't work or leads nowhere?
         </div>
-        <div>
+        <div class="normalwrite">
           We still shorten the URL and it will still track analytics, but the
           user will be taken to the exact same page as if you entered the
           inexistent URL directly in the browser.
@@ -479,6 +479,10 @@
     opacity: 1;
     transform: translateY(0);
     -webkit-transform: translateY(0);
+  }
+
+  .normalwrite {
+    font-family: "Poppins", Arial, Helvetica, sans-serif;
   }
 
   .sides {
