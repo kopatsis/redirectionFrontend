@@ -41,6 +41,7 @@
 
   <form on:submit|preventDefault={sendReset}>
     <div class="resethead">Reset Password</div>
+	<div class="expl">You'll be sent an email with a link to reset your password</div>
     <div>
       <label class="hide" for="email">Email:</label>
       <input
@@ -64,6 +65,26 @@
 <style>
   .resethead {
     font-size: 24px;
+	margin-bottom: 15px;
+  }
+
+  .expl {
+	font-size: 0.85em;
+	font-family: "Poppins" Arial, Helvetica, sans-serif;
+  }
+
+  button {
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+    border: none;
+  }
+
+  button:focus,
+  button:hover {
+    background: var(--color-theme-1);
+    color: white;
+    outline: none;
   }
 
   .link-button {
@@ -95,9 +116,10 @@
     transition: border-color 150ms ease-in-out 0s;
     outline: none;
     font-size: 16px;
-    margin: 4px;
+    margin: 20px;
     padding-left: 10px;
     padding-right: 10px;
+	min-width: min(90dvw, 420px);
   }
 
   .hide {
@@ -116,7 +138,7 @@
     flex-direction: column;
     align-items: center;
   }
-
+/* 
   .submit {
     border-radius: 0px;
     transition: border-color 150ms ease-in-out 0s;
@@ -135,7 +157,7 @@
 
   .submit:hover {
     background-color: aliceblue;
-  }
+  } */
 
   button {
     cursor: pointer;

@@ -88,21 +88,23 @@
     <div>Successfully sent authentication email to {email}</div>
   {/if}
 
-  <div>
+  <div class="resethead">Email Link Authentication</div>
+  <br />
+
+  <div class="expl">
     Enter your email below and you will receive an email from us with a link.
-    Once you click it, you'll be redirected back to this site. If you already
-    have an account, you will be automatically signed in. If not, an
-    account will be created and you'll be signed in with it.
+    Click it and you'll be signed into your account if you already have one, if
+    not one will be created for you.
   </div>
 
-  <div>
-    If you create an account with this method and want to switch to the
-    traditional email + password as well, use the Add Password/Reset Password
-    functiona from the main menu on the site's header after signing in.
+  <br />
+  <div class="expl">
+    If you create an account with this method and want to use email + password
+    as well, use the Add Password/Reset Password function from the main menu on
+    the site's header after signing in.
   </div>
 
   <form on:submit|preventDefault={sendLink}>
-    <div class="resethead">Send Email Link</div>
     <div>
       <label class="hide" for="email">Email:</label>
       <input
@@ -115,14 +117,15 @@
     </div>
 
     <div>
-        <Turnstile siteKey="0x4AAAAAAAiN0D-hYmv3ulQQ" />
+      <Turnstile siteKey="0x4AAAAAAAiN0D-hYmv3ulQQ" />
     </div>
 
     <div>
+        <br>
       <button class="submit" type="submit">Send Sign In Link</button>
     </div>
     {#if loading}
-        <div>loading...</div>
+      <div>loading...</div>
     {/if}
     {#if errorMessage}
       <p style="color: red;">{errorMessage}</p>
@@ -131,7 +134,7 @@
 </Modal>
 
 <style>
-    .link-button {
+  .link-button {
     background: none;
     border: none;
     cursor: pointer;
@@ -148,9 +151,62 @@
     color: var(--color-text);
   }
 
+  .resethead {
+    font-size: 24px;
+	margin-bottom: 15px;
+  }
+
+  .expl {
+	font-size: 0.85em;
+	font-family: "Poppins" Arial, Helvetica, sans-serif;
+  }
+
+  button {
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+    border: none;
+  }
+
+  button:focus,
+  button:hover {
+    background: var(--color-theme-1);
+    color: white;
+    outline: none;
+  }
+
   .closeline {
     display: flex;
     justify-content: right;
     width: 100%;
+  }
+
+  input {
+    border: 1px solid rgb(137, 151, 155);
+    border-radius: 0px;
+    transition: border-color 150ms ease-in-out 0s;
+    outline: none;
+    font-size: 16px;
+    margin: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+	min-width: min(90dvw, 420px);
+  }
+
+  .hide {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 </style>
