@@ -3,6 +3,10 @@
   import Chart from "./Chart.svelte";
   import copy from "$lib/images/copy.png";
   import del from "$lib/images/delete.png";
+  import add from "$lib/images/plus.png";
+  import edit from "$lib/images/edit-icon-md.png";
+  import close from "$lib/images/close.jpg";
+  import save from "$lib/images/save.png";
   import QrCode from "./QRCode.svelte";
   import { getToken } from "$lib/stores/firebaseuser";
 
@@ -224,7 +228,7 @@
             "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
           },
           credentials: "include",
-        }
+        },
       );
       if (!response.ok) {
         customError =
@@ -343,8 +347,16 @@
   async function copyCustomToClipBoard() {
     try {
       await navigator.clipboard.writeText(
-        "http://" + domain + "/" + entryOb.custom
+        "http://" + domain + "/" + entryOb.custom,
       );
+    } catch (error) {
+      console.error("Error copying to clipboard:", error);
+    }
+  }
+
+  async function copyOriginalToClipBoard() {
+    try {
+      await navigator.clipboard.writeText(entryOb.url);
     } catch (error) {
       console.error("Error copying to clipboard:", error);
     }
@@ -353,173 +365,277 @@
 
 <div class="line"></div>
 {#if error}{error}{/if}
+
+<!-- Normal Portion -->
+
 {#if state == "Present"}
-  <div class="sections">
-    <div class="sections">
-      <div class="deletecont">
-        <button on:click={toMessage} class="hasImg"
-          ><img src={del} alt="delete symbol" /></button
+  <div class="outergrid">
+    <!-- Row -->
+    <div class="deletecont">
+      <button on:click={toMessage} class="hasImg"
+        ><img src={del} alt="delete symbol" /></button
+      >
+    </div>
+    <div>Shortened URL:</div>
+    <div>
+      <a href={"http://" + url}>{url}</a>
+    </div>
+    <div class="buttonhold">
+      <button on:click={copyToClipboard} class="hasImg"
+        ><img src={copy} alt="copy symbol" /></button
+      >
+    </div>
+
+    <!-- Row -->
+    <div></div>
+    <div>Original URL:</div>
+    {#if editing}
+      <div>
+        <input type="text" bind:value={workingURL} />
+        {#if workingError}
+          <div>{workingError}</div>
+        {/if}
+      </div>
+      <div class="buttonhold">
+        <button on:click={toggleEditing} class="hasImg"
+          ><img src={close} alt="cancel symbol" /></button
+        >
+        {#if workingURL !== entryOb.url}
+          <button on:click={submitEdits} class="hasImg"
+            ><img src={save} alt="save symbol" /></button
+          >
+        {/if}
+      </div>
+    {:else}
+      <div class="overflow">
+        {#if entryOb.url === firstHund}
+          {firstHund}
+        {:else if !expanded}
+          {firstHund}&nbsp;<button on:click={() => (expanded = true)}
+            >more...</button
+          >
+        {:else}
+          {entryOb.url}<button on:click={() => (expanded = false)}
+            >less...</button
+          >
+        {/if}
+      </div>
+      <div class="buttonhold">
+        <button on:click={copyOriginalToClipBoard} class="hasImg"
+          ><img src={copy} alt="copy symbol" /></button
+        >
+        <button on:click={toggleEditing} class="hasImg"
+          ><img src={edit} alt="edit symbol" /></button
         >
       </div>
+    {/if}
+
+    {#if paying}
+      <!-- Row -->
+      <div></div>
+      <div>Custom URL:</div>
       <div>
-        <div>
-          URL: <a href={"http://" + url}>{url}</a>
-        </div>
-        <div>
-          {#if editing}
+        {#if customEditing}
+          <div>
             <div>
-              Original URL: <input type="text" bind:value={workingURL} />
-            </div>
-            <div>
-              <button on:click={toggleEditing}>Cancel</button
-              >{#if workingURL !== entryOb.url}<button on:click={submitEdits}
-                  >Submit Change</button
-                >{/if}
-            </div>
-            {#if workingError}
-              <div>{workingError}</div>
-            {/if}
-          {:else}
-            <div class="ogurl">
-              Original URL:
-              {#if entryOb.url === firstHund}
-                {firstHund}
-              {:else if !expanded}
-                {firstHund}&nbsp;<button on:click={() => (expanded = true)}
-                  >more...</button
-                >
-              {:else}
-                {entryOb.url}<button on:click={() => (expanded = false)}
-                  >less...</button
-                >
-              {/if}
-            </div>
-            <button on:click={toggleEditing}>Edit</button>
-          {/if}
-        </div>
-        {#if paying}
-          {#if customEditing}
-            <div>
-              Custom Shortened URL: {domain + "/"}<input
+              {domain + "/"}<input
                 type="text"
                 bind:value={customHandle}
                 maxlength="128"
                 placeholder="Enter custom handle"
               />
             </div>
-            <div>
-              <button on:click={toggleCustomEditing}>Cancel</button>
-              {#if customHandle !== entryOb.custom && customValid}
-                {#if customAvail === true}
-                  <b>Available!</b>
-                  <button on:click={submitCustomURL}>Submit Change</button>
-                {:else if customAvail === false}
-                  <div>Not available</div>
-                {:else if customValidLoading}
-                  <button>loading...</button>
-                {:else}
-                  <button on:click={checkCustomAvailability}
-                    >Check Availability</button
-                  >
-                {/if}
-              {/if}
-            </div>
-            <div>
-              Must be between 6 and 128 characters, only lowercase letters,
-              uppercase letters, numbers, _, and -.
-            </div>
+            {#if customAvail === true}
+              <div>Available</div>
+            {:else if customAvail === false}
+              <div>Not Available</div>
+            {:else}
+              <div>
+                Must be 6-128 chars. Only lowercase & uppercase letters,
+                numbers, _, and -.
+              </div>
+            {/if}
+
             {#if customError}
               <div>{customError}</div>
             {/if}
-          {:else if !entryOb.custom}
-            <div>No custom shortened URL handle yet</div>
-            <button on:click={toggleCustomEditing}>Add One</button>
-          {:else}
-            <div class="ogurl">
-              Custom Shortened URL: <a
-                href={"http://" + domain + "/" + entryOb.custom}
-                >{domain + "/" + entryOb.custom}</a
+          </div>
+        {:else if entryOb.custom}
+          <a href={"http://" + domain + "/" + entryOb.custom}
+            >{domain + "/" + entryOb.custom}</a
+          >
+        {:else}
+          No custom URL yet
+        {/if}
+      </div>
+      <div class="buttonhold">
+        {#if customEditing}
+          <button on:click={toggleCustomEditing} class="hasImg"
+            ><img src={close} alt="cancel symbol" /></button
+          >
+          {#if customHandle !== entryOb.custom && customValid}
+            {#if customAvail === true}
+              <button on:click={submitCustomURL} class="hasImg"
+                ><img src={save} alt="save symbol" /></button
               >
-            </div>
-            {#if customValidLoading}
+            {:else if customValidLoading}
               <button>loading...</button>
-            {:else}
-              <button on:click={toggleCustomEditing}>Edit</button>
-              <button on:click={deleteCustomURL}>Remove</button>
-              <button on:click={copyCustomToClipBoard} class="hasImg"
-                ><img src={copy} alt="copy symbol" /></button
+            {:else if customAvail === null}
+              <button on:click={checkCustomAvailability}
+                >Check Availability</button
               >
             {/if}
           {/if}
-        {/if}
-        {#if isSameCalendarDay(date, new Date())}
-          <div>Created: {date.toLocaleTimeString()}</div>
+        {:else if entryOb.custom}
+          <button on:click={copyCustomToClipBoard} class="hasImg"
+            ><img src={copy} alt="copy symbol" /></button
+          >
+          <button on:click={toggleCustomEditing} class="hasImg"
+            ><img src={edit} alt="edit symbol" /></button
+          >
+          <button on:click={deleteCustomURL} class="hasImg"
+            ><img src={del} alt="delete symbol" /></button
+          >
         {:else}
-          <div>Created: {date.toLocaleDateString()}</div>
+          <button on:click={toggleCustomEditing} class="hasImg"
+            ><img src={add} alt="plus symbol" /></button
+          >
         {/if}
-        <div>Last Click Count: {entryOb.count}</div>
       </div>
-    </div>
-    <div class="buttonhold">
-      <button on:click={copyToClipboard} class="hasImg"
-        ><img src={copy} alt="copy symbol" /></button
-      >
-      <button on:click={toggleQR}>QR Code</button>
-      <button on:click={toggleChart}>Analytics</button>
-    </div>
-  </div>
-  {#if chartOrQR === "chart"}
-    <Chart param={entryOb.param} bind:chartOrQR />
-  {/if}
-  {#if chartOrQR === "qr"}
-    <QrCode
-      QRText={"http://" + url + "?q=t"}
-      OGUrl={entryOb.url}
-      custom={entryOb.custom
-        ? "http://" + domain + "/" + entryOb.custom + "?q=t"
-        : ""}
-      bind:chartOrQR
-    />
-  {/if}
-{:else if state == "Message"}
-  <div>URL: <a href={"http://" + url}>{url}</a></div>
-  <div class="ogurl">
-    Original URL:
-    {#if entryOb.url === firstHund}
-      {firstHund}
-    {:else if !expanded}
-      {firstHund}&nbsp;<button on:click={() => (expanded = true)}
-        >more...</button
-      >
-    {:else}
-      {entryOb.url}<button on:click={() => (expanded = false)}>less...</button>
     {/if}
   </div>
-  <div>Are you sure you want to delete this URL?</div>
-  <button on:click={toRemoved}>Yes</button>
-  <button on:click={toPresent}>No</button>
-{:else if state == "Removed"}
-  <div>URL: <a href={"http://" + url}>{url}</a></div>
-  <div class="ogurl">
-    Original URL:
-    {#if entryOb.url === firstHund}
-      {firstHund}
-    {:else if !expanded}
-      {firstHund}&nbsp;<button on:click={() => (expanded = true)}
-        >more...</button
+
+  <div class="bottompart">
+    <div class="bottomrow">
+      {#if isSameCalendarDay(date, new Date())}
+        <div class="bottomcell">Created: {date.toLocaleTimeString()}</div>
+      {:else}
+        <div class="bottomcell">Created: {date.toLocaleDateString()}</div>
+      {/if}
+      <div class="bottomcell">Last Click Count: {entryOb.count}</div>
+    </div>
+    <div class="bottomrow">
+      <div class="bottomcell">
+        <button on:click={toggleQR}>QR Code</button>
+      </div>
+      <div class="bottomcell">
+        <button on:click={toggleChart}>Analytics</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Portion -->
+{:else if state == "Message"}
+  <div class="outergrid">
+    <!-- Row -->
+    <div class="deletecont">
+      <button on:click={toMessage} class="hasImg"
+        ><img src={del} alt="delete symbol" /></button
       >
-    {:else}
-      {entryOb.url}<button on:click={() => (expanded = false)}>less...</button>
+    </div>
+    <div>Shortened URL:</div>
+    <div>
+      {url}
+    </div>
+    <div class="buttonhold"></div>
+
+    <!-- Row -->
+    <div></div>
+    <div>Original URL:</div>
+    <div class="overflow">
+      {firstHund}
+    </div>
+    <div class="buttonhold"></div>
+
+    {#if paying}
+      <!-- Row -->
+      <div></div>
+      <div>Custom URL:</div>
+      <div>
+        {#if entryOb.custom}
+          {domain + "/" + entryOb.custom}
+        {:else}
+          No custom URL yet
+        {/if}
+      </div>
+      <div class="buttonhold"></div>
+    {/if}
+  </div>
+  <div>
+    <div>Are you sure you want to delete this URL?</div>
+    <div>
+      <button on:click={toRemoved}>Yes</button>
+      <button on:click={toPresent}>No</button>
+    </div>
+  </div>
+
+  <!-- Deleted Portion -->
+{:else if state == "Removed"}
+  <div class="outergrid">
+    <!-- Row -->
+    <div class="deletecont">
+      <button on:click={toMessage} class="hasImg"
+        ><img src={del} alt="delete symbol" /></button
+      >
+    </div>
+    <div>Shortened URL:</div>
+    <div>
+      {url}
+    </div>
+    <div class="buttonhold"></div>
+
+    <!-- Row -->
+    <div></div>
+    <div>Original URL:</div>
+    <div class="overflow">
+      {firstHund}
+    </div>
+    <div class="buttonhold"></div>
+
+    {#if paying}
+      <!-- Row -->
+      <div></div>
+      <div>Custom URL:</div>
+      <div>
+        {#if entryOb.custom}
+          {domain + "/" + entryOb.custom}
+        {:else}
+          No custom URL yet
+        {/if}
+      </div>
+      <div class="buttonhold"></div>
     {/if}
   </div>
   <div>This URL has been deleted</div>
-  <button on:click={undoDelete}>Undo</button>
+  <div>
+    <button on:click={undoDelete}>Undo</button>
+  </div>
 {:else}
   <div>Error, shouldn't be reachable here</div>
 {/if}
+
+{#if chartOrQR === "chart"}
+  <Chart param={entryOb.param} bind:chartOrQR />
+{/if}
+{#if chartOrQR === "qr"}
+  <QrCode
+    QRText={"http://" + url + "?q=t"}
+    OGUrl={entryOb.url}
+    custom={entryOb.custom
+      ? "http://" + domain + "/" + entryOb.custom + "?q=t"
+      : ""}
+    bind:chartOrQR
+  />
+{/if}
+
 <br />
 
 <style>
+  .outergrid {
+    display: grid;
+    grid-template-columns: max-content max-content minmax(0, 400px) max-content;
+    gap: 10px;
+  }
   .buttonhold {
     min-width: fit-content;
   }
@@ -542,10 +658,6 @@
     margin-bottom: 10px;
     margin-top: 10px;
   }
-  .sections {
-    display: flex;
-    justify-content: space-between;
-  }
   div {
     font-size: 18px;
   }
@@ -555,8 +667,26 @@
   .deletecont {
     margin-right: 5px;
   }
-  .ogurl {
-    word-break: break-all;
+
+  .overflow {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+
+  .bottomrow {
+    display: flex;
+  }
+
+  .bottomrow > * {
+    flex: 1;
+  }
+
+  .bottomcell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
   }
 
   @media (max-width: 540px) {
