@@ -95,6 +95,7 @@
 	text-decoration: none;
 	cursor: pointer;
 	font-family: "Poppins", Arial, Helvetica, sans-serif;
+	z-index: 1000;
   }
 
   .scrolltop:hover,

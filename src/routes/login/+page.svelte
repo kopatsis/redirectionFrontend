@@ -78,6 +78,7 @@
   function swapSignUp() {
     password = "";
     email = "";
+    errorMessage = "";
     const url = new URL(window.location);
     if (signUp) {
       url.searchParams.set("new", "t");
