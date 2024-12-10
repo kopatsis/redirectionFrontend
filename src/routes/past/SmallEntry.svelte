@@ -3,7 +3,8 @@
 
   export let domain;
   export let entryOb;
-  export let paying = false;
+
+  console.log(entryOb);
 
   let date = new Date(entryOb.date);
 
@@ -25,7 +26,6 @@
     );
   }
 
-  console.log(entryOb.custom);
 </script>
 
 <tr>
@@ -52,20 +52,9 @@
   </td>
 
   <td class="count">{entryOb.count}</td>
-
-  {#if paying}
-    <td>
-      {#if entryOb.custom && entryOb.custom !== ""}
-        <a href={"http://" + domain + "/" + entryOb.custom}
-          >{domain + "/" + entryOb.custom}</a
-        >
-      {:else}
-        [None]
-      {/if}
-    </td>
-    {:else}
-    <td>N/A</td>
-  {/if}
+  <td
+    >{#if entryOb.custom}TRUE{:else}FALSE{/if}</td
+  >
 </tr>
 
 <style>

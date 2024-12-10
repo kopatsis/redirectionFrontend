@@ -66,7 +66,7 @@
       workingURL = "";
       workingError = "";
       editing = false;
-      customHandle = entryOb.custom;
+      customHandle = entryOb.param;
       customError = "";
       customEditing = true;
     }
@@ -82,11 +82,11 @@
     }
   }
 
-  function updateCustomHandleAll() {
+  function updateCustomHandleAll(newparam) {
     if (allentries && allentries.length > 0) {
       allentries.forEach((entry) => {
         if (entry.param === entryOb.param) {
-          entry.custom = entryOb.custom;
+          entry.param = newparam;
         }
       });
     }
@@ -198,46 +198,12 @@
         }
       } else {
         const resp = await response.json();
-        entryOb.custom = resp.custom;
+        let newparam = resp.custom;
+        updateCustomHandleAll(newparam);
+        entryOb.param = newparam;
         customHandle = "";
         customError = "";
-        updateCustomHandleAll();
-        customEditing = false;
-      }
-    } catch (err) {
-      customError =
-        "Unable to reach our server :/ Check your internet but it might be us";
-    } finally {
-      customValidLoading = false;
-    }
-  };
-
-  const deleteCustomURL = async () => {
-    customValidLoading = true;
-    const url = import.meta.env.VITE_BACKEND_URL;
-    const passcode = import.meta.env.VITE_CHECK_PASSCODE;
-    try {
-      const token = await getToken();
-      const response = await fetch(
-        `${url}/entry/${entryOb.param}/deletecustom`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: token,
-            "Content-Type": "application/json",
-            "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
-          },
-          credentials: "include",
-        },
-      );
-      if (!response.ok) {
-        customError =
-          "Unable to reach our server :/ Check your internet but it might be us";
-      } else {
-        entryOb.custom = "";
-        customHandle = "";
-        customError = "";
-        updateCustomHandleAll();
+        
         customEditing = false;
       }
     } catch (err) {
@@ -347,7 +313,7 @@
   async function copyCustomToClipBoard() {
     try {
       await navigator.clipboard.writeText(
-        "http://" + domain + "/" + entryOb.custom,
+        "http://" + domain + "/" + entryOb.param
       );
     } catch (error) {
       console.error("Error copying to clipboard:", error);
@@ -376,15 +342,83 @@
         ><img src={del} alt="delete symbol" /></button
       >
     </div>
+
     <div>Shortened URL:</div>
-    <div>
-      <a href={"http://" + url}>{url}</a>
-    </div>
-    <div class="buttonhold">
-      <button on:click={copyToClipboard} class="hasImg"
-        ><img src={copy} alt="copy symbol" /></button
-      >
-    </div>
+
+    {#if paying && entryOb.custom}
+      <div>
+        {#if customEditing}
+          <div>
+            <div>
+              {domain + "/"}<input
+                type="text"
+                bind:value={customHandle}
+                maxlength="128"
+                placeholder="Enter custom handle"
+              />
+            </div>
+            {#if customAvail === true}
+              <div>Available</div>
+            {:else if customAvail === false}
+              <div>Not Available</div>
+            {:else}
+              <div>
+                Must be 6-128 chars. Only lowercase & uppercase letters,
+                numbers, _, and -.
+              </div>
+            {/if}
+
+            {#if customError}
+              <div>{customError}</div>
+            {/if}
+          </div>
+        {:else}
+          <a href={"http://" + domain + "/" + entryOb.param}
+            >{domain + "/" + entryOb.param}</a
+          >
+        {/if}
+      </div>
+      <div class="buttonhold">
+        {#if customEditing}
+          <button on:click={toggleCustomEditing} class="hasImg"
+            ><img src={close} alt="cancel symbol" /></button
+          >
+          {#if customHandle !== entryOb.param && customValid}
+            {#if customAvail === true}
+              <button on:click={submitCustomURL} class="hasImg"
+                ><img src={save} alt="save symbol" /></button
+              >
+            {:else if customValidLoading}
+              <button>loading...</button>
+            {:else if customAvail === null}
+              <button on:click={checkCustomAvailability}
+                >Check Availability</button
+              >
+            {/if}
+          {/if}
+        {:else if entryOb.custom}
+          <button on:click={copyCustomToClipBoard} class="hasImg"
+            ><img src={copy} alt="copy symbol" /></button
+          >
+          <button on:click={toggleCustomEditing} class="hasImg"
+            ><img src={edit} alt="edit symbol" /></button
+          >
+        {:else}
+          <button on:click={toggleCustomEditing} class="hasImg"
+            ><img src={add} alt="plus symbol" /></button
+          >
+        {/if}
+      </div>
+    {:else}
+      <div>
+        <a href={"http://" + url}>{url}</a>
+      </div>
+      <div class="buttonhold">
+        <button on:click={copyToClipboard} class="hasImg"
+          ><img src={copy} alt="copy symbol" /></button
+        >
+      </div>
+    {/if}
 
     <!-- Row -->
     <div></div>
@@ -427,80 +461,6 @@
         <button on:click={toggleEditing} class="hasImg"
           ><img src={edit} alt="edit symbol" /></button
         >
-      </div>
-    {/if}
-
-    {#if paying}
-      <!-- Row -->
-      <div></div>
-      <div>Custom URL:</div>
-      <div>
-        {#if customEditing}
-          <div>
-            <div>
-              {domain + "/"}<input
-                type="text"
-                bind:value={customHandle}
-                maxlength="128"
-                placeholder="Enter custom handle"
-              />
-            </div>
-            {#if customAvail === true}
-              <div>Available</div>
-            {:else if customAvail === false}
-              <div>Not Available</div>
-            {:else}
-              <div>
-                Must be 6-128 chars. Only lowercase & uppercase letters,
-                numbers, _, and -.
-              </div>
-            {/if}
-
-            {#if customError}
-              <div>{customError}</div>
-            {/if}
-          </div>
-        {:else if entryOb.custom}
-          <a href={"http://" + domain + "/" + entryOb.custom}
-            >{domain + "/" + entryOb.custom}</a
-          >
-        {:else}
-          No custom URL yet
-        {/if}
-      </div>
-      <div class="buttonhold">
-        {#if customEditing}
-          <button on:click={toggleCustomEditing} class="hasImg"
-            ><img src={close} alt="cancel symbol" /></button
-          >
-          {#if customHandle !== entryOb.custom && customValid}
-            {#if customAvail === true}
-              <button on:click={submitCustomURL} class="hasImg"
-                ><img src={save} alt="save symbol" /></button
-              >
-            {:else if customValidLoading}
-              <button>loading...</button>
-            {:else if customAvail === null}
-              <button on:click={checkCustomAvailability}
-                >Check Availability</button
-              >
-            {/if}
-          {/if}
-        {:else if entryOb.custom}
-          <button on:click={copyCustomToClipBoard} class="hasImg"
-            ><img src={copy} alt="copy symbol" /></button
-          >
-          <button on:click={toggleCustomEditing} class="hasImg"
-            ><img src={edit} alt="edit symbol" /></button
-          >
-          <button on:click={deleteCustomURL} class="hasImg"
-            ><img src={del} alt="delete symbol" /></button
-          >
-        {:else}
-          <button on:click={toggleCustomEditing} class="hasImg"
-            ><img src={add} alt="plus symbol" /></button
-          >
-        {/if}
       </div>
     {/if}
   </div>
@@ -546,20 +506,6 @@
       {firstHund}
     </div>
     <div class="buttonhold"></div>
-
-    {#if paying}
-      <!-- Row -->
-      <div></div>
-      <div>Custom URL:</div>
-      <div>
-        {#if entryOb.custom}
-          {domain + "/" + entryOb.custom}
-        {:else}
-          No custom URL yet
-        {/if}
-      </div>
-      <div class="buttonhold"></div>
-    {/if}
   </div>
   <div>
     <div>Are you sure you want to delete this URL?</div>
@@ -591,20 +537,6 @@
       {firstHund}
     </div>
     <div class="buttonhold"></div>
-
-    {#if paying}
-      <!-- Row -->
-      <div></div>
-      <div>Custom URL:</div>
-      <div>
-        {#if entryOb.custom}
-          {domain + "/" + entryOb.custom}
-        {:else}
-          No custom URL yet
-        {/if}
-      </div>
-      <div class="buttonhold"></div>
-    {/if}
   </div>
   <div>This URL has been deleted</div>
   <div>
@@ -621,9 +553,6 @@
   <QrCode
     QRText={"http://" + url + "?q=t"}
     OGUrl={entryOb.url}
-    custom={entryOb.custom
-      ? "http://" + domain + "/" + entryOb.custom + "?q=t"
-      : ""}
     bind:chartOrQR
   />
 {/if}

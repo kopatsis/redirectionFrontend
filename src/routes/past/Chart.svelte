@@ -287,15 +287,6 @@
         />
       </div>
 
-      <div>Clicks from Custom URL:</div>
-
-      <div>
-        <Percentile
-          numerator={status === "paid" ? allData.fromCustom : 0}
-          denominator={allData.total}
-          blocked={status === "free"}
-        />
-      </div>
     </div>
   {:else}
     <div>Error loading analytics, please close and try again</div>

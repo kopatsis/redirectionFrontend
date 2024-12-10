@@ -7,7 +7,6 @@
   export let QRText = "";
   export let chartOrQR = "none";
   export let OGUrl = "";
-  export let custom = "";
 
   let disp = "";
 
@@ -47,12 +46,9 @@
   $: if (pointsTo === "shortened") {
     setQR(QRText);
     disp = cleanUrl(QRText);
-  } else if (pointsTo === "original") {
+  } else  {
     setQR(OGUrl);
     disp = cleanUrl(OGUrl);
-  } else {
-    setQR(custom);
-    disp = cleanUrl(custom);
   }
 
   onMount(async () => {
@@ -89,15 +85,6 @@
           Shortened URL
         </label>
       </div>
-
-      {#if custom && custom !== ""}
-        <div>
-          <label>
-            <input type="radio" value="custom" bind:group={pointsTo} />
-            Custom URL
-          </label>
-        </div>
-      {/if}
 
       <div>
         <label>

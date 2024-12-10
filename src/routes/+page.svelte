@@ -37,6 +37,21 @@
     paying = value;
   });
 
+  let domain = "shk.fm";
+  let usingCustom = false;
+  let customHandle = "";
+  let customError = "";
+  let customAvail = null;
+  let customValidLoading = false;
+
+  $: customHandle, (customAvail = null);
+  $: customValid = isValid(customHandle);
+
+  function isValid(handle) {
+    const regex = /^[a-zA-Z0-9_-]*$/;
+    return handle.length >= 6 && handle.length <= 128 && regex.test(handle);
+  }
+
   let observer;
 
   const handleIntersection = (entries) => {
@@ -49,8 +64,56 @@
     });
   };
 
+  const checkCustomAvailability = async () => {
+    if (!customValid) {
+      customAvail = false;
+      return;
+    }
+    customValidLoading = true;
+    const url = import.meta.env.VITE_BACKEND_URL;
+    const passcode = import.meta.env.VITE_CHECK_PASSCODE;
+    try {
+      const token = await getToken();
+      const response = await fetch(`${url}/customcheck/${customHandle}`, {
+        method: "GET",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+          "X-User-ID": localStorage.getItem("ST_USER_KEY") || "",
+          "X-Passcode-ID": passcode,
+        },
+        credentials: "include",
+      });
+      if (!response.ok) {
+        customError =
+          "Unable to reach our server :/ Check your internet but it might be us";
+      } else {
+        const resp = await response.json();
+        customAvail = resp.available ? resp.available === true : false;
+      }
+    } catch (err) {
+      customError =
+        "Unable to reach our server :/ Check your internet but it might be us";
+    } finally {
+      customValidLoading = false;
+    }
+  };
+
   async function handleSubmit() {
     const url = import.meta.env.VITE_BACKEND_URL;
+
+    let bodyJSON = { url: actual_url };
+
+    if (usingCustom) {
+      if (!customAvail || !customValid) {
+        workingError = "Invalid or unavailable custom URL";
+        return;
+      }
+      bodyJSON.custom = true;
+      bodyJSON.handle = customHandle;
+    } else {
+      bodyJSON.custom = false;
+    }
     try {
       const token = await getToken();
       const response = await fetch(`${url}/entry`, {
@@ -61,7 +124,7 @@
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify({ url: actual_url }),
+        body: JSON.stringify(bodyJSON),
       });
 
       if (!response.ok) {
@@ -75,8 +138,8 @@
         }
       } else {
         const data = await response.json();
-        if (data.parameter) {
-          goto(`/past/${data.parameter}`);
+        if (data.id) {
+          goto(`/past/${data.id}`);
         } else {
           workingError =
             "Unable to reach our server :/ Check your internet but it might be us";
@@ -89,6 +152,8 @@
   }
 
   onMount(async () => {
+    domain = import.meta.env.VITE_SHORT_DOMAIN;
+
     observer = new IntersectionObserver(handleIntersection, {
       root: null,
       rootMargin: "0px",
@@ -144,8 +209,57 @@
           bind:value={actual_url}
           style="color: dark-gray;"
         />
-        <button type="submit">Shorten!</button>
+        {#if actual_url === "" || (usingCustom && customAvail !== true)}
+          <button type="button" class="darked">Shorten!</button>
+        {:else}
+          <button type="submit">Shorten!</button>
+        {/if}
       </form>
+      {#if paying}
+        <div>
+          <label>
+            <input type="checkbox" bind:checked={usingCustom} />
+            Use custom shortened URL
+          </label>
+        </div>
+        {#if usingCustom}
+          <div>
+            {domain + "/"}
+            <input
+              class="urlin"
+              type="text"
+              placeholder="my-custom-handle_0"
+              bind:value={customHandle}
+              maxlength="128"
+              style="color: dark-gray;"
+            />
+            {#if customValidLoading}
+              <button type="button">loading...</button>
+            {:else if customAvail === false || !customValid}
+              <button type="button" class="darked">Check Availability</button>
+            {:else}
+              <button type="button" on:click={checkCustomAvailability}
+                >Check Availability</button
+              >
+            {/if}
+          </div>
+          {#if customValidLoading}
+            <div>Checking availability...</div>
+          {:else if customAvail === true}
+            <div>Available! Use this custom url before someone takes it.</div>
+          {:else if customAvail === false}
+            <div>Not available :/ sorry, please try another one</div>
+          {:else}
+            <div>
+              Must be 6-128 chars. Only lowercase & uppercase letters, numbers,
+              _, and -.
+            </div>
+          {/if}
+          {#if customError && customAvail !== true}
+            <div>Error checking custom url availability, please try again.</div>
+          {/if}
+        {/if}
+      {/if}
       <Animate />
     </div>
     <div class="imgcontain">
@@ -367,7 +481,9 @@
           Do I need to enter the "https://" or "www" in the URL I want to
           shorten?
         </div>
-        <div class="normalwrite">No, if you leave those out, it will still work correctly.</div>
+        <div class="normalwrite">
+          No, if you leave those out, it will still work correctly.
+        </div>
       </div>
 
       <div class="observe">
@@ -375,7 +491,9 @@
           Do I need to enter the "https://" before the shk.fm/... when accessing
           a shortened URL?
         </div>
-        <div class="normalwrite">No, browsers do not need it to access the shortened URL.</div>
+        <div class="normalwrite">
+          No, browsers do not need it to access the shortened URL.
+        </div>
       </div>
 
       <div class="observe">
@@ -582,5 +700,15 @@
 
   .urlin {
     flex: 1;
+  }
+
+  .darked {
+    background-color: darkgray;
+  }
+
+  .darked:hover,
+  .darked:focus {
+    background: darkgray;
+    color: var(--color-text);
   }
 </style>

@@ -285,7 +285,7 @@
                 <th>Original URL</th>
                 <th>Created</th>
                 <th>Clicks</th>
-                <th>Custom URL</th>
+                <th>Custom</th>
               </tr>
             </thead>
             <tbody>
